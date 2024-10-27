@@ -1,10 +1,11 @@
 import Image from 'next/image'
 import Typography from './TruncatedText';
+import { StaticImport } from 'next/dist/shared/lib/get-img-props';
 
 type projects={
     name:string,
     about:string,
-    image:any
+    image:string | StaticImport
 }
 export default function ProjectsCard({name,about,image}:projects) {
   return (
@@ -19,7 +20,7 @@ export default function ProjectsCard({name,about,image}:projects) {
         text={about} 
         width="w-full" 
         charLimit={120}
-        height="h-52" // Adjust character limit if needed
+        height="h-52" 
       />
     </p>
   </div>

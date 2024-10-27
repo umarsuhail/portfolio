@@ -1,29 +1,14 @@
 import type { Metadata } from "next";
-import { Inter, Quicksand } from 'next/font/google'
-
-import localFont from "next/font/local";
+import {  Quicksand } from 'next/font/google'
 import "./globals.css";
 import Nav from "./components/Nav";
 
-const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
-});
-const inter = Inter({
-  subsets: ['latin'],
-  display: 'swap',
-})
 const quickSand = Quicksand({
   subsets: ['latin'],
   display: 'swap',
 })
  
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
-});
+
 
 export const metadata: Metadata = {
   title: "Umar Suhail- Frontend developer",

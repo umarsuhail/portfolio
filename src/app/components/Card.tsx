@@ -16,7 +16,7 @@ export default function Card() {
         </div>
        
         <h1 className="text-4xl mx-3 md:w-6/12 font-extrabold tracking-wide break-words leading-10 text-white text-stroke-blue mb-4 animate-fadeInRight">
-        Hi👋 i'm <span className='text-yellow-400 md:text-6xl font-extrabold'>Umar Suhail</span>, and i craft web experiences.
+        Hi👋 i&apos;m <span className='text-yellow-400 md:text-6xl font-extrabold'>Umar Suhail</span>, and i craft web experiences.
         </h1>
 
       </div>

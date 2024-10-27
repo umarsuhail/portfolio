@@ -1,6 +1,9 @@
-import { useState } from "react";
-
-const Tooltip = ({ children, text }:any) => {
+import { ReactElement, useState } from "react";
+type toolTip={
+    children:ReactElement,
+    text:string
+}
+const Tooltip = ({ children, text }:toolTip) => {
   const [showTooltip, setShowTooltip] = useState(false);
 
   return (

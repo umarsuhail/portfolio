@@ -1,7 +1,7 @@
 import type { Config } from "tailwindcss";
 
 const config: Config = {
-  darkMode: "class", // Enables dark mode support via class
+  darkMode: "class",
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -13,10 +13,10 @@ const config: Config = {
         inter: ["Inter", "sans-serif"],
       },
       colors: {
-        backgroundLight: "#FFFFFF", // light mode background
-        backgroundDark: "bg-gray-900", // dark mode background
-        textLight: "#1A1A1A", // light mode text
-        textDark: "#FFFFFF", // dark mode text
+        backgroundLight: "#FFFFFF", 
+        backgroundDark: "bg-gray-900",
+        textLight: "#1A1A1A",
+        textDark: "#FFFFFF", 
       },
       keyframes: {
         fadeInUp: {
