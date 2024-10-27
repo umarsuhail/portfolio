@@ -5,7 +5,7 @@ import {  texts } from '@/utils/constants';
 export default function Card() {
   return (
     <div className="bg-gray-900 text-white w-full min-h-screen p-4 " id="home">
-      <div className='md:flex justify-center items-center mt-3 rounded-b-lg'>
+      <div className='flex flex-col justify-center md:flex-row items-center mt-3 rounded-b-lg'>
       <div className="inline-block mb-6 rounded-full bg-white w-48 h-48 overflow-hidden shadow-xl">
           <Image
             src={profile}
