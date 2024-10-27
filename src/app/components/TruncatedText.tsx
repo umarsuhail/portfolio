@@ -19,7 +19,7 @@ const Typography = ({ text, height = 'h-auto', width = 'w-auto', charLimit = 100
 
   return (
     <div className={`relative ${height} ${width}  ${isExpanded?'overflow-scroll':'overflow-hidden'}`}>
-      <p className="text-gray-400">
+      <p className="text-slate-100">
         {getDisplayText()}
         {text.length > charLimit && (
           <button

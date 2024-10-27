@@ -39,7 +39,7 @@ export default function Nav() {
             </Tooltip>
           <Tooltip text="Contact me">
             
-            <a href="#contact" className="text-lg font-medium text-gray-600 hover:text-gray-900 transition-all duration-200">
+            <a href="https://wa.me/9497656243" className="text-lg font-medium text-gray-600 hover:text-gray-900 transition-all duration-200">
             <Icon icon="mdi:contact" className='text-xl hover:text-blue-700' />
             </a>
             </Tooltip>

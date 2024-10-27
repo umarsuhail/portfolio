@@ -3,7 +3,7 @@ import SkillCard from "./SkillCard";
 
 export default function Skills() {
   return (
-    <div className=" flex flex-wrap justify-center bg-purple-700  h-full md:h-screen  w-full  items-center bg-gradient-to-r from-violet-800 via-pink-700 to-purple-950 ">
+    <div id="skills" className=" flex flex-wrap justify-center bg-purple-700  h-full md:h-screen  w-full  items-center bg-gradient-to-r  from-[#9D50BB]  to-[#6E48AA]  ">
       <div className="w-full">
         <h1 className=" my-2 text-center font-bold text-xl mb-2">
           My Tech Stack
