@@ -64,12 +64,32 @@ export default function Nav() {
       {isOpen && (
         <div className="md:hidden">
           <div className="space-y-1 px-2 pt-2 pb-3 sm:px-3">
-            <a href="/" className="block text-lg font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-all duration-200 p-2 rounded-lg">Home</a>
-            <a href="/about" className="block text-lg font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-all duration-200 p-2 rounded-lg">About</a>
-            <a href="#projects" className="block text-lg font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-all duration-200 p-2 rounded-lg">Projects</a>
-            <a href="#skills" className="block text-lg font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-all duration-200 p-2 rounded-lg">Skills</a>
-            <a href="#contact" className="block text-lg font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-all duration-200 p-2 rounded-lg">Contact</a>
-        
+            <nav className="hidden md:flex space-x-10">
+          <Tooltip text="About Me">
+
+            <a href="/" className="text-lg font-medium text-gray-600 hover:text-gray-900 transition-all duration-200 text-center">
+            <Icon icon="cib:about-me" className='text-xl hover:text-blue-700' />
+            </a>
+            </Tooltip>
+          <Tooltip text="Projects">
+
+            <a href="#projects" className="text-lg font-medium text-gray-600 hover:text-gray-900 transition-all duration-200">
+            <Icon icon="material-symbols-light:developer-mode" className='text-xl hover:text-blue-700' />
+            </a>
+            </Tooltip>
+          <Tooltip text="Skills">
+
+            <a href="#skills" className="text-lg font-medium text-gray-600 hover:text-gray-900 transition-all duration-200">
+            <Icon icon="game-icons:skills" className='text-xl hover:text-blue-700'/>
+            </a>
+            </Tooltip>
+          <Tooltip text="Contact me">
+            
+            <a href="https://wa.me/9497656243" className="text-lg font-medium text-gray-600 hover:text-gray-900 transition-all duration-200">
+            <Icon icon="mdi:contact" className='text-xl hover:text-blue-700' />
+            </a>
+            </Tooltip>
+          </nav>
           </div>
         </div>
       )}
