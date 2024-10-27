@@ -10,7 +10,7 @@ export default function Projects() {
           Here are some works that I have contributed so far...
         </p>
       </div>
-      <div className="flex">
+      <div className="md:flex">
       {projects.map(items=>(
         <ProjectsCard name={items.name} key={items.name} about={items.about} image={items.image}/>
     ))}
