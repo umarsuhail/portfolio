@@ -3,7 +3,7 @@ import ProjectsCard from "./ProjectsCard";
 
 export default function Projects() {
   return (
-    <div className="h-screen" id="projects">
+    <div className="min-h-screen" id="projects">
       <div className="w-full my-6 mt-9">
         <h1 className=" my-2 text-center font-bold text-xl mb-2 ">My Works</h1>
         <p className="text-xs text-center font-thin mb-2 ">
