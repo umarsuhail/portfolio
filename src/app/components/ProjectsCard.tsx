@@ -15,14 +15,12 @@ export default function ProjectsCard({name,about,image}:projects) {
         </div>
         <h1 className="text-center font-bold text-xl mt-3">{name}</h1>
 
-    <p className="w-full mt-3">
     <Typography 
         text={about} 
         width="w-full" 
         charLimit={120}
         height="h-52" 
       />
-    </p>
   </div>
   )
 }
