@@ -12,7 +12,7 @@ export default function Nav() {
         <div className="flex justify-between items-center py-4">
           <div className="transition ease-in-out delay-150 text-violet-700 hover:-translate-y-1 hover:scale-125 hover:shadow-md  shadow	 font-extrabold hover:text-fuchsia-600 duration-300">
             <a
-              href="/"
+              href="/about"
               className="w-full animate-pulse ease-in delay-200 duration-300"
             >
               Umar Suhail P M
