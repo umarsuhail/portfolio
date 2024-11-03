@@ -29,7 +29,7 @@ export default function Nav() {
           <nav className="hidden md:flex space-x-10">
             <Tooltip text="About Me">
               <a
-                href="/"
+                href="/about"
                 className="text-lg font-medium text-gray-600 hover:text-gray-900 transition-all duration-200 text-center"
               >
                 <Icon
