@@ -8,7 +8,7 @@ export default function Card() {
     <div className="w-full" >
       <ParticlesBackground />
       <div
-        className="relative text-white md:w-2/3 min-h-screen p-4 rounded-lg md:my-4 mx-auto backdrop-blur-md"
+        className="relative text-white md:w-2/3 min-h-screen p-4 rounded-lg md:my-4 mx-auto md:backdrop-blur-md"
         style={{ backgroundColor: "rgba(142, 142, 142, 0.1)" }}
       >
         <div className="flex flex-col justify-center md:flex-row items-center mt-3 rounded-b-lg">

@@ -31,13 +31,14 @@ const ParticlesBackground = () => {
           value: "#111827",
         },
       },
+      preset:"confetti",
       fullScreen:{enable:true, zIndex:-1},
       fpsLimit: 60,
       style:{position:'absolute',top:"0px",height:'110vh'},
       interactivity: {
         events: {
           onClick: {
-            enable: true,
+            enable: false,
             mode: "push",
           },
           onHover: {
