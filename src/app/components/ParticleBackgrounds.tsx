@@ -32,7 +32,7 @@ const ParticlesBackground = () => {
         },
       },
       fullScreen:{enable:true, zIndex:-1},
-      fpsLimit: 120,
+      fpsLimit: 60,
       style:{position:'absolute',top:"0px",height:'110vh'},
       interactivity: {
         events: {
@@ -89,8 +89,9 @@ const ParticlesBackground = () => {
           type: "circle",
         },
         size: {
-          value: { min: 1, max: 5 },
+          value: { min: 3, max: 10 }, 
         },
+        
       },
       detectRetina: true,
     }),
