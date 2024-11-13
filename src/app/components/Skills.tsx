@@ -5,12 +5,11 @@ import { skills } from "@/utils/constants";
 import SkillCard from "./SkillCard";
 
 export default function Skills() {
-  const [showFireworks, setShowFireworks] = useState(false); // State for fireworks
+  const [showFireworks, setShowFireworks] = useState(false); 
 
   const playSound = () => {
     console.log(showFireworks);
     
-    // Play the sound
     const audio = new Audio('/sounds/your-sound-file.mp3'); // Replace with your sound file path
     audio.play();
 
