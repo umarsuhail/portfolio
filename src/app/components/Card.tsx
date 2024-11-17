@@ -30,7 +30,7 @@ export default function Card() {
           </h1>
         </div>
 
-        <h2 className="md:text-center font-light leading-9 tracking-widest backdrop-blur-md md:backdrop-blur-none mx-10 text-white animate-fadeInDown">
+        <h2 className="p-2 md:text-center font-light leading-9 tracking-widest backdrop-blur-md md:backdrop-blur-none mx-10 text-white animate-fadeInDown">
           {texts.about}
         </h2>
       </div>
