@@ -4,9 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 
 export default function ChatBot() {
   const [isChatOpened, setOpened] = useState(false);
-  const [chatMessages, setChatMessages] = useState<
-    { message: string; type: "send" | "received" }[]
-  >([]);
+  const [chatMessages, setChatMessages] = useState<{ message: string; type: "send" | "received" }[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -91,9 +89,8 @@ export default function ChatBot() {
           {/* chat interface */}
           <div className=" overflow-y-auto flex flex-col h-2/3">
             {chatMessages.map((msg, index) => (
-            <div className="">
+            <div key={index}>
               <div
-                key={index}
                 className={`m-2 p-2 text-xs break-words rounded-xl w-3/4 ${
                   msg.type === "send"
                     ? "bg-purple-500 rounded-tr-xl rounded-br-xl rounded-bl-xl rounded-tl-none "
