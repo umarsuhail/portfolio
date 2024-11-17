@@ -1,5 +1,5 @@
 import Image from "next/image";
-import profile from "../../public/images/me.png";
+import profile from "../../public/images/me-s.jpg";
 import { texts } from "@/utils/constants";
 import ParticlesBackground from "../components/ParticleBackgrounds";
 

@@ -15,7 +15,7 @@ export default function ChatBot() {
     setOpened(!isChatOpened);
   };
 
-  const handleSend = (
+  const handleSend = async (
     e: React.MouseEvent<HTMLButtonElement> | React.FormEvent
   ) => {
     e.preventDefault();
@@ -28,7 +28,29 @@ export default function ChatBot() {
         { message: userMessage, type: "send" },
       ]);
       setInputValue("");
+// try {
+//       // Make POST request to our backend API
+//       const response = await fetch('/api/chat', {
+//         method: 'POST',
+//         headers: {
+//           'Content-Type': 'application/json',
+//         },
+//         body: JSON.stringify({ message: inputValue }),
+//       });
 
+//       const data = await response.json();
+
+//       if (data.response) {
+//         setChatMessages((prevMessages:any) => [
+//           ...prevMessages,
+//           { type: 'receive', message: data.response },
+//         ]);
+//       }
+//     } catch (error) {
+//       console.error('Error fetching AI response:', error);
+//     } finally {
+//       setLoading(false);
+//     }
       setResponseMessage(userMessage);
     }
   };
@@ -81,9 +103,7 @@ export default function ChatBot() {
               className="text-slate-300"
             />
             <span className="text-xs text-slate-500 m-2">
-              Hello there, this is a fully custom developed personalized AI
-              assistant, and it is under development
-            </span>
+            Hello! This is a custom-developed chat assistant. Feel free to ask about Umar Suhail.</span>
           </div>
 
           {/* chat interface */}
@@ -93,8 +113,8 @@ export default function ChatBot() {
               <div
                 className={`m-2 p-2 text-xs break-words rounded-xl w-3/4 ${
                   msg.type === "send"
-                    ? "bg-purple-500 rounded-tr-xl rounded-br-xl rounded-bl-xl rounded-tl-none "
-                    : "bg-blue-500 rounded-tl-xl rounded-br-xl rounded-bl-xl rounded-tr-none float-right"
+                    ? "bg-blue-500 rounded-tr-xl rounded-br-xl rounded-bl-xl rounded-tl-none "
+                    : " bg-purple-500 rounded-tl-xl rounded-br-xl rounded-bl-xl rounded-tr-none float-right"
                 }`}
               >
                 <div className="w-full max-w-[70%]">{msg.message}</div>
