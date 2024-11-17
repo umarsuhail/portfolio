@@ -18,10 +18,26 @@ body {
   color: var(--foreground);
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
   }
+}
+/* Add this to your global CSS or a CSS module */
+::-webkit-scrollbar {
+  width: 8px; /* Narrow scrollbar */
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #6b21a8; /* Purple-500 color */
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f0f0f0; /* Light background for the track */
 }

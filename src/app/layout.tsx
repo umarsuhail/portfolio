@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import {  Quicksand } from 'next/font/google'
 import "./globals.css";
 import Nav from "./components/Nav";
+import ChatBot from "./chatbot/ChatBot";
 
 const quickSand = Quicksand({
   subsets: ['latin'],
@@ -27,6 +28,8 @@ export default function RootLayout({
         className={`antialiased dark font-quickSand ${quickSand.className}`}
         >
         <Nav></Nav>
+        <ChatBot/>
+
         {children}
       </body>
     </html>
