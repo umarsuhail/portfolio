@@ -1,9 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 
-type RequestBody = {
-  message: string;
-};
-
 type ResponseData = {
   message: string;
 };
