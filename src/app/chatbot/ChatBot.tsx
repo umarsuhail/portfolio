@@ -28,29 +28,28 @@ export default function ChatBot() {
         { message: userMessage, type: "send" },
       ]);
       setInputValue("");
-// try {
-//       // Make POST request to our backend API
-//       const response = await fetch('/api/chat', {
-//         method: 'POST',
-//         headers: {
-//           'Content-Type': 'application/json',
-//         },
-//         body: JSON.stringify({ message: inputValue }),
-//       });
+      try {
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ message: inputValue }),
+      });
 
-//       const data = await response.json();
+      const data = await response.json();
 
-//       if (data.response) {
-//         setChatMessages((prevMessages:any) => [
-//           ...prevMessages,
-//           { type: 'receive', message: data.response },
-//         ]);
-//       }
-//     } catch (error) {
-//       console.error('Error fetching AI response:', error);
-//     } finally {
-//       setLoading(false);
-//     }
+      if (data.response) {
+        setChatMessages((prevMessages:any) => [
+          ...prevMessages,
+          { type: 'receive', message: data.response },
+        ]);
+      }
+    } catch (error) {
+      console.error('Error fetching AI response:', error);
+    } finally {
+      setLoading(false);
+    }
       setResponseMessage(userMessage);
     }
   };
