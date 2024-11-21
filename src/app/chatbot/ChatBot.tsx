@@ -1,10 +1,14 @@
 "use client";
+type ChatMessage = {
+  type: 'send' | 'received';
+  message: string;
+};
 import { Icon } from "@iconify/react/dist/iconify.js";
 import React, { useEffect, useRef, useState } from "react";
 
 export default function ChatBot() {
   const [isChatOpened, setOpened] = useState(false);
-  const [chatMessages, setChatMessages] = useState<{ message: string; type: "send" | "received" }[]>([]);
+  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -28,43 +32,30 @@ export default function ChatBot() {
         { message: userMessage, type: "send" },
       ]);
       setInputValue("");
-    //   try {
-    //   const response = await fetch('/api/chat', {
-    //     method: 'POST',
-    //     headers: {
-    //       'Content-Type': 'application/json',
-    //     },
-    //     body: JSON.stringify({ message: inputValue }),
-    //   });
-
-    //   const data = await response.json();
-
-    //   if (data.response) {
-    //     setChatMessages((prevMessages:any) => [
-    //       ...prevMessages,
-    //       { type: 'receive', message: data.response },
-    //     ]);
-    //   }
-    // } catch (error) {
-    //   console.error('Error fetching AI response:', error);
-    // } finally {
-    //   setLoading(false);
-    // }
-      setResponseMessage(userMessage);
-    }
-  };
-
-  const setResponseMessage = (userMessage: string) => {
-    setTimeout(() => {
-      setChatMessages((prevMessages) => [
-        ...prevMessages,
-        {
-          message: `Hi there, the chat feature is under development. You said: ${userMessage}`,
-          type: "received",
+      try {
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
-      ]);
+        body: JSON.stringify({ message: inputValue,id:2 }),
+      });
+
+      const data = await response.json();
+      console.log(data,'data');
+      
+      if (data.message) {
+        setChatMessages((prevMessages: ChatMessage[]) => [
+          ...prevMessages,
+          { type: 'received', message: data.message }, 
+        ]);
+      }
+    } catch (error) {
+      console.error('Error fetching AI response:', error);
+    } finally {
       setLoading(false);
-    }, 2000);
+    }
+    }
   };
 
   useEffect(() => {
