@@ -6,7 +6,7 @@ import ParticlesBackground from "../components/ParticleBackgrounds";
 export default function Card() {
   return (
     <div className="w-full" >
-      <ParticlesBackground />
+      {/* <ParticlesBackground /> */}
       <div
         className="relative text-white md:w-2/3 min-h-screen p-4 rounded-lg md:my-4 mx-auto md:backdrop-blur-md"
         style={{ backgroundColor: "rgba(142, 142, 142, 0.1)" }}
