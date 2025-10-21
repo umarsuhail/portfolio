@@ -4,7 +4,7 @@ import { quickSand } from "./fonts/fonts";
 
 // Lazy load components
 const Skills = lazy(() => import("./components/Skills"));
-const Projects = lazy(() => import("./components/Projects"));
+const Projects = lazy(() => import("./components/ProjectsA"));
 const Footer = lazy(() => import("./components/Footer"));
 
 export default function Home() {
@@ -18,7 +18,7 @@ export default function Home() {
       </Suspense>
       
       <Suspense fallback={<div className="text-white">Loading Projects...</div>}>
-        <Projects />
+        <ProjectsA />
       </Suspense>
       
       <Suspense fallback={<div className="text-white">Loading Footer...</div>}>
