@@ -4,7 +4,7 @@ import { quickSand } from "./fonts/fonts";
 
 // Lazy load components
 const Skills = lazy(() => import("./components/Skills"));
-const Projects = lazy(() => import("./components/ProjectsA"));
+const ProjectsA = lazy(() => import("./components/ProjectsA"));
 const Footer = lazy(() => import("./components/Footer"));
 
 export default function Home() {
