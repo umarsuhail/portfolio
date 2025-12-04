@@ -3,7 +3,6 @@
 import { useState, useMemo, useEffect } from "react";
 import { skills } from "@/utils/constants"; 
 import SkillPlanet from "./SkillPlanet";
-import { motion } from "framer-motion";
 
 export default function SkillsUniverse() {
   const [skillState, setSkillState] = useState(
