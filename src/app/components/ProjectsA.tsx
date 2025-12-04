@@ -1,8 +1,57 @@
 'use client';
+
 import { motion } from 'framer-motion';
 import Image from 'next/image';
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import React from 'react';
+
+// --- Inline UI Components (Replacements for @/components/ui/...) ---
+
+const Badge = ({ className = "", children, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
+  <div 
+    className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 ${className}`} 
+    {...props}
+  >
+    {children}
+  </div>
+);
+
+const Card = ({ className = "", children, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
+  <div 
+    className={`rounded-lg border bg-card text-card-foreground shadow-sm ${className}`} 
+    {...props}
+  >
+    {children}
+  </div>
+);
+
+const CardHeader = ({ className = "", children, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
+  <div 
+    className={`flex flex-col space-y-1.5 p-6 ${className}`} 
+    {...props}
+  >
+    {children}
+  </div>
+);
+
+const CardTitle = ({ className = "", children, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => (
+  <h3 
+    className={`text-2xl font-semibold leading-none tracking-tight ${className}`} 
+    {...props}
+  >
+    {children}
+  </h3>
+);
+
+const CardContent = ({ className = "", children, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
+  <div 
+    className={`p-6 pt-0 ${className}`} 
+    {...props}
+  >
+    {children}
+  </div>
+);
+
+// --- Main Component ---
 
 const projects = [
   {
