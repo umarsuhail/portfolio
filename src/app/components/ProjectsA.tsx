@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import Image from 'next/image';
+import { Icon } from '@iconify/react'; // Import Iconify
 import React from 'react';
 
 // --- Inline UI Components (Replacements for @/components/ui/...) ---
@@ -69,7 +69,8 @@ const projects = [
       "Supported 10K+ active users across multiple subdomains."
     ],
     tech: ["Next.js 14", "TypeScript", "Prisma", "Redux", "Zod", "TailwindCSS"],
-    image: "/images/loyalty-dashboard.png",
+    icon: "mdi:gift-open-outline", // Iconify ID
+    color: "text-purple-500",
   },
   {
     title: "AI Chat Assistant",
@@ -86,7 +87,8 @@ const projects = [
       "Deployed for Etisalat and Emirates Space Org clients."
     ],
     tech: ["React 18", "Next.js", "TypeScript", "REST API", "Framer Motion"],
-    image: "/images/ai-chat.png",
+    icon: "mdi:robot-excited-outline",
+    color: "text-blue-500",
   },
   {
     title: "GetLife Health Insurance Portal",
@@ -103,7 +105,8 @@ const projects = [
       "Optimized for Chrome, Safari, and Edge."
     ],
     tech: ["React", "Redux", "Bootstrap", "REST API", "Figma"],
-    image: "/images/getlife.png",
+    icon: "mdi:shield-check-outline",
+    color: "text-green-500",
   },
   {
     title: "SkySearch.AI",
@@ -120,7 +123,8 @@ const projects = [
       "Presented at GITEX Global 2024."
     ],
     tech: ["Next.js 14", "TypeScript", "Prisma", "OpenAI API", "TailwindCSS"],
-    image: "/images/skysearch.png",
+    icon: "mdi:cloud-search-outline",
+    color: "text-sky-500",
   },
 ];
 
@@ -146,14 +150,17 @@ export default function ProjectsA() {
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
             >
-              <Card className="overflow-hidden border-none shadow-lg hover:shadow-xl transition-all duration-300 bg-white dark:bg-gray-800 rounded-2xl">
-                <Image
-                  src={project.image}
-                  alt={project.title}
-                  width={800}
-                  height={400}
-                  className="object-cover w-full h-48"
-                />
+              <Card className="overflow-hidden border-none shadow-lg hover:shadow-xl transition-all duration-300 bg-white dark:bg-gray-800 rounded-2xl h-full flex flex-col">
+                {/* Replaced Image with Icon Container */}
+                <div className="w-full h-48 bg-gray-100 dark:bg-gray-700/50 flex items-center justify-center">
+                  <div className={`p-4 rounded-full bg-white dark:bg-gray-800 shadow-sm`}>
+                    <Icon 
+                        icon={project.icon} 
+                        className={`w-16 h-16 ${project.color}`} 
+                    />
+                  </div>
+                </div>
+
                 <CardHeader>
                   <CardTitle className="text-xl font-semibold text-gray-900 dark:text-gray-100">
                     {project.title}
@@ -163,7 +170,7 @@ export default function ProjectsA() {
                   </p>
                 </CardHeader>
 
-                <CardContent className="space-y-3">
+                <CardContent className="space-y-3 flex-grow">
                   <p className="text-gray-700 dark:text-gray-300">
                     {project.overview}
                   </p>
@@ -185,7 +192,7 @@ export default function ProjectsA() {
                     </ul>
                   </div>
 
-                  <div className="flex flex-wrap gap-2 pt-4">
+                  <div className="flex flex-wrap gap-2 pt-4 mt-auto">
                     {project.tech.map((tech, i) => (
                       <Badge
                         key={i}
