@@ -1,15 +1,16 @@
 'use client';
 import { Icon } from "@iconify/react";
 import { motion } from "framer-motion";
-import { skillCard } from "@/utils/types";
 
-interface SkillPlanetProps extends skillCard {
+interface SkillPlanetProps {
+  icon: string;
+  name: string;
+  level: string;
   count: number;
   isWinner: boolean;
   angle: number;
   radiusX: number;
   radiusY: number;
-  totalItems: number;
   handleClick: () => void;
 }
 

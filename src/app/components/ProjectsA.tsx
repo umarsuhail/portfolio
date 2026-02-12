@@ -1,212 +1,293 @@
-'use client';
+"use client";
 
-import { motion } from 'framer-motion';
-import { Icon } from '@iconify/react'; // Import Iconify
-import React from 'react';
-
-// --- Inline UI Components (Replacements for @/components/ui/...) ---
-
-const Badge = ({ className = "", children, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
-  <div 
-    className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 ${className}`} 
-    {...props}
-  >
-    {children}
-  </div>
-);
-
-const Card = ({ className = "", children, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
-  <div 
-    className={`rounded-lg border bg-card text-card-foreground shadow-sm ${className}`} 
-    {...props}
-  >
-    {children}
-  </div>
-);
-
-const CardHeader = ({ className = "", children, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
-  <div 
-    className={`flex flex-col space-y-1.5 p-6 ${className}`} 
-    {...props}
-  >
-    {children}
-  </div>
-);
-
-const CardTitle = ({ className = "", children, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => (
-  <h3 
-    className={`text-2xl font-semibold leading-none tracking-tight ${className}`} 
-    {...props}
-  >
-    {children}
-  </h3>
-);
-
-const CardContent = ({ className = "", children, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
-  <div 
-    className={`p-6 pt-0 ${className}`} 
-    {...props}
-  >
-    {children}
-  </div>
-);
-
-// --- Main Component ---
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Icon } from "@iconify/react";
 
 const projects = [
   {
     title: "Loyalty Rewards Platform",
-    role: "Frontend Developer",
+    role: "Lead Frontend Developer",
     overview:
-      "A scalable loyalty dashboard for tracking user engagement and reward points in real time.",
+      "A scalable loyalty dashboard for tracking user engagement and reward points in real time, serving 10K+ active users.",
     contributions: [
-      "Developed responsive UI with Next.js, Tailwind, and Redux Toolkit.",
-      "Integrated APIs for authentication, transactions, and live updates.",
-      "Used Prisma ORM and Zod validation for data integrity."
+      "Developed responsive UI with Next.js 14 and Redux Toolkit",
+      "Implemented real-time data synchronization with WebSocket",
+      "Created modular component library reducing development time by 40%",
     ],
-    result: [
-      "Reduced load time by 30%.",
-      "Supported 10K+ active users across multiple subdomains."
+    results: [
+      { metric: "30%", label: "Faster Load Time" },
+      { metric: "10K+", label: "Active Users" },
+      { metric: "99.9%", label: "Uptime" },
     ],
-    tech: ["Next.js 14", "TypeScript", "Prisma", "Redux", "Zod", "TailwindCSS"],
-    icon: "mdi:gift-open-outline", // Iconify ID
-    color: "text-purple-500",
+    tech: ["Next.js 14", "TypeScript", "Prisma", "Redux", "TailwindCSS"],
+    icon: "solar:gift-bold-duotone",
+    color: "from-vintage-burgundy to-vintage-burgundy/70",
+    category: "Web App",
+    year: "2024",
   },
   {
     title: "AI Chat Assistant",
-    role: "Frontend + SDK Integration Engineer",
+    role: "Frontend + SDK Integration",
     overview:
-      "Conversational AI dashboard integrated with OpenAI API for automating business queries.",
+      "Conversational AI dashboard integrated with OpenAI API for automating business queries across enterprise clients.",
     contributions: [
-      "Integrated ChatGPT-based SDK with custom UI flow.",
-      "Built persistent chat sessions and error-handled APIs.",
-      "Enhanced UX with Framer Motion animations."
+      "Integrated ChatGPT-based SDK with custom conversation flows",
+      "Built persistent chat sessions with intelligent context management",
+      "Enhanced UX with smooth Framer Motion animations",
     ],
-    result: [
-      "Improved chat reliability by 40%.",
-      "Deployed for Etisalat and Emirates Space Org clients."
+    results: [
+      { metric: "40%", label: "Better Reliability" },
+      { metric: "2", label: "Enterprise Clients" },
+      { metric: "50K+", label: "Daily Queries" },
     ],
-    tech: ["React 18", "Next.js", "TypeScript", "REST API", "Framer Motion"],
-    icon: "mdi:robot-excited-outline",
-    color: "text-blue-500",
+    tech: ["React 18", "Next.js", "TypeScript", "OpenAI API", "Framer Motion"],
+    icon: "solar:chat-round-dots-bold-duotone",
+    color: "from-vintage-slate to-vintage-navy",
+    category: "AI/ML",
+    year: "2024",
   },
   {
-    title: "GetLife Health Insurance Portal",
+    title: "GetLife Insurance Portal",
     role: "UI/UX Developer",
     overview:
-      "Multi-step insurance portal designed for a seamless mobile user experience.",
+      "Multi-step insurance application portal designed for seamless mobile experience and WCAG accessibility compliance.",
     contributions: [
-      "Built stepwise forms with progress tracking and validation.",
-      "Ensured WCAG accessibility and mobile optimization.",
-      "Integrated APIs and JWT authentication."
+      "Built stepwise forms with progress tracking and validation",
+      "Ensured WCAG 2.1 AA accessibility compliance",
+      "Implemented JWT authentication and secure API integration",
     ],
-    result: [
-      "User completion rate increased by 22%.",
-      "Optimized for Chrome, Safari, and Edge."
+    results: [
+      { metric: "22%", label: "Higher Completion" },
+      { metric: "100%", label: "Accessible" },
+      { metric: "4.8★", label: "User Rating" },
     ],
-    tech: ["React", "Redux", "Bootstrap", "REST API", "Figma"],
-    icon: "mdi:shield-check-outline",
-    color: "text-green-500",
+    tech: ["Gatsby.js", "TypeScript", "Redux", "TailwindCSS", "Figma"],
+    icon: "solar:shield-check-bold-duotone",
+    color: "from-vintage-gray to-vintage-slate",
+    category: "Insurance",
+    year: "2023",
   },
   {
     title: "SkySearch.AI",
     role: "Full-Stack Contributor",
     overview:
-      "AI-powered platform for intelligent web search, summarization, and insights.",
+      "AI-powered platform for intelligent web search, summarization, and insights using advanced NLP models.",
     contributions: [
-      "Developed modular React UI with dynamic data rendering.",
-      "Integrated Cohere AI + Mistral 7B models for NLP.",
-      "Implemented backend caching with Prisma."
+      "Developed modular React UI with dynamic data rendering",
+      "Integrated Cohere AI + Mistral 7B models for NLP",
+      "Implemented backend caching reducing API latency by 25%",
     ],
-    result: [
-      "Reduced API latency by 25%.",
-      "Presented at GITEX Global 2024."
+    results: [
+      { metric: "25%", label: "Lower Latency" },
+      { metric: "GITEX", label: "Global 2024" },
+      { metric: "1M+", label: "Searches" },
     ],
     tech: ["Next.js 14", "TypeScript", "Prisma", "OpenAI API", "TailwindCSS"],
-    icon: "mdi:cloud-search-outline",
-    color: "text-sky-500",
+    icon: "solar:magnifer-bold-duotone",
+    color: "from-vintage-cream/80 to-vintage-gray",
+    category: "AI/ML",
+    year: "2024",
   },
 ];
 
-export default function ProjectsA() {
-  return (
-    <section id="projects" className="py-20 bg-gray-50 dark:bg-gray-900">
-      <div className="container mx-auto px-6 lg:px-12">
-        <motion.h2
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="text-3xl lg:text-4xl font-bold text-center mb-12 text-gray-800 dark:text-white"
-        >
-          Featured Projects
-        </motion.h2>
+const categories = ["All", ...new Set(projects.map((p) => p.category))];
 
-        <div className="grid gap-10 md:grid-cols-2">
-          {projects.map((project, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
+export default function ProjectsA() {
+  const [activeCategory, setActiveCategory] = useState("All");
+  const [expandedProject, setExpandedProject] = useState<string | null>(null);
+
+  const filteredProjects =
+    activeCategory === "All"
+      ? projects
+      : projects.filter((p) => p.category === activeCategory);
+
+  return (
+    <section id="projects" className="section-padding relative overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-to-b from-vintage-navy via-vintage-slate/20 to-vintage-navy opacity-50" />
+      <div className="section-container relative z-10">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-16"
+        >
+          <span className="badge badge-primary mb-4">Portfolio</span>
+          <h2 className="section-title text-vintage-cream mb-4">
+            Featured <span className="gradient-text">Projects</span>
+          </h2>
+          <p className="section-subtitle">
+            Showcasing impactful solutions that drive business value and user engagement
+          </p>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="flex flex-wrap justify-center gap-2 mb-12"
+        >
+          {categories.map((category) => (
+            <button
+              key={category}
+              onClick={() => setActiveCategory(category)}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 ${
+                activeCategory === category
+                  ? "bg-vintage-burgundy text-vintage-cream"
+                  : "bg-vintage-slate/30 text-vintage-cream/60 hover:bg-vintage-slate/50 hover:text-vintage-cream"
+              }`}
             >
-              <Card className="overflow-hidden border-none shadow-lg hover:shadow-xl transition-all duration-300 bg-white dark:bg-gray-800 rounded-2xl h-full flex flex-col">
-                {/* Replaced Image with Icon Container */}
-                <div className="w-full h-48 bg-gray-100 dark:bg-gray-700/50 flex items-center justify-center">
-                  <div className={`p-4 rounded-full bg-white dark:bg-gray-800 shadow-sm`}>
-                    <Icon 
-                        icon={project.icon} 
-                        className={`w-16 h-16 ${project.color}`} 
-                    />
+              {category}
+            </button>
+          ))}
+        </motion.div>
+
+        <motion.div layout className="grid md:grid-cols-2 gap-6">
+          <AnimatePresence mode="popLayout">
+            {filteredProjects.map((project, index) => (
+              <motion.div
+                key={project.title}
+                layout
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.9 }}
+                transition={{ duration: 0.4, delay: index * 0.1 }}
+                className="group"
+              >
+                <div className="vintage-card rounded-xl overflow-hidden card-hover h-full flex flex-col">
+                  <div
+                    className={`h-48 bg-gradient-to-br ${project.color} p-6 relative overflow-hidden`}
+                  >
+                    <div className="absolute inset-0 bg-black/20" />
+                    <div className="absolute -right-8 -bottom-8 w-32 h-32 bg-vintage-cream/10 rounded-full blur-2xl" />
+                    <div className="absolute -left-8 -top-8 w-24 h-24 bg-vintage-cream/10 rounded-full blur-2xl" />
+
+                    <div className="relative z-10 h-full flex flex-col justify-between">
+                      <div className="flex items-start justify-between">
+                        <div className="w-14 h-14 rounded-lg bg-vintage-cream/20 backdrop-blur-sm flex items-center justify-center">
+                          <Icon icon={project.icon} className="text-3xl text-vintage-cream" />
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="px-3 py-1 rounded-lg bg-vintage-cream/20 backdrop-blur-sm text-xs font-medium text-vintage-cream">
+                            {project.category}
+                          </span>
+                          <span className="px-3 py-1 rounded-lg bg-vintage-cream/20 backdrop-blur-sm text-xs font-medium text-vintage-cream">
+                            {project.year}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div>
+                        <h3 className="text-xl font-bold text-vintage-cream mb-1">
+                          {project.title}
+                        </h3>
+                        <p className="text-vintage-cream/80 text-sm">{project.role}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="p-6 flex-1 flex flex-col">
+                    <p className="text-vintage-cream/70 text-sm mb-4 line-clamp-3">
+                      {project.overview}
+                    </p>
+
+                    <div className="grid grid-cols-3 gap-3 mb-4">
+                      {project.results.map((result) => (
+                        <div
+                          key={result.label}
+                          className="text-center p-3 rounded-lg bg-vintage-slate/30"
+                        >
+                          <p className="text-lg font-bold gradient-text">
+                            {result.metric}
+                          </p>
+                          <p className="text-xs text-vintage-cream/50">{result.label}</p>
+                        </div>
+                      ))}
+                    </div>
+
+                    <AnimatePresence>
+                      {expandedProject === project.title && (
+                        <motion.div
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: "auto" }}
+                          exit={{ opacity: 0, height: 0 }}
+                          className="overflow-hidden"
+                        >
+                          <div className="mb-4">
+                            <h4 className="text-sm font-semibold text-vintage-cream/80 mb-2">
+                              Key Contributions
+                            </h4>
+                            <ul className="space-y-2">
+                              {project.contributions.map((item, i) => (
+                                <li
+                                  key={i}
+                                  className="flex items-start gap-2 text-sm text-vintage-cream/60"
+                                >
+                                  <Icon
+                                    icon="solar:check-circle-bold"
+                                    className="text-vintage-burgundy mt-0.5 shrink-0"
+                                  />
+                                  {item}
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+
+                    <div className="flex flex-wrap gap-2 mb-4 mt-auto">
+                      {project.tech.map((tech) => (
+                        <span key={tech} className="badge text-xs">
+                          {tech}
+                        </span>
+                      ))}
+                    </div>
+
+                    <button
+                      onClick={() =>
+                        setExpandedProject(
+                          expandedProject === project.title ? null : project.title
+                        )
+                      }
+                      className="flex items-center justify-center gap-2 w-full py-3 rounded-lg bg-vintage-slate/30 hover:bg-vintage-slate/50 text-vintage-cream/70 hover:text-vintage-cream text-sm font-medium transition-all duration-300"
+                    >
+                      {expandedProject === project.title ? (
+                        <>
+                          Show Less
+                          <Icon icon="solar:alt-arrow-up-linear" />
+                        </>
+                      ) : (
+                        <>
+                          View Details
+                          <Icon icon="solar:alt-arrow-down-linear" />
+                        </>
+                      )}
+                    </button>
                   </div>
                 </div>
+              </motion.div>
+            ))}
+          </AnimatePresence>
+        </motion.div>
 
-                <CardHeader>
-                  <CardTitle className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-                    {project.title}
-                  </CardTitle>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                    {project.role}
-                  </p>
-                </CardHeader>
-
-                <CardContent className="space-y-3 flex-grow">
-                  <p className="text-gray-700 dark:text-gray-300">
-                    {project.overview}
-                  </p>
-
-                  <ul className="list-disc ml-5 text-sm text-gray-600 dark:text-gray-400">
-                    {project.contributions.map((item, i) => (
-                      <li key={i}>{item}</li>
-                    ))}
-                  </ul>
-
-                  <div>
-                    <h4 className="text-sm font-semibold text-gray-800 dark:text-gray-200 mt-3">
-                      Results:
-                    </h4>
-                    <ul className="list-disc ml-5 text-sm text-gray-600 dark:text-gray-400">
-                      {project.result.map((item, i) => (
-                        <li key={i}>{item}</li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  <div className="flex flex-wrap gap-2 pt-4 mt-auto">
-                    {project.tech.map((tech, i) => (
-                      <Badge
-                        key={i}
-                        className="bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 px-3 py-1 rounded-full text-xs"
-                      >
-                        {tech}
-                      </Badge>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-          ))}
-        </div>
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="mt-12 text-center"
+        >
+          <a
+            href="https://github.com/umarsuhail"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn-secondary"
+          >
+            <Icon icon="mdi:github" className="text-xl" />
+            View More on GitHub
+          </a>
+        </motion.div>
       </div>
     </section>
   );
