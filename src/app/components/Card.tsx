@@ -119,6 +119,7 @@ export default function Card() {
                   alt="Umar Suhail"
                   fill
                   className="object-cover"
+                  style={{ objectPosition: 'top' }}
                   priority
                 />
               </div>

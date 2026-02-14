@@ -7,5 +7,9 @@ interface SmoothScrollProps {
 }
 
 export default function SmoothScroll({ children }: SmoothScrollProps) {
-  return <div className="relative">{children}</div>;
+  return (
+    <div className="relative" style={{ scrollBehavior: 'smooth', scrollSnapType: 'y mandatory' }}>
+      {children}
+    </div>
+  );
 }

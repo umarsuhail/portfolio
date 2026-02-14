@@ -26,7 +26,7 @@ export default function ChatBot() {
       setChatMessages([
         {
           type: "received",
-          message: "Hello! 👋 I'm Umar's AI assistant. Feel free to ask me anything about his experience, skills, or projects!",
+          message: "Hello! 👋 I'm Umar's Gemini-powered assistant. Ask me about Umar's experience, skills, projects, and career journey.",
           timestamp: new Date(),
         },
       ]);

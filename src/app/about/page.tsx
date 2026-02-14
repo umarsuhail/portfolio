@@ -115,6 +115,7 @@ export default function AboutPage() {
                     width={400}
                     height={400}
                     className="rounded-2xl object-cover"
+                    style={{ objectPosition: 'top' }}
                     priority
                   />
                 </div>

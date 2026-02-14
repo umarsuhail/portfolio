@@ -155,53 +155,47 @@ export default function ProjectsA() {
                 transition={{ duration: 0.4, delay: index * 0.1 }}
                 className="group"
               >
-                <div className="vintage-card rounded-xl overflow-hidden card-hover h-full flex flex-col">
-                  <div
-                    className={`h-48 bg-gradient-to-br ${project.color} p-6 relative overflow-hidden`}
-                  >
-                    <div className="absolute inset-0 bg-black/20" />
-                    <div className="absolute -right-8 -bottom-8 w-32 h-32 bg-vintage-cream/10 rounded-full blur-2xl" />
-                    <div className="absolute -left-8 -top-8 w-24 h-24 bg-vintage-cream/10 rounded-full blur-2xl" />
-
+                <div className="rounded-xl overflow-hidden card-hover h-full flex flex-col p-4 bg-gradient-to-r from-vintage-burgundy to-vintage-burgundy/80 shadow-2xl border border-white/10 backdrop-blur-md">
+                  <div className="h-48 bg-gradient-to-br from-white-700 via-slate-800 to-white p-6 relative overflow-hidden">
+                    <div className="absolute inset-0 bg-black/10" />
+                    <div className="absolute -right-8 -bottom-8 w-32 h-32 bg-white/10 rounded-full blur-2xl" />
+                    <div className="absolute -left-8 -top-8 w-24 h-24 bg-white/10 rounded-full blur-2xl" />
                     <div className="relative z-10 h-full flex flex-col justify-between">
                       <div className="flex items-start justify-between">
-                        <div className="w-14 h-14 rounded-lg bg-vintage-cream/20 backdrop-blur-sm flex items-center justify-center">
-                          <Icon icon={project.icon} className="text-3xl text-vintage-cream" />
+                        <div className="w-14 h-14 rounded-lg bg-white/30 backdrop-blur-sm flex items-center justify-center">
+                          <Icon icon={project.icon} className="text-3xl text-white" />
                         </div>
                         <div className="flex items-center gap-2">
-                          <span className="px-3 py-1 rounded-lg bg-vintage-cream/20 backdrop-blur-sm text-xs font-medium text-vintage-cream">
+                          <span className="px-3 py-1 rounded-lg bg-white/20 backdrop-blur-sm text-xs font-medium text-white">
                             {project.category}
                           </span>
-                          <span className="px-3 py-1 rounded-lg bg-vintage-cream/20 backdrop-blur-sm text-xs font-medium text-vintage-cream">
+                          <span className="px-3 py-1 rounded-lg bg-white/20 backdrop-blur-sm text-xs font-medium text-white">
                             {project.year}
                           </span>
                         </div>
                       </div>
-
                       <div>
-                        <h3 className="text-xl font-bold text-vintage-cream mb-1">
+                        <h3 className="text-xl font-bold text-white mb-1 drop-shadow-lg">
                           {project.title}
                         </h3>
-                        <p className="text-vintage-cream/80 text-sm">{project.role}</p>
+                        <p className="text-white/80 text-sm">{project.role}</p>
                       </div>
                     </div>
                   </div>
-
                   <div className="p-6 flex-1 flex flex-col">
-                    <p className="text-vintage-cream/70 text-sm mb-4 line-clamp-3">
+                    <p className="text-white/80 text-sm mb-4 line-clamp-3">
                       {project.overview}
                     </p>
-
                     <div className="grid grid-cols-3 gap-3 mb-4">
                       {project.results.map((result) => (
                         <div
                           key={result.label}
-                          className="text-center p-3 rounded-lg bg-vintage-slate/30"
+                          className="text-center p-3 rounded-lg bg-white/10"
                         >
-                          <p className="text-lg font-bold gradient-text">
+                          <p className="text-lg font-bold text-white drop-shadow">
                             {result.metric}
                           </p>
-                          <p className="text-xs text-vintage-cream/50">{result.label}</p>
+                          <p className="text-xs text-white/70">{result.label}</p>
                         </div>
                       ))}
                     </div>
