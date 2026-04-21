@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { Icon } from "@iconify/react";
 import Image from "next/image";
 import Link from "next/link";
-import { about_me } from "../../utils/constants";
+import { about_me, resumeUrl } from "../../utils/constants";
 import profile from "../../public/images/me-s.jpg";
 
 const hobbies = [
@@ -52,6 +52,10 @@ const values = [
 ];
 
 export default function AboutPage() {
+  const resumeHref =
+    resumeUrl || "mailto:umarsuhail112@gmail.com?subject=Request%20for%20Resume";
+  const isResumeConfigured = Boolean(resumeUrl);
+
   return (
     <main className="relative pt-20">
       <section className="section-padding">
@@ -90,12 +94,13 @@ export default function AboutPage() {
                   Let&apos;s Connect
                 </a>
                 <a
-                  href="/resume.pdf"
-                  target="_blank"
+                  href={resumeHref}
+                  target={isResumeConfigured ? "_blank" : undefined}
+                  rel={isResumeConfigured ? "noopener noreferrer" : undefined}
                   className="btn-secondary"
                 >
                   <Icon icon="solar:document-bold" />
-                  Download CV
+                  {isResumeConfigured ? "Download CV" : "Request CV"}
                 </a>
               </div>
             </motion.div>

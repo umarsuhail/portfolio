@@ -48,7 +48,7 @@ const config: Config = {
           foreground: "hsl(var(--card-foreground))",
         },
         vintage: {
-          burgundy: "#BF092F",
+          burgundy: "#0081A7",
           navy: "#132440",
           slate: "#1B3C53",
           cream: "#D2C1B6",

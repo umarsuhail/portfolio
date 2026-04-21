@@ -181,18 +181,6 @@ export default function Card() {
           ))}
         </motion.div>
       </div>
-
-      <div className="absolute bottom-10 left-1/2 -translate-x-1/2">
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1.2, repeat: Infinity, repeatType: "reverse", duration: 1.5 }}
-          className="flex flex-col items-center gap-2 text-vintage-cream/40"
-        >
-          <span className="text-xs">Scroll to explore</span>
-          <Icon icon="solar:arrow-down-linear" className="text-xl" />
-        </motion.div>
-      </div>
     </section>
   );
 }

@@ -94,6 +94,10 @@ export default function Nav() {
           </nav>
 
           <div className="hidden md:flex items-center gap-3">
+            <Link href="/resume-builder" className="btn-secondary text-sm px-4 py-2">
+              <Icon icon="solar:document-text-bold-duotone" className="text-lg" />
+              <span>Resume Builder</span>
+            </Link>
             <a
               href="mailto:umarsuhail112@gmail.com"
               className="btn-secondary text-sm px-4 py-2"
@@ -168,6 +172,14 @@ export default function Nav() {
                 </motion.div>
               ))}
               <div className="pt-4 flex flex-col gap-3">
+                <Link
+                  href="/resume-builder"
+                  onClick={() => setIsOpen(false)}
+                  className="btn-secondary justify-center"
+                >
+                  <Icon icon="solar:document-text-bold-duotone" />
+                  Resume Builder
+                </Link>
                 <a
                   href="mailto:umarsuhail112@gmail.com"
                   className="btn-secondary justify-center"

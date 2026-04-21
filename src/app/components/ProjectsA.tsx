@@ -48,6 +48,27 @@ const projects = [
     year: "2024",
   },
   {
+    title: "Emirates Face Recognition Dashboards",
+    role: "Application Developer",
+    overview:
+      "Enterprise dashboards for biometric transactions, system architecture visibility, and operational analysis with an enriched, executive-ready UI.",
+    contributions: [
+      "Designed transaction monitoring views with real-time status, alerts, and audit trails",
+      "Built architecture topology panels to visualize services, data flow, and dependencies",
+      "Crafted analytics workbench with trend insights, identity match accuracy, and SLA health",
+    ],
+    results: [
+      { metric: "24/7", label: "Monitoring" },
+      { metric: "98%", label: "Match Accuracy" },
+      { metric: "5x", label: "Faster Triage" },
+    ],
+    tech: ["Next.js 14", "TypeScript", "Redux", "TailwindCSS", "Framer Motion"],
+    icon: "solar:face-scan-circle-bold-duotone",
+    color: "from-vintage-burgundy to-vintage-burgundy/70",
+    category: "AI/ML",
+    year: "2025",
+  },
+  {
     title: "GetLife Insurance Portal",
     role: "UI/UX Developer",
     overview:
@@ -156,32 +177,7 @@ export default function ProjectsA() {
                 className="group"
               >
                 <div className="rounded-xl overflow-hidden card-hover h-full flex flex-col p-4 bg-gradient-to-r from-vintage-burgundy to-vintage-burgundy/80 shadow-2xl border border-white/10 backdrop-blur-md">
-                  <div className="h-48 bg-gradient-to-br from-white-700 via-slate-800 to-white p-6 relative overflow-hidden">
-                    <div className="absolute inset-0 bg-black/10" />
-                    <div className="absolute -right-8 -bottom-8 w-32 h-32 bg-white/10 rounded-full blur-2xl" />
-                    <div className="absolute -left-8 -top-8 w-24 h-24 bg-white/10 rounded-full blur-2xl" />
-                    <div className="relative z-10 h-full flex flex-col justify-between">
-                      <div className="flex items-start justify-between">
-                        <div className="w-14 h-14 rounded-lg bg-white/30 backdrop-blur-sm flex items-center justify-center">
-                          <Icon icon={project.icon} className="text-3xl text-white" />
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <span className="px-3 py-1 rounded-lg bg-white/20 backdrop-blur-sm text-xs font-medium text-white">
-                            {project.category}
-                          </span>
-                          <span className="px-3 py-1 rounded-lg bg-white/20 backdrop-blur-sm text-xs font-medium text-white">
-                            {project.year}
-                          </span>
-                        </div>
-                      </div>
-                      <div>
-                        <h3 className="text-xl font-bold text-white mb-1 drop-shadow-lg">
-                          {project.title}
-                        </h3>
-                        <p className="text-white/80 text-sm">{project.role}</p>
-                      </div>
-                    </div>
-                  </div>
+                
                   <div className="p-6 flex-1 flex flex-col">
                     <p className="text-white/80 text-sm mb-4 line-clamp-3">
                       {project.overview}

@@ -1,11 +1,15 @@
 import type { NextApiRequest, NextApiResponse } from "next";
+import OpenAI from "openai";
 
 type ResponseData = {
   message: string;
 };
 
-const GEMINI_MODEL = process.env.GEMINI_MODEL?.trim() || "gemini-2.0-flash";
-const GEMINI_FALLBACK_MODELS = [GEMINI_MODEL, "gemini-1.5-flash", "gemini-1.5-flash-8b"];
+const OPENAI_MODEL = process.env.OPENAI_MODEL?.trim() || "gpt-4.1-mini";
+const OPENAI_FALLBACK_MODELS = [OPENAI_MODEL, "gpt-4.1-mini", "gpt-4o-mini"];
+const GITHUB_MODEL = process.env.GITHUB_MODEL?.trim() || "openai/gpt-4.1-mini";
+const GITHUB_FALLBACK_MODELS = [GITHUB_MODEL, "openai/gpt-4.1-mini", "openai/gpt-4o-mini"];
+const GITHUB_MODELS_BASE_URL = "https://models.github.ai/inference";
 const REQUEST_TIMEOUT_MS = 10_000;
 
 const PROFILE_CONTEXT = `
@@ -31,75 +35,110 @@ Rules:
 Use this profile context as your source of truth:
 ${PROFILE_CONTEXT}`;
 
-function getGeminiTextResponse(payload: unknown): string {
-  const data = payload as {
-    candidates?: Array<{
-      content?: {
-        parts?: Array<{ text?: string }>;
-      };
-    }>;
-  };
-
-  return (
-    data.candidates?.[0]?.content?.parts
-      ?.map((part) => part.text ?? "")
-      .join("\n")
-      .trim() ?? ""
-  );
-}
-
-type GeminiCallResult =
+type AiCallResult =
   | { ok: true; text: string }
   | { ok: false; status: number; details: string };
 
-async function callGeminiModel(apiKey: string, model: string, message: string): Promise<GeminiCallResult> {
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+function getTextContentFromResponse(content: unknown): string {
+  if (typeof content === "string") {
+    return content.trim();
+  }
 
+  if (Array.isArray(content)) {
+    return content
+      .map((part) => {
+        if (typeof part === "string") {
+          return part;
+        }
+
+        if (
+          typeof part === "object" &&
+          part !== null &&
+          "type" in part &&
+          "text" in part &&
+          (part as { type?: unknown }).type === "text"
+        ) {
+          return String((part as { text?: unknown }).text ?? "");
+        }
+
+        return "";
+      })
+      .join("\n")
+      .trim();
+  }
+
+  return "";
+}
+
+type ProviderConfig = {
+  providerName: "OpenAI" | "GitHub Models";
+  apiKey: string;
+  baseURL?: string;
+  models: string[];
+};
+
+function getProviderConfig(): ProviderConfig | null {
+  const openAiApiKey = process.env.OPENAI_API_KEY?.trim();
+  if (openAiApiKey) {
+    return {
+      providerName: "OpenAI",
+      apiKey: openAiApiKey,
+      models: Array.from(new Set(OPENAI_FALLBACK_MODELS.filter(Boolean))),
+    };
+  }
+
+  const githubToken = process.env.GITHUB_TOKEN?.trim();
+  if (githubToken) {
+    return {
+      providerName: "GitHub Models",
+      apiKey: githubToken,
+      baseURL: GITHUB_MODELS_BASE_URL,
+      models: Array.from(new Set(GITHUB_FALLBACK_MODELS.filter(Boolean))),
+    };
+  }
+
+  return null;
+}
+
+async function callProviderModel(
+  providerConfig: ProviderConfig,
+  model: string,
+  message: string
+): Promise<AiCallResult> {
   try {
-    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
-    const response = await fetch(apiUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        systemInstruction: {
-          parts: [{ text: SYSTEM_PROMPT }],
-        },
-        contents: [
-          {
-            role: "user",
-            parts: [{ text: message }],
-          },
-        ],
-        generationConfig: {
-          temperature: 0.2,
-          topP: 0.8,
-          maxOutputTokens: 220,
-        },
-      }),
-      signal: controller.signal,
+    const client = new OpenAI({
+      apiKey: providerConfig.apiKey,
+      baseURL: providerConfig.baseURL,
+      timeout: REQUEST_TIMEOUT_MS,
     });
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      return { ok: false, status: response.status, details: errorText };
-    }
+    const completion = await client.chat.completions.create({
+      model,
+      messages: [
+        { role: "system", content: SYSTEM_PROMPT },
+        { role: "user", content: message },
+      ],
+      temperature: 0.2,
+      max_tokens: 220,
+    });
 
-    const data = await response.json();
-    const text = getGeminiTextResponse(data);
+    const text = getTextContentFromResponse(completion.choices?.[0]?.message?.content);
 
     if (!text) {
-      return { ok: false, status: 502, details: "Empty Gemini response." };
+      return { ok: false, status: 502, details: "Empty provider response." };
     }
 
     return { ok: true, text };
   } catch (error) {
-    const details = error instanceof Error ? error.message : "Unknown Gemini request error.";
-    return { ok: false, status: 500, details };
-  } finally {
-    clearTimeout(timeout);
+    const details = error instanceof Error ? error.message : "Unknown provider request error.";
+    const status =
+      typeof error === "object" &&
+      error !== null &&
+      "status" in error &&
+      typeof (error as { status?: unknown }).status === "number"
+        ? ((error as { status: number }).status ?? 500)
+        : 500;
+    return { ok: false, status, details };
   }
 }
 
@@ -112,10 +151,11 @@ export default async function chat(
     return;
   }
 
-  const apiKey = process.env.GEMINI_API_KEY?.trim();
-  if (!apiKey) {
+  const providerConfig = getProviderConfig();
+  if (!providerConfig) {
     res.status(500).json({
-      message: "Gemini is not configured yet. Add GEMINI_API_KEY in your .env file.",
+      message:
+        "AI provider is not configured yet. Add OPENAI_API_KEY or GITHUB_TOKEN in your environment variables.",
     });
     return;
   }
@@ -127,18 +167,17 @@ export default async function chat(
   }
 
   try {
-    const models = Array.from(new Set(GEMINI_FALLBACK_MODELS.filter(Boolean)));
-    let lastError: GeminiCallResult | null = null;
+    let lastError: AiCallResult | null = null;
 
-    for (const model of models) {
-      const result = await callGeminiModel(apiKey, model, message);
+    for (const model of providerConfig.models) {
+      const result = await callProviderModel(providerConfig, model, message);
       if (result.ok) {
         res.status(200).json({ message: result.text });
         return;
       }
 
       lastError = result;
-      console.error(`Gemini API error (${model}):`, result.status, result.details);
+      console.error(`${providerConfig.providerName} API error (${model}):`, result.status, result.details);
 
       if (result.status === 429) {
         break;
@@ -147,14 +186,16 @@ export default async function chat(
 
     if (lastError?.status === 429) {
       res.status(200).json({
-        message: "Gemini quota/rate limit reached for this API key or project. Please enable billing/increase quota, then retry. I can continue helping with Umar's profile and work as soon as quota is available.",
+        message:
+          "Rate limit reached for the current AI provider account. Please retry shortly or switch provider credentials.",
       });
       return;
     }
 
     if (lastError?.status === 401 || lastError?.status === 403) {
       res.status(500).json({
-        message: "Gemini authentication failed. Please verify the API key permissions and restrictions.",
+        message:
+          "AI provider authentication failed. Please verify OPENAI_API_KEY or GITHUB_TOKEN permissions and restrictions.",
       });
       return;
     }
