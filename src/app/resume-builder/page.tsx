@@ -76,8 +76,8 @@ const RESUME_FONTS: {
     label: "Modern & clean",
     cssFamily: "'Roboto', sans-serif",
     googleParam: "Roboto:wght@400;700",
-    ttfBase: "https://raw.githubusercontent.com/google/fonts/main/apache/roboto/static/Roboto-Regular.ttf",
-    ttfBold: "https://raw.githubusercontent.com/google/fonts/main/apache/roboto/static/Roboto-Bold.ttf",
+    ttfBase: "/fonts/roboto-normal.ttf",
+    ttfBold: "/fonts/roboto-bold.ttf",
   },
   {
     id: "lato",
@@ -85,8 +85,8 @@ const RESUME_FONTS: {
     label: "Friendly & professional",
     cssFamily: "'Lato', sans-serif",
     googleParam: "Lato:wght@400;700",
-    ttfBase: "https://raw.githubusercontent.com/google/fonts/main/ofl/lato/Lato-Regular.ttf",
-    ttfBold: "https://raw.githubusercontent.com/google/fonts/main/ofl/lato/Lato-Bold.ttf",
+    ttfBase: "/fonts/lato-normal.ttf",
+    ttfBold: "/fonts/lato-bold.ttf",
   },
   {
     id: "raleway",
@@ -94,8 +94,8 @@ const RESUME_FONTS: {
     label: "Elegant & stylish",
     cssFamily: "'Raleway', sans-serif",
     googleParam: "Raleway:wght@400;700",
-    ttfBase: "https://raw.githubusercontent.com/google/fonts/main/ofl/raleway/static/Raleway-Regular.ttf",
-    ttfBold: "https://raw.githubusercontent.com/google/fonts/main/ofl/raleway/static/Raleway-Bold.ttf",
+    ttfBase: "/fonts/raleway-normal.ttf",
+    ttfBold: "/fonts/raleway-bold.ttf",
   },
   {
     id: "playfair",
@@ -103,8 +103,8 @@ const RESUME_FONTS: {
     label: "Classic & prestigious",
     cssFamily: "'Playfair Display', serif",
     googleParam: "Playfair+Display:wght@400;700",
-    ttfBase: "https://raw.githubusercontent.com/google/fonts/main/ofl/playfairdisplay/static/PlayfairDisplay-Regular.ttf",
-    ttfBold: "https://raw.githubusercontent.com/google/fonts/main/ofl/playfairdisplay/static/PlayfairDisplay-Bold.ttf",
+    ttfBase: "/fonts/playfair-normal.ttf",
+    ttfBold: "/fonts/playfair-bold.ttf",
   },
   {
     id: "merriweather",
@@ -112,8 +112,8 @@ const RESUME_FONTS: {
     label: "Readable & trustworthy",
     cssFamily: "'Merriweather', serif",
     googleParam: "Merriweather:wght@400;700",
-    ttfBase: "https://raw.githubusercontent.com/google/fonts/main/ofl/merriweather/Merriweather-Regular.ttf",
-    ttfBold: "https://raw.githubusercontent.com/google/fonts/main/ofl/merriweather/Merriweather-Bold.ttf",
+    ttfBase: "/fonts/merriweather-normal.ttf",
+    ttfBold: "/fonts/merriweather-bold.ttf",
   },
 ];
 
@@ -354,17 +354,17 @@ async function createClassicPdfBlob(resume: ResumeData): Promise<Blob> {
   doc.line(leftColEnd, 0, leftColEnd, 297);
 
   let ly = 10;
-  let ry = 10;
+  let ry = 22;
 
   // Photo with preserved aspect ratio
   if (resume.showPhoto && resume.photoDataUrl) {
     try {
       const ratio = await getImageAspectRatio(resume.photoDataUrl);
-      const ph = 80;
+      const ph = 38;
       const pw = Math.min(ph * ratio, lw);
       const px = lx + (lw - pw) / 2;
       doc.addImage(resume.photoDataUrl, inferImageFormat(resume.photoDataUrl), px, ly, pw, ph);
-      ly += ph + 10;
+      ly += ph + 8;
     } catch { /* skip */ }
   }
 
@@ -522,21 +522,37 @@ async function createProfessionalPdfBlob(resume: ResumeData): Promise<Blob> {
   doc.setFillColor(255, 255, 255);
   doc.rect(0, 0, 210, 297, "F");
 
+  // Photo in top-right corner
+  let nameCw = cw;
+  if (resume.showPhoto && resume.photoDataUrl) {
+    try {
+      const ratio = await getImageAspectRatio(resume.photoDataUrl);
+      const ph = 30;
+      const pw = Math.min(ph * ratio, 26);
+      const px = 210 - mx - pw;
+      doc.addImage(resume.photoDataUrl, inferImageFormat(resume.photoDataUrl), px, y, pw, ph);
+      nameCw = cw - pw - 6;
+    } catch { /* skip */ }
+  }
+
   doc.setFont(fn, "bold"); doc.setFontSize(24); doc.setTextColor(0, 0, 0);
-  doc.text((resume.name || "Your Name").toUpperCase(), 105, y, { align: "center" });
-  y += 8;
+  const nameLines = doc.splitTextToSize((resume.name || "Your Name").toUpperCase(), nameCw) as string[];
+  const nameAlign = nameCw < cw ? "left" : "center";
+  const nameX = nameCw < cw ? mx : 105;
+  doc.text(nameLines, nameX, y, { align: nameAlign });
+  y += nameLines.length * 9;
 
   if (resume.title) {
     doc.setFont(fn, "normal"); doc.setFontSize(10.5); doc.setTextColor(70, 70, 70);
-    doc.text(resume.title.toUpperCase(), 105, y, { align: "center" });
+    doc.text(resume.title.toUpperCase(), nameX, y, { align: nameAlign, maxWidth: nameCw });
     y += 6;
   }
 
   const contactItems = getVisibleFacts(resume.contact).map((f) => f.value);
   if (contactItems.length) {
     doc.setFont(fn, "normal"); doc.setFontSize(9); doc.setTextColor(60, 60, 60);
-    const cl = doc.splitTextToSize(contactItems.join("   |   "), cw) as string[];
-    doc.text(cl, 105, y, { align: "center" });
+    const cl = doc.splitTextToSize(contactItems.join("   |   "), nameCw) as string[];
+    doc.text(cl, nameX, y, { align: nameAlign });
     y += cl.length * 4.5 + 1;
   }
 
@@ -825,7 +841,7 @@ function ResumeSection({
   return (
     <section className="space-y-[3mm]">
       <h2
-        className={`border-b-[1.5px] ${borderColor} pb-[1.5mm] text-[12px] font-black uppercase tracking-[0.14em] ${textColor}`}
+        className={`border-b-[1.5px] ${borderColor} pb-[1.5mm] text-[13px] font-black uppercase tracking-[0.14em] ${textColor}`}
       >
         {title}
       </h2>
@@ -850,13 +866,13 @@ function EntryBlock({
     <article className="space-y-[2mm]">
       <div className="flex items-start justify-between gap-2">
         <h3
-          className={`text-[11.5px] font-extrabold uppercase tracking-[0.04em] ${accentHeading ? "text-[#161e2e]" : "text-slate-900"}`}
+          className={`text-[12.5px] font-extrabold uppercase tracking-[0.04em] ${accentHeading ? "text-[#161e2e]" : "text-slate-900"}`}
         >
           {entry.heading || "Untitled item"}
         </h3>
       </div>
       {bullets.length > 0 && (
-        <ul className="ml-[4mm] list-disc space-y-[1.5mm] text-[11px] leading-[1.65] text-slate-700 marker:text-slate-500">
+        <ul className="ml-[4mm] list-disc space-y-[1.5mm] text-[12px] leading-[1.65] text-slate-700 marker:text-slate-500">
           {bullets.map((line, i) => (
             <li key={`${entry.id}-${i}`}>{line}</li>
           ))}
@@ -879,7 +895,7 @@ function ClassicPreview({ resume }: { resume: ResumeData }) {
         <div className="w-[74mm] shrink-0 space-y-[6mm] border-r border-slate-200 bg-slate-50 px-[5.5mm] py-[9mm]">
           {resume.showPhoto && resume.photoDataUrl && (
             <div className="flex justify-center">
-              <Image src={resume.photoDataUrl} alt="Profile" width={200} height={220} unoptimized className="h-[55mm] w-[50mm] rounded-sm border border-slate-200 object-cover object-top shadow-sm" />
+              <Image src={resume.photoDataUrl} alt="Profile" width={140} height={150} unoptimized className="h-[38mm] w-[34mm] rounded-sm border border-slate-200 object-cover object-top shadow-sm" />
             </div>
           )}
           {resume.showContact && vc.length > 0 && (
@@ -915,13 +931,13 @@ function ClassicPreview({ resume }: { resume: ResumeData }) {
             </ResumeSection>
           )}
         </div>
-        <div className="flex-1 space-y-[6mm] px-[7mm] py-[9mm]">
+        <div className="flex-1 space-y-[5mm] px-[9mm] pt-[22mm] pb-[5mm]">
           <div className="border-b-2 border-slate-800 pb-[3mm]">
-            <h1 className="text-[26px] font-black uppercase leading-none tracking-[0.06em] text-slate-900">{resume.name || "Your Name"}</h1>
-            {resume.title && <p className="mt-[2mm] text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500">{resume.title}</p>}
+            <h1 className="text-[30px] font-black uppercase leading-none tracking-[0.06em] text-slate-900">{resume.name || "Your Name"}</h1>
+            {resume.title && <p className="mt-[2mm] text-[12.5px] font-semibold uppercase tracking-[0.2em] text-slate-500">{resume.title}</p>}
           </div>
           <ResumeSection title={resume.aboutTitle || "Profile Summary"}>
-            <p className="text-justify text-[11.5px] leading-[1.75] text-slate-700">{resume.aboutText || "Write a short summary here."}</p>
+            <p className="text-justify text-[12.5px] leading-[1.75] text-slate-700">{resume.aboutText || "Write a short summary here."}</p>
           </ResumeSection>
           <ResumeSection title="Education">
             <div className="space-y-[4mm]">{resume.education.map((e) => <EntryBlock key={e.id} entry={e} />)}</div>
@@ -945,7 +961,7 @@ function ClassicPreview({ resume }: { resume: ResumeData }) {
           )}
           {resume.showDeclaration && (
             <ResumeSection title={resume.declarationTitle || "Declaration"}>
-              <p className="text-justify text-[11.5px] leading-[1.75] text-slate-700">{resume.declarationText || "Declaration text goes here."}</p>
+              <p className="text-justify text-[12.5px] leading-[1.75] text-slate-700">{resume.declarationText || "Declaration text goes here."}</p>
             </ResumeSection>
           )}
         </div>
@@ -960,6 +976,7 @@ function ProfessionalPreview({ resume }: { resume: ResumeData }) {
   const vc = getVisibleFacts(resume.contact);
   const fontDef = RESUME_FONTS.find((f) => f.id === resume.fontFamily);
   const fontStyle = fontDef ? { fontFamily: fontDef.cssFamily } : {};
+  const showPhoto = resume.showPhoto && resume.photoDataUrl;
 
   function AtsSection({ title, children }: { title: string; children: ReactNode }) {
     return (
@@ -972,11 +989,26 @@ function ProfessionalPreview({ resume }: { resume: ResumeData }) {
 
   return (
     <div style={fontStyle} className="mx-auto w-[210mm] min-w-[210mm] bg-white px-[15mm] py-[12mm] text-slate-900 shadow-[0_30px_80px_rgba(0,0,0,0.25)]">
-      <div className="mb-[6mm] text-center">
-        <h1 className="text-[30px] font-black uppercase tracking-[0.08em] text-slate-900 leading-none">{resume.name || "Your Name"}</h1>
-        {resume.title && <p className="mt-[2mm] text-[12px] font-semibold uppercase tracking-[0.25em] text-slate-500">{resume.title}</p>}
-        {vc.length > 0 && (
-          <p className="mt-[3mm] text-[11px] text-slate-500">{vc.map((f) => f.value).join("   •   ")}</p>
+      <div className="mb-[6mm]">
+        {showPhoto ? (
+          <div className="flex items-center gap-[6mm]">
+            <div className="flex-1 text-left">
+              <h1 className="text-[30px] font-black uppercase tracking-[0.08em] text-slate-900 leading-none">{resume.name || "Your Name"}</h1>
+              {resume.title && <p className="mt-[2mm] text-[12px] font-semibold uppercase tracking-[0.25em] text-slate-500">{resume.title}</p>}
+              {vc.length > 0 && (
+                <p className="mt-[3mm] text-[11px] text-slate-500">{vc.map((f) => f.value).join("   •   ")}</p>
+              )}
+            </div>
+            <Image src={resume.photoDataUrl} alt="Profile" width={110} height={120} unoptimized className="h-[30mm] w-[26mm] shrink-0 rounded-sm border border-slate-200 object-cover object-top shadow-sm" />
+          </div>
+        ) : (
+          <div className="text-center">
+            <h1 className="text-[30px] font-black uppercase tracking-[0.08em] text-slate-900 leading-none">{resume.name || "Your Name"}</h1>
+            {resume.title && <p className="mt-[2mm] text-[12px] font-semibold uppercase tracking-[0.25em] text-slate-500">{resume.title}</p>}
+            {vc.length > 0 && (
+              <p className="mt-[3mm] text-[11px] text-slate-500">{vc.map((f) => f.value).join("   •   ")}</p>
+            )}
+          </div>
         )}
         <div className="mx-auto mt-[3mm] h-[2px] bg-slate-900" />
       </div>
@@ -1243,6 +1275,7 @@ export default function ResumeBuilderPage() {
   const [saveStatus, setSaveStatus] = useState<SaveStatus>("saved");
   const [isStorageReady, setIsStorageReady] = useState(false);
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const previewRef = useRef<HTMLDivElement>(null);
 
   // Inject Google Fonts stylesheet once
   useEffect(() => {
@@ -1334,7 +1367,55 @@ export default function ResumeBuilderPage() {
   async function handlePdf(action: Exclude<PdfAction, "idle">) {
     setPdfAction(action);
     try {
-      const blob = await createResumePdfBlob(resume);
+      const el = previewRef.current;
+      if (!el) return;
+
+      // Ensure fonts are fully loaded before capture
+      await document.fonts.ready;
+
+      const [{ default: html2canvas }, { jsPDF }] = await Promise.all([
+        import("html2canvas"),
+        import("jspdf"),
+      ]);
+
+      const canvas = await html2canvas(el, {
+        scale: 3,
+        useCORS: true,
+        allowTaint: false,
+        backgroundColor: "#ffffff",
+        logging: false,
+        imageTimeout: 15000,
+      });
+
+      const pageWidthMm = 210;
+      const pageHeightMm = 297;
+      const pxPerMm = canvas.width / pageWidthMm;
+      const pageHeightPx = pageHeightMm * pxPerMm;
+
+      const doc = new jsPDF({ unit: "mm", format: "a4", compress: true });
+
+      let offsetPx = 0;
+      let remainingPx = canvas.height;
+      let firstPage = true;
+
+      while (remainingPx > 0) {
+        const slicePx = Math.min(pageHeightPx, remainingPx);
+        const sliceCanvas = document.createElement("canvas");
+        sliceCanvas.width = canvas.width;
+        sliceCanvas.height = slicePx;
+        const ctx = sliceCanvas.getContext("2d")!;
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(0, 0, sliceCanvas.width, sliceCanvas.height);
+        ctx.drawImage(canvas, 0, offsetPx, canvas.width, slicePx, 0, 0, canvas.width, slicePx);
+        const imgData = sliceCanvas.toDataURL("image/jpeg", 0.97);
+        if (!firstPage) doc.addPage();
+        doc.addImage(imgData, "JPEG", 0, 0, pageWidthMm, slicePx / pxPerMm);
+        offsetPx += slicePx;
+        remainingPx -= slicePx;
+        firstPage = false;
+      }
+
+      const blob = doc.output("blob");
       const url = URL.createObjectURL(blob);
       const safeName = (resume.name || "resume").trim().replace(/\s+/g, "-").toLowerCase();
       const anchor = document.createElement("a");
@@ -1661,13 +1742,15 @@ export default function ResumeBuilderPage() {
             </div>
 
             <div className="overflow-x-auto rounded-[28px] border border-vintage-cream/10 bg-black/10 p-4 shadow-2xl shadow-black/20">
-              {resume.template === "professional" ? (
-                <ProfessionalPreview resume={resume} />
-              ) : resume.template === "modern" ? (
-                <ModernPreview resume={resume} />
-              ) : (
-                <ClassicPreview resume={resume} />
-              )}
+              <div ref={previewRef}>
+                {resume.template === "professional" ? (
+                  <ProfessionalPreview resume={resume} />
+                ) : resume.template === "modern" ? (
+                  <ModernPreview resume={resume} />
+                ) : (
+                  <ClassicPreview resume={resume} />
+                )}
+              </div>
             </div>
           </section>
         </div>
