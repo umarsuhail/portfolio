@@ -6,10 +6,12 @@ type ResponseData = {
 };
 
 const OPENAI_MODEL = process.env.OPENAI_MODEL?.trim() || "gpt-4.1-mini";
-const OPENAI_FALLBACK_MODELS = [OPENAI_MODEL, "gpt-4.1-mini", "gpt-4o-mini"];
 const GITHUB_MODEL = process.env.GITHUB_MODEL?.trim() || "openai/gpt-4.1-mini";
-const GITHUB_FALLBACK_MODELS = [GITHUB_MODEL, "openai/gpt-4.1-mini", "openai/gpt-4o-mini"];
-const GITHUB_MODELS_BASE_URL = "https://models.github.ai/inference";
+const GEMINI_MODEL = process.env.GEMINI_MODEL?.trim() || "gemini-2.0-flash";
+const GEMINI_FALLBACK_MODELS = Array.from(
+  new Set([GEMINI_MODEL, "gemini-2.0-flash-lite", "gemini-2.0-flash"].filter(Boolean))
+);
+const GEMINI_API_BASE = "https://generativelanguage.googleapis.com/v1beta/models";
 const REQUEST_TIMEOUT_MS = 10_000;
 
 const PROFILE_CONTEXT = `
@@ -39,76 +41,60 @@ type AiCallResult =
   | { ok: true; text: string }
   | { ok: false; status: number; details: string };
 
-function getTextContentFromResponse(content: unknown): string {
-  if (typeof content === "string") {
-    return content.trim();
-  }
-
-  if (Array.isArray(content)) {
-    return content
-      .map((part) => {
-        if (typeof part === "string") {
-          return part;
-        }
-
-        if (
-          typeof part === "object" &&
-          part !== null &&
-          "type" in part &&
-          "text" in part &&
-          (part as { type?: unknown }).type === "text"
-        ) {
-          return String((part as { text?: unknown }).text ?? "");
-        }
-
-        return "";
-      })
-      .join("\n")
-      .trim();
-  }
-
-  return "";
-}
-
 type ProviderConfig = {
-  providerName: "OpenAI" | "GitHub Models";
+  providerName: string;
   apiKey: string;
   baseURL?: string;
   models: string[];
 };
 
-function getProviderConfig(): ProviderConfig | null {
-  const openAiApiKey = process.env.OPENAI_API_KEY?.trim();
-  if (openAiApiKey) {
-    return {
-      providerName: "OpenAI",
-      apiKey: openAiApiKey,
-      models: Array.from(new Set(OPENAI_FALLBACK_MODELS.filter(Boolean))),
-    };
+function getOrderedProviders(): ProviderConfig[] {
+  const providers: ProviderConfig[] = [];
+
+  // 1. Groq — most generous free tier, OpenAI-compatible
+  const groqKey = process.env.GROQ_API_KEY?.trim();
+  if (groqKey) {
+    providers.push({
+      providerName: "Groq",
+      apiKey: groqKey,
+      baseURL: "https://api.groq.com/openai/v1",
+      models: ["llama-3.1-8b-instant", "llama-3.3-70b-versatile", "mixtral-8x7b-32768"],
+    });
   }
 
+  // 2. GitHub Models
   const githubToken = process.env.GITHUB_TOKEN?.trim();
   if (githubToken) {
-    return {
+    providers.push({
       providerName: "GitHub Models",
       apiKey: githubToken,
-      baseURL: GITHUB_MODELS_BASE_URL,
-      models: Array.from(new Set(GITHUB_FALLBACK_MODELS.filter(Boolean))),
-    };
+      baseURL: "https://models.github.ai/inference",
+      models: Array.from(new Set([GITHUB_MODEL, "openai/gpt-4.1-mini", "openai/gpt-4o-mini"].filter(Boolean))),
+    });
   }
 
-  return null;
+  // 3. OpenAI
+  const openAiKey = process.env.OPENAI_API_KEY?.trim();
+  if (openAiKey) {
+    providers.push({
+      providerName: "OpenAI",
+      apiKey: openAiKey,
+      models: Array.from(new Set([OPENAI_MODEL, "gpt-4.1-mini", "gpt-4o-mini"].filter(Boolean))),
+    });
+  }
+
+  return providers;
 }
 
 async function callProviderModel(
-  providerConfig: ProviderConfig,
+  provider: ProviderConfig,
   model: string,
   message: string
 ): Promise<AiCallResult> {
   try {
     const client = new OpenAI({
-      apiKey: providerConfig.apiKey,
-      baseURL: providerConfig.baseURL,
+      apiKey: provider.apiKey,
+      baseURL: provider.baseURL,
       timeout: REQUEST_TIMEOUT_MS,
     });
 
@@ -122,7 +108,8 @@ async function callProviderModel(
       max_tokens: 220,
     });
 
-    const text = getTextContentFromResponse(completion.choices?.[0]?.message?.content);
+    const content = completion.choices?.[0]?.message?.content;
+    const text = typeof content === "string" ? content.trim() : "";
 
     if (!text) {
       return { ok: false, status: 502, details: "Empty provider response." };
@@ -130,15 +117,54 @@ async function callProviderModel(
 
     return { ok: true, text };
   } catch (error) {
-    const details = error instanceof Error ? error.message : "Unknown provider request error.";
+    const details = error instanceof Error ? error.message : "Unknown error.";
     const status =
-      typeof error === "object" &&
-      error !== null &&
-      "status" in error &&
+      typeof error === "object" && error !== null && "status" in error &&
       typeof (error as { status?: unknown }).status === "number"
-        ? ((error as { status: number }).status ?? 500)
+        ? (error as { status: number }).status
         : 500;
     return { ok: false, status, details };
+  }
+}
+
+async function callGemini(apiKey: string, message: string, model = GEMINI_MODEL): Promise<AiCallResult> {
+  const url = `${GEMINI_API_BASE}/${model}:generateContent?key=${apiKey}`;
+
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      signal: controller.signal,
+      body: JSON.stringify({
+        systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
+        contents: [{ role: "user", parts: [{ text: message }] }],
+        generationConfig: { temperature: 0.2, maxOutputTokens: 220 },
+      }),
+    });
+
+    clearTimeout(timeoutId);
+
+    if (!response.ok) {
+      const errBody = await response.text().catch(() => "");
+      return { ok: false, status: response.status, details: errBody || response.statusText };
+    }
+
+    const data = (await response.json()) as {
+      candidates?: { content?: { parts?: { text?: string }[] } }[];
+    };
+
+    const text = data.candidates?.[0]?.content?.parts?.[0]?.text?.trim() ?? "";
+    if (!text) {
+      return { ok: false, status: 502, details: "Empty Gemini response." };
+    }
+
+    return { ok: true, text };
+  } catch (error) {
+    const details = error instanceof Error ? error.message : "Unknown Gemini error.";
+    return { ok: false, status: 500, details };
   }
 }
 
@@ -151,62 +177,59 @@ export default async function chat(
     return;
   }
 
-  const providerConfig = getProviderConfig();
-  if (!providerConfig) {
-    res.status(500).json({
-      message:
-        "AI provider is not configured yet. Add OPENAI_API_KEY or GITHUB_TOKEN in your environment variables.",
-    });
-    return;
-  }
-
   const message = typeof req.body?.message === "string" ? req.body.message.trim() : "";
   if (!message) {
     res.status(400).json({ message: "Please enter a message." });
     return;
   }
 
-  try {
-    let lastError: AiCallResult | null = null;
+  // Try OpenAI-compatible providers in priority order: Groq → GitHub → OpenAI
+  for (const provider of getOrderedProviders()) {
+    let providerFailed = false;
 
-    for (const model of providerConfig.models) {
-      const result = await callProviderModel(providerConfig, model, message);
+    for (const model of provider.models) {
+      const result = await callProviderModel(provider, model, message);
+
       if (result.ok) {
         res.status(200).json({ message: result.text });
         return;
       }
 
-      lastError = result;
-      console.error(`${providerConfig.providerName} API error (${model}):`, result.status, result.details);
+      console.error(`${provider.providerName} error (${model}):`, result.status, result.details);
 
+      // Auth failure — skip remaining models for this provider
+      if (result.status === 401 || result.status === 403) {
+        providerFailed = true;
+        break;
+      }
+
+      // Rate limited — skip remaining models for this provider, try next provider
       if (result.status === 429) {
+        providerFailed = true;
         break;
       }
     }
 
-    if (lastError?.status === 429) {
-      res.status(200).json({
-        message:
-          "Rate limit reached for the current AI provider account. Please retry shortly or switch provider credentials.",
-      });
-      return;
+    if (!providerFailed) {
+      // All models in this provider failed with non-retryable errors; try next provider
     }
-
-    if (lastError?.status === 401 || lastError?.status === 403) {
-      res.status(500).json({
-        message:
-          "AI provider authentication failed. Please verify OPENAI_API_KEY or GITHUB_TOKEN permissions and restrictions.",
-      });
-      return;
-    }
-
-    res.status(200).json({
-      message: "I can only help with questions about Umar's profile and work.",
-    });
-  } catch (error) {
-    console.error("Error in chat API:", error);
-    res.status(200).json({
-      message: "I can only help with questions about Umar's profile and work.",
-    });
   }
+
+  // Fallback: Gemini
+  const geminiKey = process.env.GEMINI_API_KEY?.trim();
+  if (geminiKey) {
+    for (const gModel of GEMINI_FALLBACK_MODELS) {
+      const result = await callGemini(geminiKey, message, gModel);
+      if (result.ok) {
+        res.status(200).json({ message: result.text });
+        return;
+      }
+      console.error(`Gemini error (${gModel}):`, result.status, result.details);
+      if (result.status === 401 || result.status === 403) break;
+    }
+  }
+
+  res.status(200).json({
+    message: "I'm temporarily unavailable. Please try again in a moment.",
+  });
 }
