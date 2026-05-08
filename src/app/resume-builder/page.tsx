@@ -10,7 +10,7 @@ import type { jsPDF as JsPdf } from "jspdf";
 // ── Types ─────────────────────────────────────────────────────────────────────
 
 type TemplateId = "sidebar" | "professional" | "modern";
-type FontId = "roboto" | "lato" | "raleway" | "playfair" | "merriweather" | "montserrat" | "gelasio" | "ramaraja";
+type FontId = "roboto" | "lato" | "raleway" | "playfair" | "merriweather" | "montserrat" | "gelasio" | "ramaraja" | "googlesans";
 
 type ResumeEntry = {
   id: string;
@@ -153,6 +153,15 @@ const RESUME_FONTS: {
     googleParam: "Ramaraja",
     ttfBase: "/fonts/Ramaraja-Regular.ttf",
     ttfBold: "/fonts/Ramaraja-Regular.ttf",
+  },
+  {
+    id: "googlesans",
+    name: "Google Sans",
+    label: "Clean & modern",
+    cssFamily: "'Google Sans Flex', 'Google Sans', sans-serif",
+    googleParam: "",
+    ttfBase: "/fonts/GoogleSansFlex_24pt-Regular.ttf",
+    ttfBold: "/fonts/GoogleSansFlex_24pt-Bold.ttf",
   },
 ];
 
@@ -325,6 +334,7 @@ function getStoredResume(raw: string): ResumeData | null {
       "montserrat",
       "gelasio",
       "ramaraja",
+      "googlesans",
     ];
     return {
       ...initialResume,
@@ -385,6 +395,19 @@ function splitLines(value: string) {
     .filter(Boolean);
 }
 
+function splitLinesHtml(value: string): string[] {
+  // Split HTML content on <br>, </p>, </div> or plain \n
+  if (/<br|<\/p>|<\/div>/i.test(value)) {
+    return value
+      .replace(/<\/?(p|div)[^>]*>/gi, "\n")
+      .replace(/<br\s*\/?>/gi, "\n")
+      .split("\n")
+      .map((l) => l.trim())
+      .filter(Boolean);
+  }
+  return value.split("\n").map((l) => l.trim()).filter(Boolean);
+}
+
 function getVisibleFacts(facts: ResumeFact[]) {
   return facts.filter((f) => f.label.trim() || f.value.trim());
 }
@@ -429,6 +452,7 @@ const PDF_FONT_FALLBACK: Record<FontId, string> = {
   montserrat: "helvetica",
   gelasio: "times",
   ramaraja: "times",
+  googlesans: "helvetica",
 };
 
 async function loadFontIntoDoc(doc: JsPdf, fontId: FontId): Promise<string> {
@@ -1230,6 +1254,157 @@ async function createResumePdfBlob(resume: ResumeData): Promise<Blob> {
   return createClassicPdfBlob(resume);
 }
 
+// ── Rich text editor ──────────────────────────────────────────────────────────
+
+type FormatCmd = "bold" | "italic" | "underline" | "strikeThrough";
+
+function RichEditor({
+  value,
+  onChange,
+  placeholder,
+  className,
+  minHeight = "70px",
+}: {
+  value: string;
+  onChange: (html: string) => void;
+  placeholder?: string;
+  className?: string;
+  minHeight?: string;
+}) {
+  const editorRef = useRef<HTMLDivElement>(null);
+  const [toolbar, setToolbar] = useState<{
+    visible: boolean;
+    top: number;
+    left: number;
+    bold: boolean;
+    italic: boolean;
+    underline: boolean;
+    strike: boolean;
+  }>({ visible: false, top: 0, left: 0, bold: false, italic: false, underline: false, strike: false });
+  const savedRange = useRef<Range | null>(null);
+
+  // Sync external value into editor (only when it truly differs to avoid caret reset)
+  useEffect(() => {
+    const el = editorRef.current;
+    if (!el) return;
+    if (el.innerHTML !== value) {
+      el.innerHTML = value;
+    }
+  }, [value]);
+
+  function refreshToolbar() {
+    const sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0 || sel.isCollapsed) {
+      setToolbar((t) => ({ ...t, visible: false }));
+      return;
+    }
+    const range = sel.getRangeAt(0);
+    const el = editorRef.current;
+    if (!el || !el.contains(range.commonAncestorContainer)) {
+      setToolbar((t) => ({ ...t, visible: false }));
+      return;
+    }
+    savedRange.current = range.cloneRange();
+    const rect = range.getBoundingClientRect();
+    const parentRect = el.closest(".rich-editor-wrap")?.getBoundingClientRect() ?? { top: 0, left: 0 };
+    setToolbar({
+      visible: true,
+      top: rect.top - parentRect.top - 40,
+      left: Math.max(0, rect.left - parentRect.left),
+      bold: document.queryCommandState("bold"),
+      italic: document.queryCommandState("italic"),
+      underline: document.queryCommandState("underline"),
+      strike: document.queryCommandState("strikeThrough"),
+    });
+  }
+
+  function applyFormat(cmd: FormatCmd) {
+    const sel = window.getSelection();
+    if (savedRange.current && sel) {
+      sel.removeAllRanges();
+      sel.addRange(savedRange.current);
+    }
+    document.execCommand(cmd, false);
+    editorRef.current?.focus();
+    if (editorRef.current) onChange(editorRef.current.innerHTML);
+    refreshToolbar();
+  }
+
+  function applyFontSize(px: string) {
+    const sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0 || sel.isCollapsed) return;
+    if (savedRange.current) {
+      sel.removeAllRanges();
+      sel.addRange(savedRange.current);
+    }
+    const range = sel.getRangeAt(0);
+    const span = document.createElement("span");
+    span.style.fontSize = px;
+    range.surroundContents(span);
+    sel.removeAllRanges();
+    if (editorRef.current) onChange(editorRef.current.innerHTML);
+  }
+
+  function applyColor(color: string) {
+    const sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0 || sel.isCollapsed) return;
+    if (savedRange.current) {
+      sel.removeAllRanges();
+      sel.addRange(savedRange.current);
+    }
+    document.execCommand("foreColor", false, color);
+    editorRef.current?.focus();
+    if (editorRef.current) onChange(editorRef.current.innerHTML);
+  }
+
+  const btnBase =
+    "flex h-6 w-6 items-center justify-center rounded text-xs transition-colors hover:bg-white/20";
+  const btnActive = "bg-white/30 text-white";
+  const btnInactive = "text-white/80";
+
+  return (
+    <div className="rich-editor-wrap relative">
+      {toolbar.visible && (
+        <div
+          className="absolute z-50 flex items-center gap-0.5 rounded-lg bg-[#1e293b] px-1.5 py-1 shadow-xl"
+          style={{ top: toolbar.top, left: toolbar.left }}
+          onMouseDown={(e) => e.preventDefault()}
+        >
+          <button className={`${btnBase} font-bold ${toolbar.bold ? btnActive : btnInactive}`} onMouseDown={() => applyFormat("bold")}>B</button>
+          <button className={`${btnBase} italic ${toolbar.italic ? btnActive : btnInactive}`} onMouseDown={() => applyFormat("italic")}>I</button>
+          <button className={`${btnBase} underline ${toolbar.underline ? btnActive : btnInactive}`} onMouseDown={() => applyFormat("underline")}>U</button>
+          <button className={`${btnBase} line-through ${toolbar.strike ? btnActive : btnInactive}`} onMouseDown={() => applyFormat("strikeThrough")}>S</button>
+          <div className="mx-1 h-4 w-px bg-white/20" />
+          {["9px","10px","11px","12px","13px","14px","16px"].map((sz) => (
+            <button key={sz} className={`${btnBase} w-auto px-1 text-[10px] ${btnInactive}`} onMouseDown={() => applyFontSize(sz)}>{sz.replace("px","")}</button>
+          ))}
+          <div className="mx-1 h-4 w-px bg-white/20" />
+          {["#000000","#374151","#1e40af","#dc2626","#065f46"].map((c) => (
+            <button
+              key={c}
+              className="h-4 w-4 rounded-full border border-white/30 hover:scale-110 transition-transform"
+              style={{ background: c }}
+              onMouseDown={() => applyColor(c)}
+            />
+          ))}
+        </div>
+      )}
+      <div
+        ref={editorRef}
+        contentEditable
+        suppressContentEditableWarning
+        onInput={(e) => onChange(e.currentTarget.innerHTML)}
+        onMouseUp={refreshToolbar}
+        onKeyUp={refreshToolbar}
+        onBlur={() => setTimeout(() => setToolbar((t) => ({ ...t, visible: false })), 150)}
+        className={`w-full rounded-md border border-vintage-cream/10 bg-vintage-slate/30 px-3 py-2 text-xs text-vintage-cream outline-none focus:border-vintage-cream/30 focus:ring-1 focus:ring-vintage-cream/20 empty:before:text-vintage-cream/30 empty:before:content-[attr(data-placeholder)] ${className ?? ""}`}
+        style={{ minHeight, resize: "vertical", overflow: "auto" }}
+        data-placeholder={placeholder}
+      />
+    </div>
+  );
+}
+
 // ── Preview shared components ─────────────────────────────────────────────────
 
 function ResumeSection({
@@ -1280,7 +1455,7 @@ function EntryBlock({
           {bullets.map((line, i) => (
             <div key={`${entry.id}-${i}`} className="flex items-start gap-[2.5mm] leading-[1.8] text-slate-700" style={{ fontSize: 'var(--fs-detail)' }}>
               <span className="mt-[3px] inline-block h-[5px] w-[5px] shrink-0 rounded-full bg-slate-400" />
-              <span>{line}</span>
+              <span dangerouslySetInnerHTML={{ __html: line }} />
             </div>
           ))}
         </div>
@@ -1395,9 +1570,7 @@ function ClassicPreview({ resume }: { resume: ResumeData }) {
             )}
           </div>
           <ResumeSection title={resume.aboutTitle || "Profile Summary"}>
-            <p className="text-justify leading-[2] text-slate-700" style={{ fontSize: 'var(--fs-body)' }}>
-              {resume.aboutText || "Write a short summary here."}
-            </p>
+            <p className="text-justify leading-[2] text-slate-700 [&_b]:font-bold [&_i]:italic [&_u]:underline" style={{ fontSize: 'var(--fs-body)' }} dangerouslySetInnerHTML={{ __html: resume.aboutText || "Write a short summary here." }} />
           </ResumeSection>
           <ResumeSection title="Education">
             <div className="space-y-[5mm]">
@@ -1447,17 +1620,17 @@ function ClassicPreview({ resume }: { resume: ResumeData }) {
               </ResumeSection>
             )}
           {resume.showAchievements &&
-            splitLines(resume.achievementsText).length > 0 && (
+            splitLinesHtml(resume.achievementsText).length > 0 && (
               <ResumeSection title="Achievements">
                 <div className="space-y-[2mm]">
-                  {splitLines(resume.achievementsText).map((item) => (
+                  {splitLinesHtml(resume.achievementsText).map((item, i) => (
                     <div
-                      key={item}
+                      key={i}
                       className="flex items-start gap-[2.5mm] leading-[1.8] text-slate-700"
                       style={{ fontSize: 'var(--fs-detail)' }}
                     >
                       <span className="mt-[3px] inline-block h-[5px] w-[5px] shrink-0 rounded-full bg-slate-400" />
-                      <span>{item}</span>
+                      <span dangerouslySetInnerHTML={{ __html: item }} />
                     </div>
                   ))}
                 </div>
@@ -1465,9 +1638,7 @@ function ClassicPreview({ resume }: { resume: ResumeData }) {
             )}
           {resume.showDeclaration && (
             <ResumeSection title={resume.declarationTitle || "Declaration"}>
-              <p className="text-justify leading-[1.75] text-slate-700" style={{ fontSize: 'var(--fs-body)' }}>
-                {resume.declarationText || "Declaration text goes here."}
-              </p>
+              <p className="text-justify leading-[1.75] text-slate-700 [&_b]:font-bold [&_i]:italic [&_u]:underline" style={{ fontSize: 'var(--fs-body)' }} dangerouslySetInnerHTML={{ __html: resume.declarationText || "Declaration text goes here." }} />
             </ResumeSection>
           )}
         </div>
@@ -1557,9 +1728,7 @@ function ProfessionalPreview({ resume }: { resume: ResumeData }) {
       <div className="flex flex-1 flex-col gap-[6mm]">
         {resume.aboutText && (
           <AtsSection title={resume.aboutTitle || "Profile Summary"}>
-            <p className="text-justify leading-[1.75] text-slate-700" style={{ fontSize: 'var(--fs-body)' }}>
-              {resume.aboutText}
-            </p>
+            <p className="text-justify leading-[1.75] text-slate-700 [&_b]:font-bold [&_i]:italic [&_u]:underline" style={{ fontSize: 'var(--fs-body)' }} dangerouslySetInnerHTML={{ __html: resume.aboutText }} />
           </AtsSection>
         )}
 
@@ -1582,7 +1751,7 @@ function ProfessionalPreview({ resume }: { resume: ResumeData }) {
                         {bullets.map((l, i) => (
                           <div key={i} className="flex items-start gap-[2mm] leading-[1.65] text-slate-700" style={{ fontSize: 'var(--fs-detail)' }}>
                             <span className="mt-[3px] inline-block h-[4px] w-[4px] shrink-0 rounded-full bg-slate-400" />
-                            <span>{l}</span>
+                            <span dangerouslySetInnerHTML={{ __html: l }} />
                           </div>
                         ))}
                       </div>
@@ -1619,7 +1788,7 @@ function ProfessionalPreview({ resume }: { resume: ResumeData }) {
                       {splitLines(entry.details).map((l, i) => (
                         <div key={i} className="flex items-start gap-[2mm] leading-[1.65] text-slate-700" style={{ fontSize: 'var(--fs-detail)' }}>
                           <span className="mt-[3px] inline-block h-[4px] w-[4px] shrink-0 rounded-full bg-slate-400" />
-                          <span>{l}</span>
+                          <span dangerouslySetInnerHTML={{ __html: l }} />
                         </div>
                       ))}
                     </div>
@@ -1688,10 +1857,7 @@ function ProfessionalPreview({ resume }: { resume: ResumeData }) {
         {resume.showDeclaration && (
           <div className="mt-auto">
             <AtsSection title={resume.declarationTitle || "Declaration"}>
-              <p className="text-justify leading-[1.75] text-slate-700" style={{ fontSize: 'var(--fs-body)' }}>
-                {resume.declarationText ||
-                  "I hereby declare that the above information is true and correct to the best of my knowledge and belief."}
-              </p>
+              <p className="text-justify leading-[1.75] text-slate-700 [&_b]:font-bold [&_i]:italic [&_u]:underline" style={{ fontSize: 'var(--fs-body)' }} dangerouslySetInnerHTML={{ __html: resume.declarationText || "I hereby declare that the above information is true and correct to the best of my knowledge and belief." }} />
             </AtsSection>
           </div>
         )}
@@ -1851,9 +2017,7 @@ function ModernPreview({ resume }: { resume: ResumeData }) {
         <div className="flex h-full flex-1 flex-col gap-[7mm] bg-white px-[7mm] py-[8mm]">
           {resume.aboutText && (
             <ModernMain title={resume.aboutTitle || "Profile Summary"}>
-              <p className="text-justify leading-[1.75] text-slate-700" style={{ fontSize: 'var(--fs-body)' }}>
-                {resume.aboutText}
-              </p>
+              <p className="text-justify leading-[1.75] text-slate-700 [&_b]:font-bold [&_i]:italic [&_u]:underline" style={{ fontSize: 'var(--fs-body)' }} dangerouslySetInnerHTML={{ __html: resume.aboutText }} />
             </ModernMain>
           )}
           {resume.education.length > 0 && (
@@ -1891,9 +2055,7 @@ function ModernPreview({ resume }: { resume: ResumeData }) {
           )}
           {resume.showDeclaration && resume.declarationText && (
             <ModernMain title={resume.declarationTitle || "Declaration"}>
-              <p className="text-justify leading-[1.75] text-slate-700" style={{ fontSize: 'var(--fs-body)' }}>
-                {resume.declarationText}
-              </p>
+              <p className="text-justify leading-[1.75] text-slate-700 [&_b]:font-bold [&_i]:italic [&_u]:underline" style={{ fontSize: 'var(--fs-body)' }} dangerouslySetInnerHTML={{ __html: resume.declarationText }} />
             </ModernMain>
           )}
         </div>
@@ -2001,13 +2163,36 @@ export default function ResumeBuilderPage() {
   // Inject Google Fonts stylesheet once
   useEffect(() => {
     const id = "resume-google-fonts";
-    if (document.getElementById(id)) return;
-    const params = RESUME_FONTS.map((f) => `family=${f.googleParam}`).join("&");
-    const link = document.createElement("link");
-    link.id = id;
-    link.rel = "stylesheet";
-    link.href = `https://fonts.googleapis.com/css2?${params}&display=swap`;
-    document.head.appendChild(link);
+    if (!document.getElementById(id)) {
+      const gFonts = RESUME_FONTS.filter((f) => f.googleParam);
+      const params = gFonts.map((f) => `family=${f.googleParam}`).join("&");
+      if (params) {
+        const link = document.createElement("link");
+        link.id = id;
+        link.rel = "stylesheet";
+        link.href = `https://fonts.googleapis.com/css2?${params}&display=swap`;
+        document.head.appendChild(link);
+      }
+    }
+    const localId = "resume-local-fonts";
+    if (!document.getElementById(localId)) {
+      const localFonts = RESUME_FONTS.filter((f) => !f.googleParam);
+      if (localFonts.length > 0) {
+        const css = localFonts
+          .flatMap((f) => [
+            `@font-face { font-family: '${f.name}'; src: url('${f.ttfBase}') format('truetype'); font-weight: 400; font-style: normal; }`,
+            f.ttfBold !== f.ttfBase
+              ? `@font-face { font-family: '${f.name}'; src: url('${f.ttfBold}') format('truetype'); font-weight: 700; font-style: normal; }`
+              : "",
+          ])
+          .filter(Boolean)
+          .join("\n");
+        const style = document.createElement("style");
+        style.id = localId;
+        style.textContent = css;
+        document.head.appendChild(style);
+      }
+    }
   }, []);
 
   useEffect(() => {
@@ -2190,38 +2375,89 @@ export default function ResumeBuilderPage() {
     reader.readAsDataURL(file);
   }
 
+  // Build a complete standalone HTML document from the live resume DOM.
+  // All stylesheet URLs are made absolute so they load correctly when the
+  // document is opened as a blob URL or a new window (which have null origin).
+  function buildPrintHtml(opts: { autoprint?: boolean } = {}): string {
+    const el = previewRef.current;
+    if (!el) return "";
+
+    const origin = window.location.origin;
+
+    const sheetLinks = Array.from(document.styleSheets)
+      .filter((s) => s.href)
+      .map((s) => {
+        const href = s.href!.startsWith("http")
+          ? s.href!
+          : `${origin}${s.href}`;
+        return `<link rel="stylesheet" href="${href}">`;
+      })
+      .join("\n");
+
+    // Inline <style> tags (Google Fonts + @font-face for local fonts).
+    // Make relative /fonts/ URLs absolute so they resolve from a blob context.
+    const inlineStyles = Array.from(document.querySelectorAll("style"))
+      .map((s) => {
+        const text = (s.textContent ?? "").replace(
+          /url\(['"]?(\/[^'")\s]+)['"]?\)/g,
+          (_, p) => `url('${origin}${p}')`,
+        );
+        return `<style>${text}</style>`;
+      })
+      .join("\n");
+
+    const printScript = opts.autoprint
+      ? `<script>window.addEventListener('load',function(){document.fonts.ready.then(function(){setTimeout(function(){window.print();},900);})})<\/script>`
+      : "";
+
+    return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>${(resume.name || "Resume").replace(/[<>&"]/g, "")}</title>
+  ${sheetLinks}
+  ${inlineStyles}
+  <style>
+    @page { size: 210mm 297mm; margin: 0; }
+    html, body { margin: 0; padding: 0; background: white; }
+  </style>
+  ${printScript}
+</head>
+<body>${el.outerHTML}</body>
+</html>`;
+  }
+
   async function handlePdf(action: Exclude<PdfAction, "idle">) {
     setPdfAction(action);
     try {
-      const response = await fetch("/api/generate-pdf", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(resume),
-      });
+      if (!previewRef.current) throw new Error("Preview not ready");
+      await document.fonts.ready;
 
-      if (!response.ok) {
-        const err = await response.json().catch(() => ({ error: "Unknown error" }));
-        throw new Error(err.error ?? "PDF generation failed");
-      }
+      const html = buildPrintHtml({ autoprint: action === "downloading" });
 
-      const blob = await response.blob();
-      const url = URL.createObjectURL(blob);
-
-      if (action === "viewing") {
+      if (action === "downloading") {
+        // Create a blob URL and navigate a new window to it.
+        // The embedded script auto-triggers the browser's Print / Save-as-PDF
+        // dialog after fonts are ready.
+        const blob = new Blob([html], { type: "text/html" });
+        const url  = URL.createObjectURL(blob);
+        const w    = window.open(url, "_blank");
+        if (!w) {
+          URL.revokeObjectURL(url);
+          alert(
+            "Popups are blocked. Please allow popups for this site and try again.",
+          );
+          return;
+        }
+        // Revoke after the window has had time to load
+        setTimeout(() => URL.revokeObjectURL(url), 60_000);
+      } else {
+        // View: render the same HTML inside the modal iframe via a blob URL.
+        const blob = new Blob([html], { type: "text/html" });
+        const url = URL.createObjectURL(blob);
         if (pdfViewerUrl) URL.revokeObjectURL(pdfViewerUrl);
         setPdfViewerUrl(url);
-      } else {
-        const safeName = (resume.name || "resume")
-          .trim()
-          .replace(/\s+/g, "-")
-          .toLowerCase();
-        const anchor = document.createElement("a");
-        anchor.href = url;
-        anchor.download = `${safeName}-resume.pdf`;
-        document.body.appendChild(anchor);
-        anchor.click();
-        anchor.remove();
-        window.setTimeout(() => URL.revokeObjectURL(url), 5000);
       }
     } catch (err) {
       console.error("[handlePdf]", err);
@@ -2236,17 +2472,13 @@ export default function ResumeBuilderPage() {
   }
 
   function handleViewerDownload() {
-    if (!pdfViewerUrl) return;
-    const safeName = (resume.name || "resume")
-      .trim()
-      .replace(/\s+/g, "-")
-      .toLowerCase();
-    const anchor = document.createElement("a");
-    anchor.href = pdfViewerUrl;
-    anchor.download = `${safeName}-resume.pdf`;
-    document.body.appendChild(anchor);
-    anchor.click();
-    anchor.remove();
+    if (!previewRef.current) return;
+    const html = buildPrintHtml({ autoprint: true });
+    const blob = new Blob([html], { type: "text/html" });
+    const url  = URL.createObjectURL(blob);
+    const w    = window.open(url, "_blank");
+    if (w) setTimeout(() => URL.revokeObjectURL(url), 60_000);
+    else   URL.revokeObjectURL(url);
   }
 
   function handleReset() {
@@ -2614,11 +2846,11 @@ export default function ResumeBuilderPage() {
                     <span className="mb-1.5 block text-xs font-medium text-vintage-cream/70">
                       Summary text
                     </span>
-                    <textarea
+                    <RichEditor
                       value={resume.aboutText}
-                      onChange={(e) => upd("aboutText", e.target.value)}
-                      className="input-field min-h-[120px] resize-y"
-                      placeholder="Write a concise professional summary"
+                      onChange={(html) => upd("aboutText", html)}
+                      placeholder="Write 3-4 lines about your background and career goals."
+                      minHeight="100px"
                     />
                   </label>
                 </div>
@@ -2722,6 +2954,7 @@ export default function ResumeBuilderPage() {
                             )
                           }
                           className="input-field min-h-[70px] resize-y text-xs"
+                          title="Select text after typing to bold/italic/underline it"
                           placeholder={
                             "One bullet per line:\nSpecialization\nInstitution name\nYear"
                           }
@@ -2822,6 +3055,7 @@ export default function ResumeBuilderPage() {
                               )
                             }
                             className="input-field min-h-[80px] resize-y text-xs"
+                            title="Select text after typing to bold/italic/underline it"
                             placeholder={
                               "One bullet per line:\nKey achievement or responsibility"
                             }
@@ -2920,6 +3154,7 @@ export default function ResumeBuilderPage() {
                               )
                             }
                             className="input-field min-h-[70px] resize-y text-xs"
+                            title="Select text after typing to bold/italic/underline it"
                             placeholder="One bullet per line"
                           />
                         </div>
@@ -3046,11 +3281,11 @@ export default function ResumeBuilderPage() {
                     onChange={(v) => upd("showAchievements", v)}
                     label="Include achievements"
                   />
-                  <textarea
+                  <RichEditor
                     value={resume.achievementsText}
-                    onChange={(e) => upd("achievementsText", e.target.value)}
-                    className="input-field min-h-[70px] resize-y text-xs"
+                    onChange={(html) => upd("achievementsText", html)}
                     placeholder={"One achievement per line:\nCompleted GDS training with distinction\nParticipated in airport simulation"}
+                    minHeight="70px"
                   />
                 </div>
               </SectionCard>
@@ -3073,11 +3308,11 @@ export default function ResumeBuilderPage() {
                         className="input-field text-xs"
                         placeholder="Declaration"
                       />
-                      <textarea
+                      <RichEditor
                         value={resume.declarationText}
-                        onChange={(e) => upd("declarationText", e.target.value)}
-                        className="input-field min-h-[80px] resize-y text-xs"
+                        onChange={(html) => upd("declarationText", html)}
                         placeholder="I hereby declare…"
+                        minHeight="80px"
                       />
                     </>
                   )}
@@ -3190,7 +3425,7 @@ export default function ResumeBuilderPage() {
             {/* PDF embed */}
             <div className="relative flex-1 overflow-hidden bg-[#1a1f2e]">
               <iframe
-                src={`${pdfViewerUrl}#toolbar=1&navpanes=0&scrollbar=1&view=FitH`}
+                src={pdfViewerUrl}
                 className="absolute inset-0 h-full w-full border-0"
                 title="Resume PDF Preview"
               />
