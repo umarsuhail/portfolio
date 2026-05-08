@@ -10,7 +10,7 @@ import type { jsPDF as JsPdf } from "jspdf";
 // ── Types ─────────────────────────────────────────────────────────────────────
 
 type TemplateId = "sidebar" | "professional" | "modern";
-type FontId = "roboto" | "lato" | "raleway" | "playfair" | "merriweather";
+type FontId = "roboto" | "lato" | "raleway" | "playfair" | "merriweather" | "montserrat" | "gelasio" | "ramaraja";
 
 type ResumeEntry = {
   id: string;
@@ -26,6 +26,15 @@ type ResumeFact = {
   value: string;
 };
 
+type FontSizes = {
+  overall: number;  // -5 to +5, step 1 (each step ≈ 0.5px)
+  name: number;
+  heading: number;
+  body: number;
+  detail: number;
+  label: number;
+};
+
 type ResumeData = {
   template: TemplateId;
   fontFamily: FontId;
@@ -38,6 +47,8 @@ type ResumeData = {
   skillsText: string;
   languagesText: string;
   certificationsText: string;
+  achievementsText: string;
+  showAchievements: boolean;
   showExperience: boolean;
   showProjects: boolean;
   showSkills: boolean;
@@ -49,6 +60,7 @@ type ResumeData = {
   showPhoto: boolean;
   photoTopLeft: boolean;
   photoDataUrl: string;
+  fontSizes: FontSizes;
   education: ResumeEntry[];
   experience: ResumeEntry[];
   projects: ResumeEntry[];
@@ -115,6 +127,33 @@ const RESUME_FONTS: {
     ttfBase: "/fonts/merriweather-normal.ttf",
     ttfBold: "/fonts/merriweather-bold.ttf",
   },
+  {
+    id: "montserrat",
+    name: "Montserrat",
+    label: "Bold & geometric",
+    cssFamily: "'Montserrat', sans-serif",
+    googleParam: "Montserrat:wght@400;700",
+    ttfBase: "/fonts/Montserrat-Regular.ttf",
+    ttfBold: "/fonts/Montserrat-Bold.ttf",
+  },
+  {
+    id: "gelasio",
+    name: "Gelasio",
+    label: "Warm & editorial",
+    cssFamily: "'Gelasio', serif",
+    googleParam: "Gelasio:wght@400;700",
+    ttfBase: "/fonts/Gelasio-Regular.ttf",
+    ttfBold: "/fonts/Gelasio-Bold.ttf",
+  },
+  {
+    id: "ramaraja",
+    name: "Ramaraja",
+    label: "Traditional & distinct",
+    cssFamily: "'Ramaraja', serif",
+    googleParam: "Ramaraja",
+    ttfBase: "/fonts/Ramaraja-Regular.ttf",
+    ttfBold: "/fonts/Ramaraja-Regular.ttf",
+  },
 ];
 
 const TEMPLATES: {
@@ -143,6 +182,29 @@ const TEMPLATES: {
   },
 ];
 
+const TEMPLATE_BASE_SIZES: Record<
+  TemplateId,
+  { name: number; titleSub: number; heading: number; body: number; detail: number; label: number }
+> = {
+  sidebar:      { name: 30, titleSub: 12.5, heading: 12,   body: 13,   detail: 12.5, label: 11   },
+  professional: { name: 30, titleSub: 12,   heading: 12,   body: 11.5, detail: 11,   label: 11   },
+  modern:       { name: 24, titleSub: 11,   heading: 12,   body: 11.5, detail: 11,   label: 10.5 },
+};
+
+function computeFontSizes(resume: ResumeData) {
+  const b = TEMPLATE_BASE_SIZES[resume.template];
+  const fs = resume.fontSizes;
+  const o = fs.overall * 0.5;
+  return {
+    name:    `${b.name    + o + fs.name    * 0.5}px`,
+    titleSub:`${b.titleSub+ o             }px`,
+    heading: `${b.heading + o + fs.heading * 0.5}px`,
+    body:    `${b.body    + o + fs.body    * 0.5}px`,
+    detail:  `${b.detail  + o + fs.detail  * 0.5}px`,
+    label:   `${b.label   + o + fs.label   * 0.5}px`,
+  };
+}
+
 // ── Initial data ──────────────────────────────────────────────────────────────
 
 const initialResume: ResumeData = {
@@ -152,7 +214,7 @@ const initialResume: ResumeData = {
   title: "Airport Management Professional",
   aboutTitle: "Profile Summary",
   aboutText:
-    "Motivated and detail-oriented management graduate with a specialization in Human Resource Management and currently pursuing a Diploma in Airport Management. Strong communication skills with a calm and customer-focused approach, aiming to build a career in the aviation industry. Capable of handling passengers professionally and resolving issues efficiently in fast-paced environments.",
+    "Motivated and detail-oriented management graduate with a specialization in Human Resource Management and a completed Diploma in Airport Management. Strong communication skills with a calm and customer-focused approach, aiming to build a career in the aviation industry. Capable of handling passengers professionally and resolving issues efficiently in fast-paced environments.",
   declarationTitle: "Declaration",
   declarationText:
     "I hereby declare that the above information is true and correct to the best of my knowledge and belief.",
@@ -160,8 +222,11 @@ const initialResume: ResumeData = {
     "Punctual person\nActive listener\nSelf learning\nTeam work\nTime management",
   languagesText: "English\nMalayalam",
   certificationsText: "Sabre\nAmadeus",
+  achievementsText:
+    "Completed Amadeus and Sabre GDS training with distinction during Diploma program\nActive member of college Aviation Club, participated in airport simulation exercises",
+  showAchievements: true,
   showExperience: false,
-  showProjects: false,
+  showProjects: true,
   showSkills: true,
   showLanguages: true,
   showContact: true,
@@ -171,6 +236,7 @@ const initialResume: ResumeData = {
   showPhoto: true,
   photoTopLeft: true,
   photoDataUrl: "",
+  fontSizes: { overall: 0, name: 0, heading: 0, body: 0, detail: 0, label: 0 },
   education: [
     {
       id: "education-1",
@@ -197,7 +263,16 @@ const initialResume: ResumeData = {
     },
   ],
   experience: [],
-  projects: [],
+  projects: [
+    {
+      id: "project-1",
+      heading: "Flight Ticket Booking System",
+      subheading: "Contributor · Ongoing",
+      period: "2024 – Present",
+      details:
+        "Contributing to a team-developed flight reservation platform supporting multi-city search and real-time seat availability\nImplementing passenger booking workflows including fare selection, seat assignment, payment, and e-ticket generation\nConducting functional testing, regression testing, and UAT for end-to-end booking flows\nVerifying fare rules, baggage policies, cancellation and refund workflows against airline data\nDocumenting test cases and reporting defects using structured bug-tracking processes",
+    },
+  ],
   contact: [
     { id: "contact-1", label: "Phone", value: "8891412426" },
     { id: "contact-2", label: "Email", value: "sshahanavn@gmail.com" },
@@ -247,6 +322,9 @@ function getStoredResume(raw: string): ResumeData | null {
       "raleway",
       "playfair",
       "merriweather",
+      "montserrat",
+      "gelasio",
+      "ramaraja",
     ];
     return {
       ...initialResume,
@@ -279,6 +357,17 @@ function getStoredResume(raw: string): ResumeData | null {
             .map((f) => normalizeFact(f, "personal"))
             .filter((f): f is ResumeFact => Boolean(f))
         : initialResume.personalDetails,
+      fontSizes:
+        parsed.fontSizes && typeof parsed.fontSizes === "object"
+          ? {
+              overall: typeof (parsed.fontSizes as FontSizes).overall === "number" ? (parsed.fontSizes as FontSizes).overall : 0,
+              name:    typeof (parsed.fontSizes as FontSizes).name    === "number" ? (parsed.fontSizes as FontSizes).name    : 0,
+              heading: typeof (parsed.fontSizes as FontSizes).heading === "number" ? (parsed.fontSizes as FontSizes).heading : 0,
+              body:    typeof (parsed.fontSizes as FontSizes).body    === "number" ? (parsed.fontSizes as FontSizes).body    : 0,
+              detail:  typeof (parsed.fontSizes as FontSizes).detail  === "number" ? (parsed.fontSizes as FontSizes).detail  : 0,
+              label:   typeof (parsed.fontSizes as FontSizes).label   === "number" ? (parsed.fontSizes as FontSizes).label   : 0,
+            }
+          : initialResume.fontSizes,
     };
   } catch {
     return null;
@@ -337,6 +426,9 @@ const PDF_FONT_FALLBACK: Record<FontId, string> = {
   raleway: "helvetica",
   playfair: "times",
   merriweather: "times",
+  montserrat: "helvetica",
+  gelasio: "times",
+  ramaraja: "times",
 };
 
 async function loadFontIntoDoc(doc: JsPdf, fontId: FontId): Promise<string> {
@@ -1151,11 +1243,11 @@ function ResumeSection({
 }) {
   const headingClass =
     accent === "navy"
-      ? "border-b border-b-[#161e2e]/20 border-l-[3px] border-l-[#161e2e] pl-[2.5mm] pb-[2mm] text-[12px] font-black uppercase tracking-[0.14em] text-[#161e2e]"
-      : "border-b border-b-slate-200 border-l-[3px] border-l-slate-700 pl-[2.5mm] pb-[2mm] text-[12px] font-black uppercase tracking-[0.14em] text-slate-800";
+      ? "border-b border-b-[#161e2e]/20 border-l-[3px] border-l-[#161e2e] pl-[2.5mm] pb-[2mm] font-black uppercase tracking-[0.14em] text-[#161e2e]"
+      : "border-b border-b-slate-200 border-l-[3px] border-l-slate-700 pl-[2.5mm] pb-[2mm] font-black uppercase tracking-[0.14em] text-slate-800";
   return (
     <section className="space-y-[3.5mm]">
-      <h2 className={headingClass}>{title}</h2>
+      <h2 className={headingClass} style={{ fontSize: 'var(--fs-heading)' }}>{title}</h2>
       {children}
     </section>
   );
@@ -1177,7 +1269,8 @@ function EntryBlock({
     <article className="space-y-[2mm]">
       <div className="flex items-start justify-between gap-2">
         <h3
-          className={`text-[12.5px] font-extrabold uppercase tracking-[0.04em] ${accentHeading ? "text-[#161e2e]" : "text-slate-900"}`}
+          className={`font-extrabold uppercase tracking-[0.04em] ${accentHeading ? "text-[#161e2e]" : "text-slate-900"}`}
+          style={{ fontSize: 'var(--fs-detail)' }}
         >
           {entry.heading || "Untitled item"}
         </h3>
@@ -1185,7 +1278,7 @@ function EntryBlock({
       {bullets.length > 0 && (
         <div className="space-y-[2mm]">
           {bullets.map((line, i) => (
-            <div key={`${entry.id}-${i}`} className="flex items-start gap-[2.5mm] text-[12.5px] leading-[1.8] text-slate-700">
+            <div key={`${entry.id}-${i}`} className="flex items-start gap-[2.5mm] leading-[1.8] text-slate-700" style={{ fontSize: 'var(--fs-detail)' }}>
               <span className="mt-[3px] inline-block h-[5px] w-[5px] shrink-0 rounded-full bg-slate-400" />
               <span>{line}</span>
             </div>
@@ -1203,9 +1296,10 @@ function ClassicPreview({ resume }: { resume: ResumeData }) {
   const vp = getVisibleFacts(resume.personalDetails);
   const fontDef = RESUME_FONTS.find((f) => f.id === resume.fontFamily);
   const fontStyle = fontDef ? { fontFamily: fontDef.cssFamily } : {};
+  const sz = computeFontSizes(resume);
   return (
     <div
-      style={fontStyle}
+      style={{ ...fontStyle, '--fs-name': sz.name, '--fs-heading': sz.heading, '--fs-body': sz.body, '--fs-detail': sz.detail, '--fs-label': sz.label } as unknown as React.CSSProperties}
       className="mx-auto h-[297mm] w-[210mm] min-w-[210mm] overflow-hidden bg-white text-slate-900 shadow-[0_30px_80px_rgba(0,0,0,0.25)]"
     >
       <div className="flex h-full">
@@ -1228,7 +1322,8 @@ function ClassicPreview({ resume }: { resume: ResumeData }) {
                 {vc.map((f) => (
                   <p
                     key={f.id}
-                    className="break-all text-[12.5px] leading-[2] text-slate-700"
+                    className="break-all leading-[2] text-slate-700"
+                    style={{ fontSize: 'var(--fs-label)' }}
                   >
                     {f.value}
                   </p>
@@ -1242,9 +1337,10 @@ function ClassicPreview({ resume }: { resume: ResumeData }) {
                 {splitLines(resume.skillsText).map((item) => (
                   <span
                     key={item}
-                    className="inline-flex h-[5.5mm] items-center rounded-md bg-slate-100 px-[3mm] text-[11px] leading-none text-slate-700"
+                    className="inline-block rounded-md bg-slate-100 px-[3mm] leading-[5.5mm] text-slate-700"
+                    style={{ fontSize: 'var(--fs-label)' }}
                   >
-                    <span>{item}</span>
+                    {item}
                   </span>
                 ))}
               </div>
@@ -1257,9 +1353,10 @@ function ClassicPreview({ resume }: { resume: ResumeData }) {
                   {splitLines(resume.languagesText).map((item) => (
                     <span
                       key={item}
-                      className="inline-flex h-[5.5mm] items-center rounded-md bg-slate-100 px-[3mm] text-[11px] leading-none text-slate-700"
+                      className="inline-block rounded-md bg-slate-100 px-[3mm] leading-[5.5mm] text-slate-700"
+                      style={{ fontSize: 'var(--fs-label)' }}
                     >
-                      <span>{item}</span>
+                      {item}
                     </span>
                   ))}
                 </div>
@@ -1271,7 +1368,8 @@ function ClassicPreview({ resume }: { resume: ResumeData }) {
                 {vp.map((f) => (
                   <p
                     key={f.id}
-                    className="text-[12.5px] leading-[2] text-slate-700"
+                    className="leading-[2] text-slate-700"
+                    style={{ fontSize: 'var(--fs-label)' }}
                   >
                     {f.label && (
                       <span className="font-bold text-slate-800">
@@ -1287,17 +1385,17 @@ function ClassicPreview({ resume }: { resume: ResumeData }) {
         </div>
         <div className="flex h-full flex-1 flex-col gap-[7mm] min-w-0 px-[9mm] pt-[18mm] pb-[8mm]">
           <div className="border-b-2 border-slate-800 pb-[3mm]">
-            <h1 className="text-[30px] font-black uppercase leading-none tracking-[0.06em] text-slate-900">
+            <h1 className="font-black uppercase leading-none tracking-[0.06em] text-slate-900" style={{ fontSize: 'var(--fs-name)' }}>
               {resume.name || "Your Name"}
             </h1>
             {resume.title && (
-              <p className="mt-[2mm] text-[12.5px] font-semibold uppercase tracking-[0.2em] text-slate-500">
+              <p className="mt-[2mm] font-semibold uppercase tracking-[0.2em] text-slate-500" style={{ fontSize: 'var(--fs-label)' }}>
                 {resume.title}
               </p>
             )}
           </div>
           <ResumeSection title={resume.aboutTitle || "Profile Summary"}>
-            <p className="text-justify text-[13px] leading-[2] text-slate-700">
+            <p className="text-justify leading-[2] text-slate-700" style={{ fontSize: 'var(--fs-body)' }}>
               {resume.aboutText || "Write a short summary here."}
             </p>
           </ResumeSection>
@@ -1339,22 +1437,38 @@ function ClassicPreview({ resume }: { resume: ResumeData }) {
                   {splitLines(resume.certificationsText).map((item) => (
                     <span
                       key={item}
-                      className="inline-flex h-[5.5mm] items-center rounded-md bg-slate-100 px-[3mm] text-[11px] leading-none text-slate-700"
+                      className="inline-block rounded-md bg-slate-100 px-[3mm] leading-[5.5mm] text-slate-700"
+                      style={{ fontSize: 'var(--fs-label)' }}
                     >
-                      <span>{item}</span>
+                      {item}
                     </span>
                   ))}
                 </div>
               </ResumeSection>
             )}
-          {resume.showDeclaration && (
-            <div className="mt-auto">
-              <ResumeSection title={resume.declarationTitle || "Declaration"}>
-                <p className="text-justify text-[12.5px] leading-[1.75] text-slate-700">
-                  {resume.declarationText || "Declaration text goes here."}
-                </p>
+          {resume.showAchievements &&
+            splitLines(resume.achievementsText).length > 0 && (
+              <ResumeSection title="Achievements">
+                <div className="space-y-[2mm]">
+                  {splitLines(resume.achievementsText).map((item) => (
+                    <div
+                      key={item}
+                      className="flex items-start gap-[2.5mm] leading-[1.8] text-slate-700"
+                      style={{ fontSize: 'var(--fs-detail)' }}
+                    >
+                      <span className="mt-[3px] inline-block h-[5px] w-[5px] shrink-0 rounded-full bg-slate-400" />
+                      <span>{item}</span>
+                    </div>
+                  ))}
+                </div>
               </ResumeSection>
-            </div>
+            )}
+          {resume.showDeclaration && (
+            <ResumeSection title={resume.declarationTitle || "Declaration"}>
+              <p className="text-justify leading-[1.75] text-slate-700" style={{ fontSize: 'var(--fs-body)' }}>
+                {resume.declarationText || "Declaration text goes here."}
+              </p>
+            </ResumeSection>
           )}
         </div>
       </div>
@@ -1368,6 +1482,7 @@ function ProfessionalPreview({ resume }: { resume: ResumeData }) {
   const vc = getVisibleFacts(resume.contact);
   const fontDef = RESUME_FONTS.find((f) => f.id === resume.fontFamily);
   const fontStyle = fontDef ? { fontFamily: fontDef.cssFamily } : {};
+  const sz = computeFontSizes(resume);
   const showPhoto = resume.showPhoto && resume.photoDataUrl;
 
   function AtsSection({
@@ -1379,7 +1494,7 @@ function ProfessionalPreview({ resume }: { resume: ResumeData }) {
   }) {
     return (
       <section className="space-y-[3.5mm]">
-        <h2 className="border-b border-b-slate-300 border-l-[3px] border-l-slate-700 pb-[1.5mm] pl-[2.5mm] text-[12px] font-black uppercase tracking-[0.16em] text-slate-900">
+        <h2 className="border-b border-b-slate-300 border-l-[3px] border-l-slate-700 pb-[1.5mm] pl-[2.5mm] font-black uppercase tracking-[0.16em] text-slate-900" style={{ fontSize: 'var(--fs-heading)' }}>
           {title}
         </h2>
         {children}
@@ -1389,23 +1504,23 @@ function ProfessionalPreview({ resume }: { resume: ResumeData }) {
 
   return (
     <div
-      style={fontStyle}
+      style={{ ...fontStyle, '--fs-name': sz.name, '--fs-heading': sz.heading, '--fs-body': sz.body, '--fs-detail': sz.detail, '--fs-label': sz.label } as unknown as React.CSSProperties}
       className="mx-auto flex h-[297mm] w-[210mm] min-w-[210mm] flex-col bg-white px-[15mm] py-[12mm] text-slate-900 shadow-[0_30px_80px_rgba(0,0,0,0.25)]"
     >
       <div className="mb-[6mm] shrink-0">
         {showPhoto ? (
           <div className="flex items-center gap-[6mm]">
             <div className="flex-1 text-left">
-              <h1 className="text-[30px] font-black uppercase tracking-[0.08em] text-slate-900 leading-none">
+              <h1 className="font-black uppercase tracking-[0.08em] text-slate-900 leading-none" style={{ fontSize: 'var(--fs-name)' }}>
                 {resume.name || "Your Name"}
               </h1>
               {resume.title && (
-                <p className="mt-[2mm] text-[12px] font-semibold uppercase tracking-[0.25em] text-slate-500">
+                <p className="mt-[2mm] font-semibold uppercase tracking-[0.25em] text-slate-500" style={{ fontSize: 'var(--fs-label)' }}>
                   {resume.title}
                 </p>
               )}
               {vc.length > 0 && (
-                <p className="mt-[3mm] text-[11px] text-slate-500">
+                <p className="mt-[3mm] text-slate-500" style={{ fontSize: 'var(--fs-label)' }}>
                   {vc.map((f) => f.value).join("   •   ")}
                 </p>
               )}
@@ -1421,16 +1536,16 @@ function ProfessionalPreview({ resume }: { resume: ResumeData }) {
           </div>
         ) : (
           <div className="text-center">
-            <h1 className="text-[30px] font-black uppercase tracking-[0.08em] text-slate-900 leading-none">
+            <h1 className="font-black uppercase tracking-[0.08em] text-slate-900 leading-none" style={{ fontSize: 'var(--fs-name)' }}>
               {resume.name || "Your Name"}
             </h1>
             {resume.title && (
-              <p className="mt-[2mm] text-[12px] font-semibold uppercase tracking-[0.25em] text-slate-500">
+              <p className="mt-[2mm] font-semibold uppercase tracking-[0.25em] text-slate-500" style={{ fontSize: 'var(--fs-label)' }}>
                 {resume.title}
               </p>
             )}
             {vc.length > 0 && (
-              <p className="mt-[3mm] text-[11px] text-slate-500">
+              <p className="mt-[3mm] text-slate-500" style={{ fontSize: 'var(--fs-label)' }}>
                 {vc.map((f) => f.value).join("   •   ")}
               </p>
             )}
@@ -1439,10 +1554,10 @@ function ProfessionalPreview({ resume }: { resume: ResumeData }) {
         <div className="mx-auto mt-[3mm] h-[2px] bg-slate-900" />
       </div>
 
-      <div className="flex flex-1 flex-col gap-[6mm] overflow-hidden">
+      <div className="flex flex-1 flex-col gap-[6mm]">
         {resume.aboutText && (
           <AtsSection title={resume.aboutTitle || "Profile Summary"}>
-            <p className="text-justify text-[11.5px] leading-[1.75] text-slate-700">
+            <p className="text-justify leading-[1.75] text-slate-700" style={{ fontSize: 'var(--fs-body)' }}>
               {resume.aboutText}
             </p>
           </AtsSection>
@@ -1459,13 +1574,13 @@ function ProfessionalPreview({ resume }: { resume: ResumeData }) {
                 ];
                 return (
                   <article key={entry.id} className="space-y-[1.5mm] border-l-2 border-slate-200 pl-[3mm]">
-                    <h3 className="text-[12px] font-extrabold uppercase tracking-[0.04em] text-slate-900">
+                    <h3 className="font-extrabold uppercase tracking-[0.04em] text-slate-900" style={{ fontSize: 'var(--fs-detail)' }}>
                       {entry.heading}
                     </h3>
                     {bullets.length > 0 && (
                       <div className="space-y-[1mm]">
                         {bullets.map((l, i) => (
-                          <div key={i} className="flex items-start gap-[2mm] text-[11px] leading-[1.65] text-slate-700">
+                          <div key={i} className="flex items-start gap-[2mm] leading-[1.65] text-slate-700" style={{ fontSize: 'var(--fs-detail)' }}>
                             <span className="mt-[3px] inline-block h-[4px] w-[4px] shrink-0 rounded-full bg-slate-400" />
                             <span>{l}</span>
                           </div>
@@ -1485,24 +1600,24 @@ function ProfessionalPreview({ resume }: { resume: ResumeData }) {
               {resume.experience.map((entry) => (
                 <article key={entry.id} className="space-y-[1.5mm] border-l-2 border-slate-200 pl-[3mm]">
                   <div className="flex items-start justify-between">
-                    <h3 className="text-[12px] font-extrabold text-slate-900">
+                    <h3 className="font-extrabold text-slate-900" style={{ fontSize: 'var(--fs-detail)' }}>
                       {entry.heading}
                     </h3>
                     {entry.period && (
-                      <span className="shrink-0 text-[11px] text-slate-500">
+                      <span className="shrink-0 text-slate-500" style={{ fontSize: 'var(--fs-label)' }}>
                         {entry.period}
                       </span>
                     )}
                   </div>
                   {entry.subheading && (
-                    <p className="text-[11px] italic text-slate-500">
+                    <p className="italic text-slate-500" style={{ fontSize: 'var(--fs-label)' }}>
                       {entry.subheading}
                     </p>
                   )}
                   {splitLines(entry.details).length > 0 && (
                     <div className="space-y-[1mm]">
                       {splitLines(entry.details).map((l, i) => (
-                        <div key={i} className="flex items-start gap-[2mm] text-[11px] leading-[1.65] text-slate-700">
+                        <div key={i} className="flex items-start gap-[2mm] leading-[1.65] text-slate-700" style={{ fontSize: 'var(--fs-detail)' }}>
                           <span className="mt-[3px] inline-block h-[4px] w-[4px] shrink-0 rounded-full bg-slate-400" />
                           <span>{l}</span>
                         </div>
@@ -1517,14 +1632,12 @@ function ProfessionalPreview({ resume }: { resume: ResumeData }) {
 
         {resume.showSkills && splitLines(resume.skillsText).length > 0 && (
           <AtsSection title="Skills">
-            <div className="flex flex-wrap gap-[1.5mm]">
+            <div className="space-y-[1.5mm]">
               {splitLines(resume.skillsText).map((item) => (
-                <span
-                  key={item}
-                  className="inline-flex h-[5.5mm] items-center rounded-md bg-slate-100 px-[3mm] text-[11px] leading-none text-slate-700"
-                >
+                <div key={item} className="flex items-start gap-[2mm] leading-[1.65] text-slate-700" style={{ fontSize: 'var(--fs-label)' }}>
+                  <span className="mt-[3px] inline-block h-[4px] w-[4px] shrink-0 rounded-full bg-slate-400" />
                   <span>{item}</span>
-                </span>
+                </div>
               ))}
             </div>
           </AtsSection>
@@ -1533,14 +1646,12 @@ function ProfessionalPreview({ resume }: { resume: ResumeData }) {
         {resume.showLanguages &&
           splitLines(resume.languagesText).length > 0 && (
             <AtsSection title="Languages">
-              <div className="flex flex-wrap gap-[1.5mm]">
+              <div className="space-y-[1.5mm]">
                 {splitLines(resume.languagesText).map((item) => (
-                  <span
-                    key={item}
-                    className="inline-flex h-[5.5mm] items-center rounded-md bg-slate-100 px-[3mm] text-[11px] leading-none text-slate-700"
-                  >
+                  <div key={item} className="flex items-start gap-[2mm] leading-[1.65] text-slate-700" style={{ fontSize: 'var(--fs-label)' }}>
+                    <span className="mt-[3px] inline-block h-[4px] w-[4px] shrink-0 rounded-full bg-slate-400" />
                     <span>{item}</span>
-                  </span>
+                  </div>
                 ))}
               </div>
             </AtsSection>
@@ -1549,9 +1660,12 @@ function ProfessionalPreview({ resume }: { resume: ResumeData }) {
         {resume.showCertifications &&
           splitLines(resume.certificationsText).length > 0 && (
             <AtsSection title="Certifications">
-              <div className="flex flex-wrap gap-[1.5mm]">
+              <div className="space-y-[1.5mm]">
                 {splitLines(resume.certificationsText).map((item) => (
-                  <span key={item} className="inline-flex h-[5.5mm] items-center rounded-md bg-slate-100 px-[3mm] text-[11px] leading-none text-slate-700"><span>{item}</span></span>
+                  <div key={item} className="flex items-start gap-[2mm] leading-[1.65] text-slate-700" style={{ fontSize: 'var(--fs-label)' }}>
+                    <span className="mt-[3px] inline-block h-[4px] w-[4px] shrink-0 rounded-full bg-slate-400" />
+                    <span>{item}</span>
+                  </div>
                 ))}
               </div>
             </AtsSection>
@@ -1562,7 +1676,7 @@ function ProfessionalPreview({ resume }: { resume: ResumeData }) {
             <AtsSection title="Personal Information">
               <div className="flex flex-wrap gap-x-[8mm] gap-y-[1.5mm]">
                 {getVisibleFacts(resume.personalDetails).map((f) => (
-                  <p key={f.id} className="text-[11px] text-slate-700">
+                  <p key={f.id} className="text-slate-700" style={{ fontSize: 'var(--fs-label)' }}>
                     {f.label && <span className="font-bold">{f.label}:</span>}{" "}
                     {f.value}
                   </p>
@@ -1571,11 +1685,12 @@ function ProfessionalPreview({ resume }: { resume: ResumeData }) {
             </AtsSection>
           )}
 
-        {resume.showDeclaration && resume.declarationText && (
+        {resume.showDeclaration && (
           <div className="mt-auto">
             <AtsSection title={resume.declarationTitle || "Declaration"}>
-              <p className="text-justify text-[11.5px] leading-[1.75] text-slate-700">
-                {resume.declarationText}
+              <p className="text-justify leading-[1.75] text-slate-700" style={{ fontSize: 'var(--fs-body)' }}>
+                {resume.declarationText ||
+                  "I hereby declare that the above information is true and correct to the best of my knowledge and belief."}
               </p>
             </AtsSection>
           </div>
@@ -1592,6 +1707,7 @@ function ModernPreview({ resume }: { resume: ResumeData }) {
   const vp = getVisibleFacts(resume.personalDetails);
   const fontDef = RESUME_FONTS.find((f) => f.id === resume.fontFamily);
   const fontStyle = fontDef ? { fontFamily: fontDef.cssFamily } : {};
+  const sz = computeFontSizes(resume);
 
   function ModernSidebar({
     title,
@@ -1602,7 +1718,7 @@ function ModernPreview({ resume }: { resume: ResumeData }) {
   }) {
     return (
       <section className="space-y-[3.5mm]">
-        <h2 className="border-b border-b-[#161e2e]/20 border-l-[3px] border-l-[#161e2e] pb-[1.5mm] pl-[2mm] text-[11.5px] font-black uppercase tracking-[0.14em] text-[#161e2e]">
+        <h2 className="border-b border-b-[#161e2e]/20 border-l-[3px] border-l-[#161e2e] pb-[1.5mm] pl-[2mm] font-black uppercase tracking-[0.14em] text-[#161e2e]" style={{ fontSize: 'var(--fs-label)' }}>
           {title}
         </h2>
         {children}
@@ -1619,7 +1735,7 @@ function ModernPreview({ resume }: { resume: ResumeData }) {
   }) {
     return (
       <section className="space-y-[3.5mm]">
-        <h2 className="border-b-[2px] border-b-[#161e2e] border-l-[3px] border-l-[#161e2e] pb-[1.5mm] pl-[2mm] text-[12.5px] font-black uppercase tracking-[0.14em] text-[#161e2e]">
+        <h2 className="border-b-[2px] border-b-[#161e2e] border-l-[3px] border-l-[#161e2e] pb-[1.5mm] pl-[2mm] font-black uppercase tracking-[0.14em] text-[#161e2e]" style={{ fontSize: 'var(--fs-heading)' }}>
           {title}
         </h2>
         {children}
@@ -1629,7 +1745,7 @@ function ModernPreview({ resume }: { resume: ResumeData }) {
 
   return (
     <div
-      style={fontStyle}
+      style={{ ...fontStyle, '--fs-name': sz.name, '--fs-heading': sz.heading, '--fs-body': sz.body, '--fs-detail': sz.detail, '--fs-label': sz.label } as unknown as React.CSSProperties}
       className="mx-auto flex h-[297mm] w-[210mm] min-w-[210mm] flex-col bg-white text-slate-900 shadow-[0_30px_80px_rgba(0,0,0,0.25)]"
     >
       {/* Dark header */}
@@ -1645,16 +1761,16 @@ function ModernPreview({ resume }: { resume: ResumeData }) {
           />
         )}
         <div className="min-w-0">
-          <h1 className="text-[24px] font-black uppercase leading-none tracking-[0.06em] text-white">
+          <h1 className="font-black uppercase leading-none tracking-[0.06em] text-white" style={{ fontSize: 'var(--fs-name)' }}>
             {resume.name || "Your Name"}
           </h1>
           {resume.title && (
-            <p className="mt-[2mm] text-[11px] font-light uppercase tracking-[0.25em] text-white/60">
+            <p className="mt-[2mm] font-light uppercase tracking-[0.25em] text-white/60" style={{ fontSize: 'var(--fs-label)' }}>
               {resume.title}
             </p>
           )}
           {vc.length > 0 && (
-            <p className="mt-[3mm] break-all text-[10px] leading-[1.7] text-white/50">
+            <p className="mt-[3mm] break-all leading-[1.7] text-white/50" style={{ fontSize: 'var(--fs-label)' }}>
               {vc.map((f) => f.value).join("  ·  ")}
             </p>
           )}
@@ -1670,9 +1786,10 @@ function ModernPreview({ resume }: { resume: ResumeData }) {
                 {splitLines(resume.skillsText).map((item) => (
                   <span
                     key={item}
-                    className="inline-flex h-[5mm] items-center rounded-md bg-[#161e2e]/10 px-[2.5mm] text-[10.5px] leading-none text-[#161e2e]"
+                    className="inline-block rounded-md bg-[#161e2e]/10 px-[2.5mm] leading-[5mm] text-[#161e2e]"
+                    style={{ fontSize: 'var(--fs-label)' }}
                   >
-                    <span>{item}</span>
+                    {item}
                   </span>
                 ))}
               </div>
@@ -1685,9 +1802,10 @@ function ModernPreview({ resume }: { resume: ResumeData }) {
                   {splitLines(resume.languagesText).map((item) => (
                     <span
                       key={item}
-                      className="inline-flex h-[5mm] items-center rounded-md bg-[#161e2e]/10 px-[2.5mm] text-[10.5px] leading-none text-[#161e2e]"
+                      className="inline-block rounded-md bg-[#161e2e]/10 px-[2.5mm] leading-[5mm] text-[#161e2e]"
+                      style={{ fontSize: 'var(--fs-label)' }}
                     >
-                      <span>{item}</span>
+                      {item}
                     </span>
                   ))}
                 </div>
@@ -1700,9 +1818,10 @@ function ModernPreview({ resume }: { resume: ResumeData }) {
                   {splitLines(resume.certificationsText).map((item) => (
                     <span
                       key={item}
-                      className="inline-flex h-[5mm] items-center rounded-md bg-[#161e2e]/10 px-[2.5mm] text-[10.5px] leading-none text-[#161e2e]"
+                      className="inline-block rounded-md bg-[#161e2e]/10 px-[2.5mm] leading-[5mm] text-[#161e2e]"
+                      style={{ fontSize: 'var(--fs-label)' }}
                     >
-                      <span>{item}</span>
+                      {item}
                     </span>
                   ))}
                 </div>
@@ -1714,7 +1833,8 @@ function ModernPreview({ resume }: { resume: ResumeData }) {
                 {vp.map((f) => (
                   <p
                     key={f.id}
-                    className="text-[11px] leading-[1.6] text-slate-700"
+                    className="leading-[1.6] text-slate-700"
+                    style={{ fontSize: 'var(--fs-label)' }}
                   >
                     {f.label && (
                       <span className="font-bold text-[#161e2e]">
@@ -1731,7 +1851,7 @@ function ModernPreview({ resume }: { resume: ResumeData }) {
         <div className="flex h-full flex-1 flex-col gap-[7mm] bg-white px-[7mm] py-[8mm]">
           {resume.aboutText && (
             <ModernMain title={resume.aboutTitle || "Profile Summary"}>
-              <p className="text-justify text-[11.5px] leading-[1.75] text-slate-700">
+              <p className="text-justify leading-[1.75] text-slate-700" style={{ fontSize: 'var(--fs-body)' }}>
                 {resume.aboutText}
               </p>
             </ModernMain>
@@ -1770,13 +1890,11 @@ function ModernPreview({ resume }: { resume: ResumeData }) {
             </ModernMain>
           )}
           {resume.showDeclaration && resume.declarationText && (
-            <div className="mt-auto">
-              <ModernMain title={resume.declarationTitle || "Declaration"}>
-                <p className="text-justify text-[11.5px] leading-[1.75] text-slate-700">
-                  {resume.declarationText}
-                </p>
-              </ModernMain>
-            </div>
+            <ModernMain title={resume.declarationTitle || "Declaration"}>
+              <p className="text-justify leading-[1.75] text-slate-700" style={{ fontSize: 'var(--fs-body)' }}>
+                {resume.declarationText}
+              </p>
+            </ModernMain>
           )}
         </div>
       </div>
@@ -1870,6 +1988,7 @@ function loadDefaultPhoto(onLoad: (dataUrl: string) => void) {
 export default function ResumeBuilderPage() {
   const [resume, setResume] = useState(initialResume);
   const [pdfAction, setPdfAction] = useState<PdfAction>("idle");
+  const [pdfViewerUrl, setPdfViewerUrl] = useState<string | null>(null);
   const [saveStatus, setSaveStatus] = useState<SaveStatus>("saved");
   const [isStorageReady, setIsStorageReady] = useState(false);
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -1974,6 +2093,16 @@ export default function ResumeBuilderPage() {
     setResume((cur) => ({ ...cur, [field]: value }));
   }
 
+  function updFontSize(key: keyof FontSizes, delta: number) {
+    setResume((r) => ({
+      ...r,
+      fontSizes: {
+        ...r.fontSizes,
+        [key]: Math.max(-5, Math.min(5, r.fontSizes[key] + delta)),
+      },
+    }));
+  }
+
   function updateEntry(
     section: "education" | "experience" | "projects",
     id: string,
@@ -2064,96 +2193,60 @@ export default function ResumeBuilderPage() {
   async function handlePdf(action: Exclude<PdfAction, "idle">) {
     setPdfAction(action);
     try {
-      const el = previewRef.current;
-      if (!el) return;
-
-      // Ensure fonts are fully loaded before capture
-      await document.fonts.ready;
-
-      const [{ default: html2canvas }, { jsPDF }] = await Promise.all([
-        import("html2canvas"),
-        import("jspdf"),
-      ]);
-
-      // Temporarily remove CSS scale so html2canvas captures at full A4 resolution
-      const sw = scaleWrapperRef.current;
-      const origTransform = sw ? sw.style.transform : "";
-      if (sw) sw.style.transform = "none";
-
-      const canvas = await html2canvas(el, {
-        scale: 3,
-        useCORS: true,
-        allowTaint: false,
-        backgroundColor: "#ffffff",
-        logging: false,
-        imageTimeout: 15000,
-      }).finally(() => {
-        if (sw) sw.style.transform = origTransform;
+      const response = await fetch("/api/generate-pdf", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(resume),
       });
 
-      const pageWidthMm = 210;
-      const pageHeightMm = 297;
-      const pxPerMm = canvas.width / pageWidthMm;
-      const pageHeightPx = pageHeightMm * pxPerMm;
-
-      const doc = new jsPDF({ unit: "mm", format: "a4", compress: true });
-
-      let offsetPx = 0;
-      let remainingPx = canvas.height;
-      let firstPage = true;
-      const minPagePx = pageHeightPx * 0.03; // ignore slivers < 3% of page height (rounding artefacts)
-
-      while (remainingPx > minPagePx) {
-        const slicePx = Math.min(pageHeightPx, remainingPx);
-        const sliceCanvas = document.createElement("canvas");
-        sliceCanvas.width = canvas.width;
-        sliceCanvas.height = slicePx;
-        const ctx = sliceCanvas.getContext("2d")!;
-        ctx.fillStyle = "#ffffff";
-        ctx.fillRect(0, 0, sliceCanvas.width, sliceCanvas.height);
-        ctx.drawImage(
-          canvas,
-          0,
-          offsetPx,
-          canvas.width,
-          slicePx,
-          0,
-          0,
-          canvas.width,
-          slicePx,
-        );
-        const imgData = sliceCanvas.toDataURL("image/jpeg", 0.97);
-        if (!firstPage) doc.addPage();
-        doc.addImage(imgData, "JPEG", 0, 0, pageWidthMm, slicePx / pxPerMm);
-        offsetPx += slicePx;
-        remainingPx -= slicePx;
-        firstPage = false;
+      if (!response.ok) {
+        const err = await response.json().catch(() => ({ error: "Unknown error" }));
+        throw new Error(err.error ?? "PDF generation failed");
       }
 
-      const blob = doc.output("blob");
+      const blob = await response.blob();
       const url = URL.createObjectURL(blob);
-      const safeName = (resume.name || "resume")
-        .trim()
-        .replace(/\s+/g, "-")
-        .toLowerCase();
-      const anchor = document.createElement("a");
-      anchor.href = url;
+
       if (action === "viewing") {
-        anchor.target = "_blank";
-        anchor.rel = "noopener noreferrer";
+        if (pdfViewerUrl) URL.revokeObjectURL(pdfViewerUrl);
+        setPdfViewerUrl(url);
       } else {
+        const safeName = (resume.name || "resume")
+          .trim()
+          .replace(/\s+/g, "-")
+          .toLowerCase();
+        const anchor = document.createElement("a");
+        anchor.href = url;
         anchor.download = `${safeName}-resume.pdf`;
+        document.body.appendChild(anchor);
+        anchor.click();
+        anchor.remove();
+        window.setTimeout(() => URL.revokeObjectURL(url), 5000);
       }
-      document.body.appendChild(anchor);
-      anchor.click();
-      anchor.remove();
-      window.setTimeout(
-        () => URL.revokeObjectURL(url),
-        action === "viewing" ? 60000 : 5000,
-      );
+    } catch (err) {
+      console.error("[handlePdf]", err);
     } finally {
       setPdfAction("idle");
     }
+  }
+
+  function closePdfViewer() {
+    if (pdfViewerUrl) URL.revokeObjectURL(pdfViewerUrl);
+    setPdfViewerUrl(null);
+  }
+
+  function handleViewerDownload() {
+    if (!pdfViewerUrl) return;
+    const safeName = (resume.name || "resume")
+      .trim()
+      .replace(/\s+/g, "-")
+      .toLowerCase();
+    const anchor = document.createElement("a");
+    anchor.href = pdfViewerUrl;
+    anchor.download = `${safeName}-resume.pdf`;
+    document.body.appendChild(anchor);
+    anchor.click();
+    anchor.remove();
   }
 
   function handleReset() {
@@ -2365,6 +2458,69 @@ export default function ResumeBuilderPage() {
             </div>
 
             <div className="space-y-3">
+              {/* Typography */}
+              <SectionCard title="Typography" defaultOpen={false}>
+                <div className="space-y-4">
+                  {/* Overall */}
+                  <div>
+                    <p className="mb-2 text-xs font-medium text-vintage-cream/70">Overall size</p>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => updFontSize("overall", -1)}
+                        disabled={resume.fontSizes.overall <= -5}
+                        className="flex h-7 w-7 items-center justify-center rounded-md border border-vintage-cream/20 text-base text-vintage-cream/70 hover:bg-vintage-cream/10 disabled:opacity-30"
+                      >−</button>
+                      <span className="min-w-[2rem] text-center text-xs text-vintage-cream/60">
+                        {resume.fontSizes.overall > 0 ? `+${resume.fontSizes.overall}` : resume.fontSizes.overall}
+                      </span>
+                      <button
+                        onClick={() => updFontSize("overall", 1)}
+                        disabled={resume.fontSizes.overall >= 5}
+                        className="flex h-7 w-7 items-center justify-center rounded-md border border-vintage-cream/20 text-base text-vintage-cream/70 hover:bg-vintage-cream/10 disabled:opacity-30"
+                      >+</button>
+                      {resume.fontSizes.overall !== 0 && (
+                        <button
+                          onClick={() => updFontSize("overall", -resume.fontSizes.overall)}
+                          className="ml-1 text-[10px] text-vintage-cream/40 hover:text-vintage-cream/70"
+                        >reset</button>
+                      )}
+                    </div>
+                  </div>
+                  {/* Per-field */}
+                  <div className="space-y-2">
+                    <p className="text-xs font-medium text-vintage-cream/70">Per section</p>
+                    {(
+                      [
+                        { key: "name",    label: "Name" },
+                        { key: "heading", label: "Headings" },
+                        { key: "body",    label: "Body text" },
+                        { key: "detail",  label: "Details / bullets" },
+                        { key: "label",   label: "Labels / chips" },
+                      ] as { key: keyof FontSizes; label: string }[]
+                    ).map(({ key, label }) => (
+                      <div key={key} className="flex items-center justify-between">
+                        <span className="text-xs text-vintage-cream/60">{label}</span>
+                        <div className="flex items-center gap-1.5">
+                          <button
+                            onClick={() => updFontSize(key, -1)}
+                            disabled={resume.fontSizes[key] <= -5}
+                            className="flex h-6 w-6 items-center justify-center rounded border border-vintage-cream/20 text-xs text-vintage-cream/70 hover:bg-vintage-cream/10 disabled:opacity-30"
+                          >−</button>
+                          <span className="min-w-[1.75rem] text-center text-[11px] text-vintage-cream/60">
+                            {resume.fontSizes[key] > 0 ? `+${resume.fontSizes[key]}` : resume.fontSizes[key]}
+                          </span>
+                          <button
+                            onClick={() => updFontSize(key, 1)}
+                            disabled={resume.fontSizes[key] >= 5}
+                            className="flex h-6 w-6 items-center justify-center rounded border border-vintage-cream/20 text-xs text-vintage-cream/70 hover:bg-vintage-cream/10 disabled:opacity-30"
+                          >+</button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </SectionCard>
+
               {/* Basic Info */}
               <SectionCard title="Basic Info">
                 <div className="space-y-3">
@@ -2728,6 +2884,19 @@ export default function ResumeBuilderPage() {
                             placeholder="Project title"
                           />
                           <input
+                            value={entry.subheading}
+                            onChange={(e) =>
+                              updateEntry(
+                                "projects",
+                                entry.id,
+                                "subheading",
+                                e.target.value,
+                              )
+                            }
+                            className="input-field"
+                            placeholder="Role / Contribution (e.g. Contributor · Ongoing)"
+                          />
+                          <input
                             value={entry.period}
                             onChange={(e) =>
                               updateEntry(
@@ -2738,7 +2907,7 @@ export default function ResumeBuilderPage() {
                               )
                             }
                             className="input-field"
-                            placeholder="Year"
+                            placeholder="Duration (e.g. 2024 – Present)"
                           />
                           <textarea
                             value={entry.details}
@@ -2869,6 +3038,23 @@ export default function ResumeBuilderPage() {
                 </div>
               </SectionCard>
 
+              {/* Achievements */}
+              <SectionCard title="Achievements" defaultOpen={false}>
+                <div className="space-y-3">
+                  <ToggleField
+                    checked={resume.showAchievements}
+                    onChange={(v) => upd("showAchievements", v)}
+                    label="Include achievements"
+                  />
+                  <textarea
+                    value={resume.achievementsText}
+                    onChange={(e) => upd("achievementsText", e.target.value)}
+                    className="input-field min-h-[70px] resize-y text-xs"
+                    placeholder={"One achievement per line:\nCompleted GDS training with distinction\nParticipated in airport simulation"}
+                  />
+                </div>
+              </SectionCard>
+
               {/* Declaration */}
               <SectionCard title="Declaration" defaultOpen={false}>
                 <div className="space-y-3">
@@ -2953,6 +3139,65 @@ export default function ResumeBuilderPage() {
           </section>
         </div>
       </div>
+
+      {/* ── PDF Viewer Modal ─────────────────────────────────────────────── */}
+      {pdfViewerUrl && (
+        <div
+          className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm"
+          onClick={(e) => e.target === e.currentTarget && closePdfViewer()}
+        >
+          <div
+            className="relative flex w-full max-w-4xl flex-col overflow-hidden rounded-2xl border border-vintage-cream/15 bg-[#0d1117] shadow-[0_40px_100px_rgba(0,0,0,0.7)]"
+            style={{ height: "calc(100vh - 2rem)" }}
+          >
+            {/* Header */}
+            <div className="flex shrink-0 items-center justify-between border-b border-vintage-cream/10 bg-[#0d1117] px-5 py-3.5">
+              <div className="flex items-center gap-3">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-vintage-burgundy/20">
+                  <Icon
+                    icon="solar:document-text-bold"
+                    className="text-[20px] text-vintage-burgundy"
+                  />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-vintage-cream">
+                    {resume.name || "Resume"} &mdash; PDF Preview
+                  </p>
+                  <p className="text-[11px] text-vintage-cream/40">
+                    A4 · 210 × 297 mm ·{" "}
+                    {TEMPLATES.find((t) => t.id === resume.template)?.name}
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={handleViewerDownload}
+                  className="btn-primary py-2 text-sm"
+                >
+                  <Icon icon="solar:download-linear" className="text-base" />
+                  Download
+                </button>
+                <button
+                  onClick={closePdfViewer}
+                  className="flex h-9 w-9 items-center justify-center rounded-xl border border-vintage-cream/15 text-vintage-cream/60 transition-colors hover:border-vintage-cream/30 hover:text-vintage-cream"
+                  aria-label="Close viewer"
+                >
+                  <Icon icon="solar:close-linear" className="text-lg" />
+                </button>
+              </div>
+            </div>
+
+            {/* PDF embed */}
+            <div className="relative flex-1 overflow-hidden bg-[#1a1f2e]">
+              <iframe
+                src={`${pdfViewerUrl}#toolbar=1&navpanes=0&scrollbar=1&view=FitH`}
+                className="absolute inset-0 h-full w-full border-0"
+                title="Resume PDF Preview"
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 }
