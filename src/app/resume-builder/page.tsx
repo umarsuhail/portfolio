@@ -19,7 +19,7 @@ type ResumeEntry = {
   period: string;
   details: string;
 };
-
+type ResumePresetId = "airport-management" | "cabin-crew" | "ground-support";
 type ResumeFact = {
   id: string;
   label: string;
