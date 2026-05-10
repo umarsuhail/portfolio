@@ -90,7 +90,7 @@ function sectionH(title: string, content: string, accent: "slate" | "navy" = "sl
     accent === "navy"
       ? "border-b border-b-[#161e2e]/20 border-l-[3px] border-l-[#161e2e] pl-[2.5mm] pb-[2mm] text-[12px] font-black uppercase tracking-[0.14em] text-[#161e2e]"
       : "border-b border-b-slate-200 border-l-[3px] border-l-slate-700 pl-[2.5mm] pb-[2mm] text-[12px] font-black uppercase tracking-[0.14em] text-slate-800";
-  return `<section class="space-y-[3.5mm]"><h2 class="${cls}">${esc(title)}</h2>${content}</section>`;
+  return `<section class="space-y-[3.5mm] break-inside-avoid" style="break-inside: avoid-page; page-break-inside: avoid;"><h2 class="${cls}">${esc(title)}</h2>${content}</section>`;
 }
 
 /** Matches <EntryBlock> */
@@ -110,7 +110,7 @@ function entryH(entry: ResumeEntry, accentHeading = false): string {
     )
     .join("");
   return (
-    `<article class="space-y-[2mm]">` +
+    `<article class="space-y-[2mm] break-inside-avoid" style="break-inside: avoid-page; page-break-inside: avoid;">` +
     `<div class="flex items-start justify-between gap-2"><h3 class="${hCls}">${esc(entry.heading || "Untitled item")}</h3></div>` +
     (bullets.length > 0 ? `<div class="space-y-[2mm]">${bulletsHtml}</div>` : "") +
     `</article>`
@@ -237,7 +237,7 @@ function classicHtml(resume: ResumeData): string {
   return (
     `<div class="mx-auto min-h-[297mm] w-[210mm] min-w-[210mm] bg-white text-slate-900">` +
     `<div class="flex min-h-[297mm]">` +
-    `<div class="w-[74mm] shrink-0 flex-col gap-[8mm] border-r border-slate-200 bg-slate-50 px-[5.5mm] py-[9mm]">${left}</div>` +
+    `<div class="w-[74mm] shrink-0 flex flex-col gap-[8mm] border-r border-slate-200 bg-slate-50 px-[5.5mm] py-[9mm]">${left}</div>` +
     `<div class="flex flex-col gap-[7mm] min-w-0 px-[9mm] pt-[18mm] pb-[8mm]">${right}</div>` +
     `</div></div>`
   );
@@ -247,7 +247,7 @@ function classicHtml(resume: ResumeData): string {
 
 function atsSectionH(title: string, content: string): string {
   return (
-    `<section class="space-y-[3.5mm]">` +
+    `<section class="space-y-[3.5mm] break-inside-avoid" style="break-inside: avoid-page; page-break-inside: avoid;">` +
     `<h2 class="border-b border-b-slate-300 border-l-[3px] border-l-slate-700 pb-[1.5mm] pl-[2.5mm] text-[12px] font-black uppercase tracking-[0.16em] text-slate-900">${esc(title)}</h2>` +
     content +
     `</section>`
@@ -424,7 +424,7 @@ function professionalHtml(resume: ResumeData): string {
 
 function modernSidebarH(title: string, content: string): string {
   return (
-    `<section class="space-y-[3.5mm]">` +
+    `<section class="space-y-[3.5mm] break-inside-avoid" style="break-inside: avoid-page; page-break-inside: avoid;">` +
     `<h2 class="border-b border-b-[#161e2e]/20 border-l-[3px] border-l-[#161e2e] pb-[1.5mm] pl-[2mm] text-[11.5px] font-black uppercase tracking-[0.14em] text-[#161e2e]">${esc(title)}</h2>` +
     content +
     `</section>`
@@ -433,7 +433,7 @@ function modernSidebarH(title: string, content: string): string {
 
 function modernMainH(title: string, content: string): string {
   return (
-    `<section class="space-y-[3.5mm]">` +
+    `<section class="space-y-[3.5mm] break-inside-avoid" style="break-inside: avoid-page; page-break-inside: avoid;">` +
     `<h2 class="border-b-[2px] border-b-[#161e2e] border-l-[3px] border-l-[#161e2e] pb-[1.5mm] pl-[2mm] text-[12.5px] font-black uppercase tracking-[0.14em] text-[#161e2e]">${esc(title)}</h2>` +
     content +
     `</section>`
@@ -536,7 +536,7 @@ function modernHtml(resume: ResumeData): string {
   return (
     `<div class="mx-auto min-h-[297mm] w-[210mm] min-w-[210mm] flex flex-col bg-white text-slate-900">` +
     `<div class="flex shrink-0 min-h-[46mm] items-center gap-[5mm] bg-[#161e2e] px-[7mm] py-[5mm]">${header}</div>` +
-    `<div class="flex flex-grow">` +
+    `<div class="flex min-h-[251mm] items-stretch">` +
     `<div class="w-[74mm] shrink-0 flex flex-col gap-[8mm] border-r border-slate-200 bg-[#f3f5f7] px-[5.5mm] py-[8mm]">${sidebar}</div>` +
     `<div class="flex flex-col gap-[7mm] bg-white px-[7mm] py-[8mm]">${main}</div>` +
     `</div></div>`
@@ -573,6 +573,7 @@ export function generateResumeHtml(resume: ResumeData): string {
       box-sizing: border-box;
     }
     body { margin: 0; padding: 0; background: #fff; font-family: ${fontFamily}; }
+    .break-inside-avoid { break-inside: avoid-page; page-break-inside: avoid; }
   </style>
 </head>
 <body>

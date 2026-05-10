@@ -227,6 +227,36 @@ const TEMPLATE_BASE_SIZES: Record<
   modern:       { name: 24, titleSub: 11,   heading: 12,   body: 11.5, detail: 11,   label: 10.5 },
 };
 
+const CAREER_PRESETS: {
+  id: ResumePresetId;
+  name: string;
+  shortName: string;
+  desc: string;
+  recommendedTemplate: TemplateId;
+}[] = [
+  {
+    id: "airport-management",
+    name: "Airport Management",
+    shortName: "Airport Ops",
+    desc: "FAA, AVSEC, cargo, compliance, and terminal operations keywords.",
+    recommendedTemplate: "professional",
+  },
+  {
+    id: "cabin-crew",
+    name: "Cabin Crew",
+    shortName: "Cabin Crew",
+    desc: "Passenger safety, service recovery, grooming, and multilingual support.",
+    recommendedTemplate: "modern",
+  },
+  {
+    id: "ground-support",
+    name: "Ground Staff & Support",
+    shortName: "Ground Staff",
+    desc: "Check-in, baggage, passenger assistance, and frontline terminal support.",
+    recommendedTemplate: "professional",
+  },
+];
+
 function computeFontSizes(resume: ResumeData) {
   const b = TEMPLATE_BASE_SIZES[resume.template];
   const fs = resume.fontSizes;
@@ -250,37 +280,38 @@ const initialResume: ResumeData = {
   title: "Airport Management Professional",
   aboutTitle: "Profile Summary",
   aboutText:
-    "Motivated and detail-oriented management graduate with a specialization in Human Resource Management and a completed Diploma in Airport Management. Strong communication skills with a calm and customer-focused approach, aiming to build a career in the aviation industry. Capable of handling passengers professionally and resolving issues efficiently in fast-paced environments.",
+    "Ambitious aviation management candidate with an IATA-certified foundation in aviation security, cargo operations, and passenger-facing airport support. Currently pursuing a BBA in Human Resource Management to combine workforce leadership with safe, efficient terminal operations. Prepared to support compliance, service recovery, and a smooth passenger experience in high-pressure environments.",
   declarationTitle: "Declaration",
   declarationText:
     "I hereby declare that the above information is true and correct to the best of my knowledge and belief.",
   skillsText:
-    "Punctual person\nActive listener\nSelf learning\nTeam work\nTime management",
+    "FAA Part 139 awareness\nICAO Standards familiarity\nAVSEC Protocols\nAir Cargo Operations\nGround Handling Coordination\nPassenger Service Recovery\nConflict Resolution\nWorkforce Scheduling\nEmergency Response Coordination\nRisk Assessment\nOperational Efficiency\nStakeholder Communication",
   languagesText: "English\nMalayalam",
-  certificationsText: "Sabre\nAmadeus",
+  certificationsText:
+    "IATA Certified Airport Professional - Aviation Security & Cargo Operations\nSabre GDS\nAmadeus GDS",
   achievementsText:
-    "Completed Amadeus and Sabre GDS training with distinction during Diploma program\nActive member of college Aviation Club, participated in airport simulation exercises",
+    "Completed Amadeus and Sabre GDS training with distinction during airport management studies<br>Participated in airport simulation exercises focused on passenger flow, terminal coordination, and safety response<br>Translated customer-facing experience into aviation-ready strengths such as service recovery, calm communication, and conflict handling",
   showAchievements: true,
   showExperience: false,
-  showProjects: true,
+  showProjects: false,
   showSkills: true,
   showLanguages: true,
   showContact: true,
   showPersonalDetails: true,
   showDeclaration: true,
   showCertifications: true,
-  showPhoto: true,
+  showPhoto: false,
   photoTopLeft: true,
   photoDataUrl: "",
   fontSizes: { overall: 0, name: 0, heading: 0, body: 0, detail: 0, label: 0 },
   education: [
     {
       id: "education-1",
-      heading: "Bachelor's of Business Administration",
+      heading: "Bachelor of Business Administration (BBA)",
       subheading: "",
       period: "",
       details:
-        "Specialized in Human Resource Management\nCalicut University\n2023 - 2026",
+        "University of Calicut\nSpecialization: Human Resource Management\nRelevant Coursework: Organizational Behavior, Labor Laws, and Strategic Management\nApplying HR principles to large-scale workforce environments such as international airports\n2023 - 2026 (Expected)",
     },
     {
       id: "education-2",
@@ -288,7 +319,7 @@ const initialResume: ResumeData = {
       subheading: "",
       period: "",
       details:
-        "Certified by IATA (International Air Transport Association)\n2 Core subject - Aviation security and cargo\nVision School of Aviation",
+        "Vision School of Aviation\nIATA Certified\nCore Focus: Aviation Security (AVSEC) and Air Cargo Operations\nTrained in international standards for cargo handling, dangerous goods awareness, and terminal security protocols\n2024 - 2025",
     },
     {
       id: "education-3",
@@ -299,16 +330,7 @@ const initialResume: ResumeData = {
     },
   ],
   experience: [],
-  projects: [
-    {
-      id: "project-1",
-      heading: "Flight Ticket Booking System",
-      subheading: "Contributor · Ongoing",
-      period: "2024 – Present",
-      details:
-        "Contributing to a team-developed flight reservation platform supporting multi-city search and real-time seat availability\nImplementing passenger booking workflows including fare selection, seat assignment, payment, and e-ticket generation\nConducting functional testing, regression testing, and UAT for end-to-end booking flows\nVerifying fare rules, baggage policies, cancellation and refund workflows against airline data\nDocumenting test cases and reporting defects using structured bug-tracking processes",
-    },
-  ],
+  projects: [],
   contact: [
     { id: "contact-1", label: "Phone", value: "8891412426" },
     { id: "contact-2", label: "Email", value: "sshahanavn@gmail.com" },
@@ -322,6 +344,70 @@ const initialResume: ResumeData = {
     { id: "personal-4", label: "Nationality", value: "Indian" },
     { id: "personal-5", label: "Passport No", value: "AK117356" },
   ],
+};
+
+const cabinCrewPreset: ResumeData = {
+  ...initialResume,
+  template: "modern",
+  title: "Cabin Crew Candidate",
+  aboutText:
+    "Service-oriented aviation candidate with an IATA-backed foundation in passenger handling, cabin safety awareness, and conflict resolution. Recognized for calm communication, professional presentation, and multilingual passenger support in fast-paced environments. Ready to deliver a safe, welcoming onboard experience while supporting service excellence and regulatory discipline.",
+  skillsText:
+    "Passenger Safety Awareness\nIn-flight Service Standards\nPassenger Handling\nConflict De-escalation\nEmergency Response Awareness\nCross-cultural Communication\nTeam Coordination\nService Recovery\nTime Management\nGrooming & Professional Etiquette\nUpselling Support\nMultilingual Passenger Assistance",
+  certificationsText:
+    "IATA Certified Airport Professional - Aviation Security & Cargo Operations\nSabre GDS\nAmadeus GDS\nFirst Aid / CPR (Add if completed)\nDG Awareness / Safety Training (Add if completed)",
+  achievementsText:
+    "Built passenger-facing communication skills through service-oriented environments where calm issue resolution and courtesy were essential<br>Maintained professionalism and service quality during high-volume, time-sensitive interactions<br>Developed aviation-ready awareness of safety, service flow, and customer confidence through airport studies and simulations",
+  showExperience: true,
+  showProjects: false,
+  showPhoto: false,
+  education: [...initialResume.education],
+  experience: [
+    {
+      id: "cabin-experience-1",
+      heading: "Customer Experience & Service Support",
+      subheading: "Transferable experience template",
+      period: "Add dates",
+      details:
+        "Resolved customer concerns with empathy and composure during peak service hours\nDelivered clear instructions and reassurance to first-time or anxious customers\nMaintained grooming, punctuality, and teamwork standards in a public-facing setting\nHandled service recovery professionally to protect brand experience and customer trust\nSupported team coordination to keep operations running on schedule",
+    },
+  ],
+  projects: [],
+};
+
+const groundSupportPreset: ResumeData = {
+  ...initialResume,
+  template: "professional",
+  title: "Airport Ground Staff & Passenger Support Candidate",
+  aboutText:
+    "Detail-oriented aviation candidate with an IATA-certified background in AVSEC and cargo operations, supported by BBA studies in Human Resource Management. Skilled in passenger assistance, check-in support, baggage coordination, and terminal-side problem solving. Focused on safe, efficient ground operations and a smooth passenger experience across busy airport environments.",
+  skillsText:
+    "Check-in & Boarding Support\nPassenger Assistance\nBaggage Coordination\nTerminal Operations Support\nAVSEC Protocols\nAir Cargo Operations\nGround Handling Operations\nCrowd Flow Coordination\nDocumentation Accuracy\nConflict Resolution\nService Recovery\nOperational Safety Awareness",
+  certificationsText:
+    "IATA Certified Airport Professional - Aviation Security & Cargo Operations\nSabre GDS\nAmadeus GDS",
+  achievementsText:
+    "Built frontline service skills that translate directly to terminal support, check-in assistance, and passenger issue handling<br>Strengthened operational discipline through airport-focused coursework in security, cargo, and service coordination<br>Practiced aviation terminology and workflow awareness through reservation-system and passenger-processing exercises",
+  showExperience: true,
+  showProjects: false,
+  showPhoto: false,
+  education: [...initialResume.education],
+  experience: [
+    {
+      id: "ground-experience-1",
+      heading: "Passenger Service / Frontline Support",
+      subheading: "Transferable experience template",
+      period: "Add dates",
+      details:
+        "Assisted customers quickly and accurately in fast-paced service environments\nHandled complaints, queue pressure, and special requests while maintaining professionalism\nSupported documentation accuracy, basic system updates, and handoff communication across teams\nPrioritized safety, punctuality, and smooth service delivery during busy operational periods\nWorked collaboratively to maintain workflow continuity and customer satisfaction",
+    },
+  ],
+  projects: [],
+};
+
+const RESUME_PRESETS: Record<ResumePresetId, ResumeData> = {
+  "airport-management": initialResume,
+  "cabin-crew": cabinCrewPreset,
+  "ground-support": groundSupportPreset,
 };
 
 // ── Utilities ─────────────────────────────────────────────────────────────────
@@ -418,6 +504,18 @@ function createItemId(prefix: string) {
   return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 }
 
+function cloneResumeData(resume: ResumeData): ResumeData {
+  return {
+    ...resume,
+    education: resume.education.map((entry) => ({ ...entry })),
+    experience: resume.experience.map((entry) => ({ ...entry })),
+    projects: resume.projects.map((entry) => ({ ...entry })),
+    contact: resume.contact.map((fact) => ({ ...fact })),
+    personalDetails: resume.personalDetails.map((fact) => ({ ...fact })),
+    fontSizes: { ...resume.fontSizes },
+  };
+}
+
 function splitLines(value: string) {
   return value
     .split("\n")
@@ -436,6 +534,94 @@ function splitLinesHtml(value: string): string[] {
       .filter(Boolean);
   }
   return value.split("\n").map((l) => l.trim()).filter(Boolean);
+}
+
+type PreviewSection = {
+  key: string;
+  estimatedHeight: number;
+  content: ReactNode;
+};
+
+function stripHtml(value: string) {
+  return value
+    .replace(/<br\s*\/?>/gi, "\n")
+    .replace(/<\/(p|div|li)>/gi, "\n")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&nbsp;/gi, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function estimateWrappedLines(value: string, charsPerLine: number) {
+  const clean = stripHtml(value);
+  if (!clean) return 0;
+  return Math.max(1, Math.ceil(clean.length / Math.max(charsPerLine, 1)));
+}
+
+function estimateBulletsHeight(
+  items: string[],
+  charsPerLine: number,
+  lineHeight: number,
+  gap = 1.5,
+) {
+  return items.reduce((sum, item) => {
+    const lines = estimateWrappedLines(item, charsPerLine);
+    return sum + lines * lineHeight + gap;
+  }, 0);
+}
+
+function estimateEntryHeight(
+  entry: ResumeEntry,
+  charsPerLine: number,
+  lineHeight: number,
+  headingHeight = 7,
+  tailGap = 4,
+) {
+  const bullets = [
+    ...(entry.subheading ? [entry.subheading] : []),
+    ...splitLinesHtml(entry.details),
+    ...(entry.period ? [entry.period] : []),
+  ];
+  return (
+    headingHeight +
+    estimateBulletsHeight(bullets, charsPerLine, lineHeight, 1.2) +
+    tailGap
+  );
+}
+
+function estimateChipRows(items: string[], rowCapacity: number) {
+  const total = items.reduce((sum, item) => sum + item.length + 6, 0);
+  return Math.max(1, Math.ceil(total / Math.max(rowCapacity, 1)));
+}
+
+function paginatePreviewSections(
+  sections: PreviewSection[],
+  availableHeight: number,
+) {
+  const pages: PreviewSection[][] = [];
+  let currentPage: PreviewSection[] = [];
+  let usedHeight = 0;
+
+  sections.forEach((section) => {
+    const sectionHeight = Math.min(section.estimatedHeight, availableHeight);
+    if (
+      currentPage.length > 0 &&
+      usedHeight + sectionHeight > availableHeight
+    ) {
+      pages.push(currentPage);
+      currentPage = [section];
+      usedHeight = sectionHeight;
+      return;
+    }
+    currentPage.push(section);
+    usedHeight += sectionHeight;
+  });
+
+  if (currentPage.length > 0) {
+    pages.push(currentPage);
+  }
+
+  return pages.length > 0 ? pages : [[]];
 }
 
 function getVisibleFacts(facts: ResumeFact[]) {
@@ -1454,7 +1640,10 @@ function ResumeSection({
       ? "border-b border-b-[#161e2e]/20 border-l-[3px] border-l-[#161e2e] pl-[2.5mm] pb-[2mm] font-black uppercase tracking-[0.14em] text-[#161e2e]"
       : "border-b border-b-slate-200 border-l-[3px] border-l-slate-700 pl-[2.5mm] pb-[2mm] font-black uppercase tracking-[0.14em] text-slate-800";
   return (
-    <section className="space-y-[3.5mm]">
+    <section
+      className="space-y-[3.5mm]"
+      style={{ breakInside: "avoid-page", pageBreakInside: "avoid" }}
+    >
       <h2 className={headingClass} style={{ fontSize: 'var(--fs-heading)' }}>{title}</h2>
       {children}
     </section>
@@ -1474,7 +1663,10 @@ function EntryBlock({
     ...(entry.period ? [entry.period] : []),
   ];
   return (
-    <article className="space-y-[2mm]">
+    <article
+      className="space-y-[2mm]"
+      style={{ breakInside: "avoid-page", pageBreakInside: "avoid" }}
+    >
       <div className="flex items-start justify-between gap-2">
         <h3
           className={`font-extrabold uppercase tracking-[0.04em] ${accentHeading ? "text-[#161e2e]" : "text-slate-900"}`}
@@ -1505,177 +1697,335 @@ function ClassicPreview({ resume }: { resume: ResumeData }) {
   const fontDef = RESUME_FONTS.find((f) => f.id === resume.fontFamily);
   const fontStyle = fontDef ? { fontFamily: fontDef.cssFamily } : {};
   const sz = computeFontSizes(resume);
+
+  const leftSections: PreviewSection[] = [];
+  const rightSections: PreviewSection[] = [];
+
+  if (resume.showPhoto && resume.photoDataUrl) {
+    leftSections.push({
+      key: "photo",
+      estimatedHeight: 66,
+      content: (
+        <div className="flex justify-center">
+          <Image
+            src={resume.photoDataUrl}
+            alt="Profile"
+            width={174}
+            height={197}
+            unoptimized
+            className="h-[57mm] w-[46mm] rounded-sm border border-slate-200 object-cover object-top shadow-sm"
+          />
+        </div>
+      ),
+    });
+  }
+
+  if (resume.showContact && vc.length > 0) {
+    leftSections.push({
+      key: "contact",
+      estimatedHeight:
+        12 +
+        estimateBulletsHeight(
+          vc.map((fact) => fact.value),
+          26,
+          6,
+          2,
+        ) +
+        4,
+      content: (
+        <ResumeSection title="Contact">
+          <div className="space-y-[3mm]">
+            {vc.map((f) => (
+              <p
+                key={f.id}
+                className="break-all leading-[2] text-slate-700"
+                style={{ fontSize: 'var(--fs-label)' }}
+              >
+                {f.value}
+              </p>
+            ))}
+          </div>
+        </ResumeSection>
+      ),
+    });
+  }
+
+  const skillItems = splitLines(resume.skillsText);
+  if (resume.showSkills && skillItems.length > 0) {
+    leftSections.push({
+      key: "skills",
+      estimatedHeight: 12 + estimateChipRows(skillItems, 28) * 8 + 4,
+      content: (
+        <ResumeSection title="Skills">
+          <div className="flex flex-wrap gap-[2mm]">
+            {skillItems.map((item) => (
+              <span
+                key={item}
+                className="inline-block rounded-md bg-slate-100 px-[3mm] leading-[5.5mm] text-slate-700"
+                style={{ fontSize: 'var(--fs-label)' }}
+              >
+                {item}
+              </span>
+            ))}
+          </div>
+        </ResumeSection>
+      ),
+    });
+  }
+
+  const languageItems = splitLines(resume.languagesText);
+  if (resume.showLanguages && languageItems.length > 0) {
+    leftSections.push({
+      key: "languages",
+      estimatedHeight: 12 + estimateChipRows(languageItems, 28) * 8 + 4,
+      content: (
+        <ResumeSection title="Language">
+          <div className="flex flex-wrap gap-[2mm]">
+            {languageItems.map((item) => (
+              <span
+                key={item}
+                className="inline-block rounded-md bg-slate-100 px-[3mm] leading-[5.5mm] text-slate-700"
+                style={{ fontSize: 'var(--fs-label)' }}
+              >
+                {item}
+              </span>
+            ))}
+          </div>
+        </ResumeSection>
+      ),
+    });
+  }
+
+  if (resume.showPersonalDetails && vp.length > 0) {
+    leftSections.push({
+      key: "personal-details",
+      estimatedHeight:
+        12 +
+        estimateBulletsHeight(
+          vp.map((fact) => `${fact.label ? `${fact.label}: ` : ""}${fact.value}`),
+          28,
+          6.3,
+          2,
+        ) +
+        4,
+      content: (
+        <ResumeSection title="Personal Details">
+          <div className="space-y-[3mm]">
+            {vp.map((f) => (
+              <p
+                key={f.id}
+                className="leading-[2] text-slate-700"
+                style={{ fontSize: 'var(--fs-label)' }}
+              >
+                {f.label && (
+                  <span className="font-bold text-slate-800">
+                    {f.label}:
+                  </span>
+                )}{" "}
+                {f.value}
+              </p>
+            ))}
+          </div>
+        </ResumeSection>
+      ),
+    });
+  }
+
+  rightSections.push({
+    key: "header",
+    estimatedHeight: resume.title ? 30 : 22,
+    content: (
+      <div className="border-b-2 border-slate-800 pb-[3mm]">
+        <h1 className="font-black uppercase leading-none tracking-[0.06em] text-slate-900" style={{ fontSize: 'var(--fs-name)' }}>
+          {resume.name || "Your Name"}
+        </h1>
+        {resume.title && (
+          <p className="mt-[2mm] font-semibold uppercase tracking-[0.2em] text-slate-500" style={{ fontSize: 'var(--fs-label)' }}>
+            {resume.title}
+          </p>
+        )}
+      </div>
+    ),
+  });
+
+  if (resume.aboutText.trim()) {
+    rightSections.push({
+      key: "about",
+      estimatedHeight:
+        12 + estimateWrappedLines(resume.aboutText, 82) * 6 + 6,
+      content: (
+        <ResumeSection title={resume.aboutTitle || "Profile Summary"}>
+          <p className="text-justify leading-[2] text-slate-700 [&_b]:font-bold [&_i]:italic [&_u]:underline" style={{ fontSize: 'var(--fs-body)' }} dangerouslySetInnerHTML={{ __html: resume.aboutText || "Write a short summary here." }} />
+        </ResumeSection>
+      ),
+    });
+  }
+
+  const educationEntries = resume.education.filter(
+    (entry) => entry.heading.trim() || entry.details.trim(),
+  );
+  if (educationEntries.length > 0) {
+    rightSections.push({
+      key: "education",
+      estimatedHeight:
+        12 +
+        educationEntries.reduce(
+          (sum, entry) => sum + estimateEntryHeight(entry, 74, 5.8, 7, 4),
+          0,
+        ) +
+        4,
+      content: (
+        <ResumeSection title="Education">
+          <div className="space-y-[5mm]">
+            {resume.education.map((e) => (
+              <div key={e.id} className="border-l-2 border-slate-200 pl-[3mm]">
+                <EntryBlock entry={e} />
+              </div>
+            ))}
+          </div>
+        </ResumeSection>
+      ),
+    });
+  }
+
+  if (resume.showExperience && resume.experience.length > 0) {
+    rightSections.push({
+      key: "experience",
+      estimatedHeight:
+        12 +
+        resume.experience.reduce(
+          (sum, entry) => sum + estimateEntryHeight(entry, 74, 5.8, 7, 4),
+          0,
+        ) +
+        4,
+      content: (
+        <ResumeSection title="Experience">
+          <div className="space-y-[5mm]">
+            {resume.experience.map((e) => (
+              <div key={e.id} className="border-l-2 border-slate-200 pl-[3mm]">
+                <EntryBlock entry={e} />
+              </div>
+            ))}
+          </div>
+        </ResumeSection>
+      ),
+    });
+  }
+
+  if (resume.showProjects && resume.projects.length > 0) {
+    rightSections.push({
+      key: "projects",
+      estimatedHeight:
+        12 +
+        resume.projects.reduce(
+          (sum, entry) => sum + estimateEntryHeight(entry, 74, 5.8, 7, 4),
+          0,
+        ) +
+        4,
+      content: (
+        <ResumeSection title="Projects">
+          <div className="space-y-[5mm]">
+            {resume.projects.map((e) => (
+              <div key={e.id} className="border-l-2 border-slate-200 pl-[3mm]">
+                <EntryBlock entry={e} />
+              </div>
+            ))}
+          </div>
+        </ResumeSection>
+      ),
+    });
+  }
+
+  const certificationItems = splitLines(resume.certificationsText);
+  if (resume.showCertifications && certificationItems.length > 0) {
+    rightSections.push({
+      key: "certifications",
+      estimatedHeight:
+        12 + estimateChipRows(certificationItems, 68) * 8 + 4,
+      content: (
+        <ResumeSection title="Certifications">
+          <div className="flex flex-wrap gap-[2mm]">
+            {certificationItems.map((item) => (
+              <span
+                key={item}
+                className="inline-block rounded-md bg-slate-100 px-[3mm] leading-[5.5mm] text-slate-700"
+                style={{ fontSize: 'var(--fs-label)' }}
+              >
+                {item}
+              </span>
+            ))}
+          </div>
+        </ResumeSection>
+      ),
+    });
+  }
+
+  const achievementItems = splitLinesHtml(resume.achievementsText);
+  if (resume.showAchievements && achievementItems.length > 0) {
+    rightSections.push({
+      key: "achievements",
+      estimatedHeight:
+        12 + estimateBulletsHeight(achievementItems, 78, 5.8, 1.5) + 4,
+      content: (
+        <ResumeSection title="Achievements">
+          <div className="space-y-[2mm]">
+            {achievementItems.map((item, i) => (
+              <div
+                key={i}
+                className="flex items-start gap-[2.5mm] leading-[1.8] text-slate-700"
+                style={{ fontSize: 'var(--fs-detail)' }}
+              >
+                <span className="mt-[3px] inline-block h-[5px] w-[5px] shrink-0 rounded-full bg-slate-400" />
+                <span dangerouslySetInnerHTML={{ __html: item }} />
+              </div>
+            ))}
+          </div>
+        </ResumeSection>
+      ),
+    });
+  }
+
+  if (resume.showDeclaration) {
+    rightSections.push({
+      key: "declaration",
+      estimatedHeight:
+        12 + estimateWrappedLines(resume.declarationText || "", 82) * 5.8 + 4,
+      content: (
+        <ResumeSection title={resume.declarationTitle || "Declaration"}>
+          <p className="text-justify leading-[1.75] text-slate-700 [&_b]:font-bold [&_i]:italic [&_u]:underline" style={{ fontSize: 'var(--fs-body)' }} dangerouslySetInnerHTML={{ __html: resume.declarationText || "Declaration text goes here." }} />
+        </ResumeSection>
+      ),
+    });
+  }
+
+  const leftPages = paginatePreviewSections(leftSections, 279);
+  const rightPages = paginatePreviewSections(rightSections, 271);
+  const totalPages = Math.max(leftPages.length, rightPages.length, 1);
+
   return (
     <div
       style={{ ...fontStyle, '--fs-name': sz.name, '--fs-heading': sz.heading, '--fs-body': sz.body, '--fs-detail': sz.detail, '--fs-label': sz.label } as unknown as React.CSSProperties}
-      className="mx-auto h-[297mm] w-[210mm] min-w-[210mm] overflow-hidden bg-white text-slate-900 shadow-[0_30px_80px_rgba(0,0,0,0.25)]"
+      className="resume-preview-stack mx-auto flex w-[210mm] min-w-[210mm] flex-col gap-[10mm]"
     >
-      <div className="flex h-full">
-        <div className="flex h-full w-[74mm] shrink-0 flex-col gap-[8mm] border-r border-slate-200 bg-slate-50 px-[5.5mm] py-[9mm]">
-          {resume.showPhoto && resume.photoDataUrl && (
-            <div className="flex justify-center">
-              <Image
-                src={resume.photoDataUrl}
-                alt="Profile"
-                width={174}
-                height={197}
-                unoptimized
-                className="h-[57mm] w-[46mm] rounded-sm border border-slate-200 object-cover object-top shadow-sm"
-              />
-            </div>
-          )}
-          {resume.showContact && vc.length > 0 && (
-            <ResumeSection title="Contact">
-              <div className="space-y-[3mm]">
-                {vc.map((f) => (
-                  <p
-                    key={f.id}
-                    className="break-all leading-[2] text-slate-700"
-                    style={{ fontSize: 'var(--fs-label)' }}
-                  >
-                    {f.value}
-                  </p>
-                ))}
-              </div>
-            </ResumeSection>
-          )}
-          {resume.showSkills && splitLines(resume.skillsText).length > 0 && (
-            <ResumeSection title="Skills">
-              <div className="flex flex-wrap gap-[2mm]">
-                {splitLines(resume.skillsText).map((item) => (
-                  <span
-                    key={item}
-                    className="inline-block rounded-md bg-slate-100 px-[3mm] leading-[5.5mm] text-slate-700"
-                    style={{ fontSize: 'var(--fs-label)' }}
-                  >
-                    {item}
-                  </span>
-                ))}
-              </div>
-            </ResumeSection>
-          )}
-          {resume.showLanguages &&
-            splitLines(resume.languagesText).length > 0 && (
-              <ResumeSection title="Language">
-                <div className="flex flex-wrap gap-[2mm]">
-                  {splitLines(resume.languagesText).map((item) => (
-                    <span
-                      key={item}
-                      className="inline-block rounded-md bg-slate-100 px-[3mm] leading-[5.5mm] text-slate-700"
-                      style={{ fontSize: 'var(--fs-label)' }}
-                    >
-                      {item}
-                    </span>
-                  ))}
-                </div>
-              </ResumeSection>
-            )}
-          {resume.showPersonalDetails && vp.length > 0 && (
-            <ResumeSection title="Personal Details">
-              <div className="space-y-[3mm]">
-                {vp.map((f) => (
-                  <p
-                    key={f.id}
-                    className="leading-[2] text-slate-700"
-                    style={{ fontSize: 'var(--fs-label)' }}
-                  >
-                    {f.label && (
-                      <span className="font-bold text-slate-800">
-                        {f.label}:
-                      </span>
-                    )}{" "}
-                    {f.value}
-                  </p>
-                ))}
-              </div>
-            </ResumeSection>
-          )}
-        </div>
-        <div className="flex h-full flex-1 flex-col gap-[7mm] min-w-0 px-[9mm] pt-[18mm] pb-[8mm]">
-          <div className="border-b-2 border-slate-800 pb-[3mm]">
-            <h1 className="font-black uppercase leading-none tracking-[0.06em] text-slate-900" style={{ fontSize: 'var(--fs-name)' }}>
-              {resume.name || "Your Name"}
-            </h1>
-            {resume.title && (
-              <p className="mt-[2mm] font-semibold uppercase tracking-[0.2em] text-slate-500" style={{ fontSize: 'var(--fs-label)' }}>
-                {resume.title}
-              </p>
-            )}
-          </div>
-          <ResumeSection title={resume.aboutTitle || "Profile Summary"}>
-            <p className="text-justify leading-[2] text-slate-700 [&_b]:font-bold [&_i]:italic [&_u]:underline" style={{ fontSize: 'var(--fs-body)' }} dangerouslySetInnerHTML={{ __html: resume.aboutText || "Write a short summary here." }} />
-          </ResumeSection>
-          <ResumeSection title="Education">
-            <div className="space-y-[5mm]">
-              {resume.education.map((e) => (
-                <div key={e.id} className="border-l-2 border-slate-200 pl-[3mm]">
-                  <EntryBlock entry={e} />
-                </div>
+      {Array.from({ length: totalPages }, (_, pageIndex) => (
+        <div
+          key={`classic-page-${pageIndex}`}
+          className="resume-preview-page min-h-[297mm] w-[210mm] overflow-hidden bg-white text-slate-900 shadow-[0_30px_80px_rgba(0,0,0,0.25)]"
+        >
+          <div className="flex min-h-[297mm] items-stretch">
+            <div className="flex w-[74mm] shrink-0 flex-col gap-[8mm] border-r border-slate-200 bg-slate-50 px-[5.5mm] py-[9mm]">
+              {(leftPages[pageIndex] ?? []).map((section) => (
+                <div key={section.key}>{section.content}</div>
               ))}
             </div>
-          </ResumeSection>
-          {resume.showExperience && resume.experience.length > 0 && (
-            <ResumeSection title="Experience">
-              <div className="space-y-[5mm]">
-                {resume.experience.map((e) => (
-                  <div key={e.id} className="border-l-2 border-slate-200 pl-[3mm]">
-                    <EntryBlock entry={e} />
-                  </div>
-                ))}
-              </div>
-            </ResumeSection>
-          )}
-          {resume.showProjects && resume.projects.length > 0 && (
-            <ResumeSection title="Projects">
-              <div className="space-y-[5mm]">
-                {resume.projects.map((e) => (
-                  <div key={e.id} className="border-l-2 border-slate-200 pl-[3mm]">
-                    <EntryBlock entry={e} />
-                  </div>
-                ))}
-              </div>
-            </ResumeSection>
-          )}
-          {resume.showCertifications &&
-            splitLines(resume.certificationsText).length > 0 && (
-              <ResumeSection title="Certifications">
-                <div className="flex flex-wrap gap-[2mm]">
-                  {splitLines(resume.certificationsText).map((item) => (
-                    <span
-                      key={item}
-                      className="inline-block rounded-md bg-slate-100 px-[3mm] leading-[5.5mm] text-slate-700"
-                      style={{ fontSize: 'var(--fs-label)' }}
-                    >
-                      {item}
-                    </span>
-                  ))}
-                </div>
-              </ResumeSection>
-            )}
-          {resume.showAchievements &&
-            splitLinesHtml(resume.achievementsText).length > 0 && (
-              <ResumeSection title="Achievements">
-                <div className="space-y-[2mm]">
-                  {splitLinesHtml(resume.achievementsText).map((item, i) => (
-                    <div
-                      key={i}
-                      className="flex items-start gap-[2.5mm] leading-[1.8] text-slate-700"
-                      style={{ fontSize: 'var(--fs-detail)' }}
-                    >
-                      <span className="mt-[3px] inline-block h-[5px] w-[5px] shrink-0 rounded-full bg-slate-400" />
-                      <span dangerouslySetInnerHTML={{ __html: item }} />
-                    </div>
-                  ))}
-                </div>
-              </ResumeSection>
-            )}
-          {resume.showDeclaration && (
-            <ResumeSection title={resume.declarationTitle || "Declaration"}>
-              <p className="text-justify leading-[1.75] text-slate-700 [&_b]:font-bold [&_i]:italic [&_u]:underline" style={{ fontSize: 'var(--fs-body)' }} dangerouslySetInnerHTML={{ __html: resume.declarationText || "Declaration text goes here." }} />
-            </ResumeSection>
-          )}
+            <div className="flex flex-1 flex-col gap-[7mm] min-w-0 px-[9mm] pt-[18mm] pb-[8mm]">
+              {(rightPages[pageIndex] ?? []).map((section) => (
+                <div key={section.key}>{section.content}</div>
+              ))}
+            </div>
+          </div>
         </div>
-      </div>
+      ))}
     </div>
   );
 }
@@ -1697,7 +2047,10 @@ function ProfessionalPreview({ resume }: { resume: ResumeData }) {
     children: ReactNode;
   }) {
     return (
-      <section className="space-y-[3.5mm]">
+      <section
+        className="space-y-[3.5mm]"
+        style={{ breakInside: "avoid-page", pageBreakInside: "avoid" }}
+      >
         <h2 className="border-b border-b-slate-300 border-l-[3px] border-l-slate-700 pb-[1.5mm] pl-[2.5mm] font-black uppercase tracking-[0.16em] text-slate-900" style={{ fontSize: 'var(--fs-heading)' }}>
           {title}
         </h2>
@@ -1709,7 +2062,7 @@ function ProfessionalPreview({ resume }: { resume: ResumeData }) {
   return (
     <div
       style={{ ...fontStyle, '--fs-name': sz.name, '--fs-heading': sz.heading, '--fs-body': sz.body, '--fs-detail': sz.detail, '--fs-label': sz.label } as unknown as React.CSSProperties}
-      className="mx-auto flex h-[297mm] w-[210mm] min-w-[210mm] flex-col bg-white px-[15mm] py-[12mm] text-slate-900 shadow-[0_30px_80px_rgba(0,0,0,0.25)]"
+      className="mx-auto flex min-h-[297mm] w-[210mm] min-w-[210mm] flex-col bg-white px-[15mm] py-[12mm] text-slate-900 shadow-[0_30px_80px_rgba(0,0,0,0.25)]"
     >
       <div className="mb-[6mm] shrink-0">
         {showPhoto ? (
@@ -1916,7 +2269,10 @@ function ModernPreview({ resume }: { resume: ResumeData }) {
     children: ReactNode;
   }) {
     return (
-      <section className="space-y-[3.5mm]">
+      <section
+        className="space-y-[3.5mm]"
+        style={{ breakInside: "avoid-page", pageBreakInside: "avoid" }}
+      >
         <h2 className="border-b border-b-[#161e2e]/20 border-l-[3px] border-l-[#161e2e] pb-[1.5mm] pl-[2mm] font-black uppercase tracking-[0.14em] text-[#161e2e]" style={{ fontSize: 'var(--fs-label)' }}>
           {title}
         </h2>
@@ -1933,7 +2289,10 @@ function ModernPreview({ resume }: { resume: ResumeData }) {
     children: ReactNode;
   }) {
     return (
-      <section className="space-y-[3.5mm]">
+      <section
+        className="space-y-[3.5mm]"
+        style={{ breakInside: "avoid-page", pageBreakInside: "avoid" }}
+      >
         <h2 className="border-b-[2px] border-b-[#161e2e] border-l-[3px] border-l-[#161e2e] pb-[1.5mm] pl-[2mm] font-black uppercase tracking-[0.14em] text-[#161e2e]" style={{ fontSize: 'var(--fs-heading)' }}>
           {title}
         </h2>
@@ -1945,7 +2304,7 @@ function ModernPreview({ resume }: { resume: ResumeData }) {
   return (
     <div
       style={{ ...fontStyle, '--fs-name': sz.name, '--fs-heading': sz.heading, '--fs-body': sz.body, '--fs-detail': sz.detail, '--fs-label': sz.label } as unknown as React.CSSProperties}
-      className="mx-auto flex h-[297mm] w-[210mm] min-w-[210mm] flex-col bg-white text-slate-900 shadow-[0_30px_80px_rgba(0,0,0,0.25)]"
+      className="mx-auto flex min-h-[297mm] w-[210mm] min-w-[210mm] flex-col bg-white text-slate-900 shadow-[0_30px_80px_rgba(0,0,0,0.25)]"
     >
       {/* Dark header */}
       <div className="flex shrink-0 min-h-[46mm] items-center gap-[5mm] bg-[#161e2e] px-[7mm] py-[5mm]">
@@ -1977,8 +2336,8 @@ function ModernPreview({ resume }: { resume: ResumeData }) {
       </div>
 
       {/* Body */}
-      <div className="flex flex-1 overflow-hidden">
-        <div className="flex h-full w-[74mm] shrink-0 flex-col gap-[8mm] border-r border-slate-200 bg-[#f3f5f7] px-[5.5mm] py-[8mm]">
+      <div className="flex min-h-[251mm] items-stretch">
+        <div className="flex w-[74mm] shrink-0 flex-col gap-[8mm] border-r border-slate-200 bg-[#f3f5f7] px-[5.5mm] py-[8mm]">
           {resume.showSkills && splitLines(resume.skillsText).length > 0 && (
             <ModernSidebar title="Skills">
               <div className="flex flex-wrap gap-[1.5mm]">
@@ -2047,7 +2406,7 @@ function ModernPreview({ resume }: { resume: ResumeData }) {
             </ModernSidebar>
           )}
         </div>
-        <div className="flex h-full flex-1 flex-col gap-[7mm] bg-white px-[7mm] py-[8mm]">
+        <div className="flex flex-1 flex-col gap-[7mm] bg-white px-[7mm] py-[8mm]">
           {resume.aboutText && (
             <ModernMain title={resume.aboutTitle || "Profile Summary"}>
               <p className="text-justify leading-[1.75] text-slate-700 [&_b]:font-bold [&_i]:italic [&_u]:underline" style={{ fontSize: 'var(--fs-body)' }} dangerouslySetInnerHTML={{ __html: resume.aboutText }} />
@@ -2181,7 +2540,7 @@ function loadDefaultPhoto(onLoad: (dataUrl: string) => void) {
 // ── Page ──────────────────────────────────────────────────────────────────────
 
 export default function ResumeBuilderPage() {
-  const [resume, setResume] = useState(initialResume);
+  const [resume, setResume] = useState(() => cloneResumeData(initialResume));
   const [pdfAction, setPdfAction] = useState<PdfAction>("idle");
   const [pdfViewerUrl, setPdfViewerUrl] = useState<string | null>(null);
   const [saveStatus, setSaveStatus] = useState<SaveStatus>("saved");
@@ -2239,14 +2598,14 @@ export default function ResumeBuilderPage() {
     } catch {
       /* ignore */
     }
-    setResume(resolved);
+    setResume(cloneResumeData(resolved));
     setIsStorageReady(true);
     if (!resolved.photoDataUrl) {
       loadDefaultPhoto((dataUrl) =>
         setResume((cur) => ({
           ...cur,
           photoDataUrl: dataUrl,
-          showPhoto: true,
+          showPhoto: cur.showPhoto,
         })),
       );
     }
@@ -2454,6 +2813,20 @@ export default function ResumeBuilderPage() {
   <style>
     @page { size: 210mm 297mm; margin: 0; }
     html, body { margin: 0; padding: 0; background: white; }
+    .resume-preview-stack {
+      gap: 0 !important;
+      width: 210mm !important;
+    }
+    .resume-preview-page {
+      box-shadow: none !important;
+      margin: 0 !important;
+      break-after: page;
+      page-break-after: always;
+    }
+    .resume-preview-page:last-child {
+      break-after: auto;
+      page-break-after: auto;
+    }
   </style>
   ${printScript}
 </head>
@@ -2515,7 +2888,7 @@ export default function ResumeBuilderPage() {
   }
 
   function handleReset() {
-    setResume(initialResume);
+    setResume(cloneResumeData(initialResume));
     try {
       window.localStorage.setItem(
         RESUME_STORAGE_KEY,
@@ -2525,8 +2898,27 @@ export default function ResumeBuilderPage() {
       /* ignore */
     }
     loadDefaultPhoto((dataUrl) =>
-      setResume((cur) => ({ ...cur, photoDataUrl: dataUrl, showPhoto: true })),
+      setResume((cur) => ({
+        ...cur,
+        photoDataUrl: dataUrl,
+        showPhoto: cur.showPhoto,
+      })),
     );
+  }
+
+  function applyCareerPreset(presetId: ResumePresetId) {
+    const preset = cloneResumeData(RESUME_PRESETS[presetId]);
+    setResume((cur) => ({
+      ...preset,
+      name: cur.name,
+      contact: cur.contact.map((fact) => ({ ...fact })),
+      personalDetails: cur.personalDetails.map((fact) => ({ ...fact })),
+      template: cur.template,
+      fontFamily: cur.fontFamily,
+      photoDataUrl: cur.photoDataUrl,
+      showPhoto: preset.showPhoto && Boolean(cur.photoDataUrl),
+      fontSizes: { ...cur.fontSizes },
+    }));
   }
 
   const isBusy = pdfAction !== "idle";
@@ -2693,6 +3085,49 @@ export default function ResumeBuilderPage() {
                     </p>
                   </button>
                 ))}
+              </div>
+            </div>
+
+            {/* Career preset selector */}
+            <div className="mb-6 rounded-2xl border border-vintage-cream/10 bg-vintage-slate/20 p-4">
+              <div className="mb-3 flex items-start justify-between gap-3">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-widest text-vintage-cream/50">
+                    Career Template
+                  </p>
+                  <p className="mt-1 text-xs text-vintage-cream/45">
+                    Swap in aviation-ready content for airport ops, cabin crew, or ground support while keeping your personal details.
+                  </p>
+                </div>
+                <span className="rounded-full border border-vintage-cream/10 px-2 py-1 text-[10px] uppercase tracking-[0.16em] text-vintage-cream/40">
+                  Content only
+                </span>
+              </div>
+              <div className="grid gap-2">
+                {CAREER_PRESETS.map((preset) => (
+                  <button
+                    key={preset.id}
+                    onClick={() => applyCareerPreset(preset.id)}
+                    className="rounded-xl border border-vintage-cream/10 bg-vintage-navy/30 p-3 text-left transition-all hover:border-vintage-cream/25 hover:bg-vintage-cream/5"
+                  >
+                    <div className="flex items-center justify-between gap-3">
+                      <div>
+                        <p className="text-sm font-semibold text-vintage-cream/85">
+                          {preset.name}
+                        </p>
+                        <p className="mt-1 text-[11px] leading-5 text-vintage-cream/45">
+                          {preset.desc}
+                        </p>
+                      </div>
+                      <span className="shrink-0 rounded-full bg-vintage-burgundy/15 px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-vintage-burgundy">
+                        {preset.shortName}
+                      </span>
+                    </div>
+                  </button>
+                ))}
+              </div>
+              <div className="mt-3 rounded-xl border border-amber-400/15 bg-amber-500/5 px-3 py-2 text-[11px] leading-5 text-amber-100/70">
+                Tip: ATS-focused roles usually perform better without a photo and without generic filler like “hard worker” or “team player.” Let achievements and aviation keywords do the heavy lifting.
               </div>
             </div>
 
