@@ -10,7 +10,7 @@ import type { jsPDF as JsPdf } from "jspdf";
 // ── Types ─────────────────────────────────────────────────────────────────────
 
 type TemplateId = "sidebar" | "professional" | "modern";
-type FontId = "roboto" | "lato" | "raleway" | "playfair" | "merriweather" | "montserrat" | "gelasio" | "ramaraja" | "googlesans";
+type FontId = "roboto" | "lato" | "raleway" | "playfair" | "merriweather" | "montserrat" | "gelasio" | "ramaraja" | "googlesans" | "urbanist" | "gabriela" | "parkinsans";
 
 type ResumeEntry = {
   id: string;
@@ -162,6 +162,33 @@ const RESUME_FONTS: {
     googleParam: "",
     ttfBase: "/fonts/GoogleSansFlex_24pt-Regular.ttf",
     ttfBold: "/fonts/GoogleSansFlex_24pt-Bold.ttf",
+  },
+  {
+    id: "urbanist",
+    name: "Urbanist",
+    label: "Minimal & geometric",
+    cssFamily: "'Urbanist', sans-serif",
+    googleParam: "",
+    ttfBase: "/fonts/Urbanist-Regular.ttf",
+    ttfBold: "/fonts/Urbanist-Black.ttf",
+  },
+  {
+    id: "gabriela",
+    name: "Gabriela",
+    label: "Elegant serif",
+    cssFamily: "'Gabriela', serif",
+    googleParam: "",
+    ttfBase: "/fonts/Gabriela-Regular.ttf",
+    ttfBold: "/fonts/Gabriela-Regular.ttf",
+  },
+  {
+    id: "parkinsans",
+    name: "Parkinsans",
+    label: "Friendly & rounded",
+    cssFamily: "'Parkinsans', sans-serif",
+    googleParam: "",
+    ttfBase: "/fonts/Parkinsans-Regular.ttf",
+    ttfBold: "/fonts/Parkinsans-Bold.ttf",
   },
 ];
 
@@ -335,6 +362,9 @@ function getStoredResume(raw: string): ResumeData | null {
       "gelasio",
       "ramaraja",
       "googlesans",
+      "urbanist",
+      "gabriela",
+      "parkinsans",
     ];
     return {
       ...initialResume,
@@ -453,6 +483,9 @@ const PDF_FONT_FALLBACK: Record<FontId, string> = {
   gelasio: "times",
   ramaraja: "times",
   googlesans: "helvetica",
+  urbanist: "helvetica",
+  gabriela: "times",
+  parkinsans: "helvetica",
 };
 
 async function loadFontIntoDoc(doc: JsPdf, fontId: FontId): Promise<string> {
