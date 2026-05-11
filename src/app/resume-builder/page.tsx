@@ -74,8 +74,11 @@ type ResumeData = {
 
 type PdfAction = "idle" | "viewing" | "downloading";
 type SaveStatus = "saved" | "unsaved" | "saving";
+type MobileView = "editor" | "preview";
+type PreviewZoomMode = "fit" | "read";
 
 const RESUME_STORAGE_KEY = "resume-builder-draft-v4";
+const RESUME_DEFAULT_PRESET_KEY = "resume-builder-default-preset-v1";
 
 const RESUME_FONTS: {
   id: FontId;
@@ -2111,7 +2114,7 @@ function RichEditor({
     <div className="rich-editor-wrap relative">
       {toolbar.visible && (
         <div
-          className="absolute z-50 flex items-center gap-0.5 rounded-lg bg-[#1e293b] px-1.5 py-1 shadow-xl"
+          className="absolute z-50 flex max-w-[calc(100vw-2rem)] items-center gap-0.5 overflow-x-auto rounded-lg bg-[#1e293b] px-1.5 py-1 shadow-xl"
           style={{ top: toolbar.top, left: toolbar.left }}
           onMouseDown={(e) => e.preventDefault()}
         >
@@ -2142,7 +2145,7 @@ function RichEditor({
         onMouseUp={refreshToolbar}
         onKeyUp={refreshToolbar}
         onBlur={() => setTimeout(() => setToolbar((t) => ({ ...t, visible: false })), 150)}
-        className={`w-full rounded-md border border-vintage-cream/10 bg-vintage-slate/30 px-3 py-2 text-xs text-vintage-cream outline-none focus:border-vintage-cream/30 focus:ring-1 focus:ring-vintage-cream/20 empty:before:text-vintage-cream/30 empty:before:content-[attr(data-placeholder)] ${className ?? ""}`}
+        className={`w-full rounded-md border border-vintage-cream/10 bg-vintage-slate/30 px-3 py-2 text-sm leading-6 text-vintage-cream outline-none focus:border-vintage-cream/30 focus:ring-1 focus:ring-vintage-cream/20 empty:before:text-vintage-cream/30 empty:before:content-[attr(data-placeholder)] sm:text-xs sm:leading-normal ${className ?? ""}`}
         style={{ minHeight, resize: "vertical", overflow: "auto" }}
         data-placeholder={placeholder}
       />
@@ -3592,7 +3595,7 @@ function ToggleField({
 }) {
   return (
     <label
-      className={`flex cursor-pointer items-center gap-3 text-sm ${disabled ? "text-vintage-cream/40" : "text-vintage-cream/80"}`}
+      className={`flex min-h-10 cursor-pointer items-center gap-3 text-sm ${disabled ? "text-vintage-cream/40" : "text-vintage-cream/80"}`}
     >
       <div
         onClick={() => !disabled && onChange(!checked)}
@@ -3618,13 +3621,13 @@ function SectionCard({
 }) {
   const [open, setOpen] = useState(defaultOpen);
   return (
-    <div className="overflow-hidden rounded-2xl border border-vintage-cream/10 bg-vintage-navy/40">
+    <div className="overflow-hidden rounded-xl border border-vintage-cream/10 bg-vintage-navy/40 sm:rounded-2xl">
       <button
         type="button"
         onClick={() => setOpen(!open)}
-        className="flex w-full items-center justify-between px-4 py-3 text-left transition-colors hover:bg-vintage-cream/5"
+        className="flex min-h-12 w-full items-center justify-between px-3 py-3 text-left transition-colors hover:bg-vintage-cream/5 sm:px-4"
       >
-        <h3 className="text-sm font-semibold uppercase tracking-[0.2em] text-vintage-cream/70">
+        <h3 className="text-[12px] font-semibold uppercase tracking-[0.14em] text-vintage-cream/70 sm:text-sm sm:tracking-[0.2em]">
           {title}
         </h3>
         <Icon
@@ -3635,7 +3638,7 @@ function SectionCard({
         />
       </button>
       {open && (
-        <div className="border-t border-vintage-cream/5 px-4 pb-4 pt-3">
+        <div className="border-t border-vintage-cream/5 px-3 pb-4 pt-3 sm:px-4">
           {children}
         </div>
       )}
@@ -3666,7 +3669,12 @@ export default function ResumeBuilderPage() {
   const [pdfViewerUrl, setPdfViewerUrl] = useState<string | null>(null);
   const [saveStatus, setSaveStatus] = useState<SaveStatus>("saved");
   const [isStorageReady, setIsStorageReady] = useState(false);
+  const [hasCustomDefault, setHasCustomDefault] = useState(false);
+  const [mobileView, setMobileView] = useState<MobileView>("editor");
+  const [previewZoomMode, setPreviewZoomMode] = useState<PreviewZoomMode>("read");
+  const [isMobileSheet, setIsMobileSheet] = useState(false);
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const editorSectionRef = useRef<HTMLElement>(null);
   const previewRef = useRef<HTMLDivElement>(null);
   const scaleWrapperRef = useRef<HTMLDivElement>(null);
   const previewContainerRef = useRef<HTMLDivElement>(null);
@@ -3675,6 +3683,7 @@ export default function ResumeBuilderPage() {
   const [typoOpen, setTypoOpen] = useState(false);
   const [typoTab, setTypoTab] = useState<"typeface" | "sizes" | "layout">("typeface");
   const [typoPos, setTypoPos] = useState({ x: 24, y: 140 });
+  const [careerTemplateOpen, setCareerTemplateOpen] = useState(false);
   const typoDragRef = useRef<{ startX: number; startY: number; startPx: number; startPy: number } | null>(null);
 
   // Inject Google Fonts stylesheet once
@@ -3713,8 +3722,21 @@ export default function ResumeBuilderPage() {
   }, []);
 
   useEffect(() => {
+    const mq = window.matchMedia("(max-width: 767px)");
+    const sync = () => setIsMobileSheet(mq.matches);
+    sync();
+    mq.addEventListener("change", sync);
+    return () => mq.removeEventListener("change", sync);
+  }, []);
+
+  useEffect(() => {
     let resolved = initialResume;
     try {
+      const defaultPreset = window.localStorage.getItem(RESUME_DEFAULT_PRESET_KEY);
+      const parsedDefault = defaultPreset ? getStoredResume(defaultPreset) : null;
+      setHasCustomDefault(Boolean(parsedDefault));
+      if (parsedDefault) resolved = parsedDefault;
+
       const stored = window.localStorage.getItem(RESUME_STORAGE_KEY);
       if (stored) {
         const p = getStoredResume(stored);
@@ -3756,17 +3778,25 @@ export default function ResumeBuilderPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [resume]);
 
-  // Responsive A4 preview: scale down to fit container width
+  // Responsive A4 preview. "Read" keeps the page legible on phones and allows
+  // horizontal panning; "Fit" shows the full width at once.
   useEffect(() => {
     const A4_PX = 794;
     const el = previewContainerRef.current;
     if (!el) return;
-    const calc = () => setPreviewScale(Math.min(1, el.clientWidth / A4_PX));
+    const calc = () => {
+      const fitScale = Math.min(1, el.clientWidth / A4_PX);
+      const readableScale =
+        window.innerWidth < 768
+          ? Math.min(0.72, Math.max(fitScale, 0.58))
+          : fitScale;
+      setPreviewScale(previewZoomMode === "read" ? readableScale : fitScale);
+    };
     calc();
     const ro = new ResizeObserver(calc);
     ro.observe(el);
     return () => ro.disconnect();
-  }, []);
+  }, [previewZoomMode]);
 
   // Track scaled height to clip bottom blank space
   useEffect(() => {
@@ -3788,6 +3818,40 @@ export default function ResumeBuilderPage() {
       setSaveStatus("saved");
     } catch {
       setSaveStatus("unsaved");
+    }
+  }
+
+  function getBrowserDefaultResume() {
+    try {
+      const stored = window.localStorage.getItem(RESUME_DEFAULT_PRESET_KEY);
+      const parsed = stored ? getStoredResume(stored) : null;
+      setHasCustomDefault(Boolean(parsed));
+      return parsed ?? initialResume;
+    } catch {
+      setHasCustomDefault(false);
+      return initialResume;
+    }
+  }
+
+  function handleSaveAsDefaultPreset() {
+    if (saveTimer.current) clearTimeout(saveTimer.current);
+    try {
+      const preset = cloneResumeData(resume);
+      window.localStorage.setItem(RESUME_DEFAULT_PRESET_KEY, JSON.stringify(preset));
+      window.localStorage.setItem(RESUME_STORAGE_KEY, JSON.stringify(preset));
+      setHasCustomDefault(true);
+      setSaveStatus("saved");
+    } catch {
+      setSaveStatus("unsaved");
+    }
+  }
+
+  function handleClearDefaultPreset() {
+    try {
+      window.localStorage.removeItem(RESUME_DEFAULT_PRESET_KEY);
+      setHasCustomDefault(false);
+    } catch {
+      /* ignore */
     }
   }
 
@@ -4013,22 +4077,25 @@ export default function ResumeBuilderPage() {
   }
 
   function handleReset() {
-    setResume(cloneResumeData(initialResume));
+    const defaultResume = getBrowserDefaultResume();
+    setResume(cloneResumeData(defaultResume));
     try {
       window.localStorage.setItem(
         RESUME_STORAGE_KEY,
-        JSON.stringify(initialResume),
+        JSON.stringify(defaultResume),
       );
     } catch {
       /* ignore */
     }
-    loadDefaultPhoto((dataUrl) =>
-      setResume((cur) => ({
-        ...cur,
-        photoDataUrl: dataUrl,
-        showPhoto: cur.showPhoto,
-      })),
-    );
+    if (!defaultResume.photoDataUrl) {
+      loadDefaultPhoto((dataUrl) =>
+        setResume((cur) => ({
+          ...cur,
+          photoDataUrl: dataUrl,
+          showPhoto: cur.showPhoto,
+        })),
+      );
+    }
   }
 
   function applyCareerPreset(presetId: ResumePresetId) {
@@ -4046,11 +4113,25 @@ export default function ResumeBuilderPage() {
     }));
   }
 
+  function showMobileView(view: MobileView) {
+    setMobileView(view);
+    requestAnimationFrame(() => {
+      const target =
+        view === "editor" ? editorSectionRef.current : previewContainerRef.current;
+      target?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  }
+
+  function toggleStylePanel() {
+    setMobileView("editor");
+    setTypoOpen((open) => !open);
+  }
+
   const isBusy = pdfAction !== "idle";
 
   return (
-    <main className="relative px-4 pb-20 pt-28 sm:px-6 lg:px-8">
-      <div className="mx-auto flex max-w-7xl flex-col gap-8">
+    <main className="relative px-3 pb-28 pt-20 sm:px-6 sm:pt-28 lg:px-8 xl:pb-20">
+      <div className="mx-auto flex max-w-7xl flex-col gap-5 sm:gap-8">
         {/* Page header */}
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="space-y-3">
@@ -4062,20 +4143,19 @@ export default function ResumeBuilderPage() {
             </Link>
             <div>
               <p className="badge badge-primary mb-3">Resume Builder</p>
-              <h1 className="max-w-3xl text-4xl font-bold tracking-tight text-vintage-cream md:text-5xl">
-                Build your resume with 3 professional templates.
+              <h1 className="max-w-3xl text-2xl font-bold tracking-tight text-vintage-cream sm:text-4xl md:text-5xl">
+                Build your resume with professional templates.
               </h1>
-              <p className="mt-3 max-w-2xl text-lg text-vintage-cream/70">
-                Edit on the left, preview live on the right. Download as a
-                ready-to-use PDF.
+              <p className="mt-2 max-w-2xl text-sm leading-6 text-vintage-cream/70 sm:mt-3 sm:text-lg">
+                Edit, style, preview, and export without leaving the page.
               </p>
             </div>
           </div>
-          <div className="flex flex-wrap gap-3">
+          <div className="grid w-full grid-cols-2 gap-2 sm:w-auto sm:flex sm:flex-wrap sm:gap-3">
             <button
               onClick={() => handlePdf("viewing")}
               disabled={isBusy}
-              className="btn-secondary disabled:cursor-not-allowed disabled:opacity-60"
+              className="btn-secondary min-h-11 px-3 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-60 sm:px-6 sm:py-3"
             >
               <Icon
                 icon={
@@ -4090,7 +4170,7 @@ export default function ResumeBuilderPage() {
             <button
               onClick={() => handlePdf("downloading")}
               disabled={isBusy}
-              className="btn-primary disabled:cursor-not-allowed disabled:opacity-60"
+              className="btn-primary min-h-11 px-3 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-60 sm:px-6 sm:py-3"
             >
               <Icon
                 icon={
@@ -4105,11 +4185,41 @@ export default function ResumeBuilderPage() {
           </div>
         </div>
 
-        <div className="grid gap-8 xl:grid-cols-[480px_minmax(0,1fr)]">
+        <div className="sticky top-3 z-40 grid grid-cols-2 gap-2 rounded-2xl border border-vintage-cream/10 bg-vintage-navy/90 p-1 shadow-xl shadow-black/30 backdrop-blur-xl xl:hidden">
+          {(["editor", "preview"] as MobileView[]).map((view) => (
+            <button
+              key={view}
+              type="button"
+              onClick={() => showMobileView(view)}
+              className={`flex min-h-11 items-center justify-center gap-2 rounded-xl text-sm font-semibold transition-colors ${
+                mobileView === view
+                  ? "bg-vintage-burgundy text-white"
+                  : "text-vintage-cream/65 hover:bg-vintage-cream/10 hover:text-vintage-cream"
+              }`}
+            >
+              <Icon
+                icon={
+                  view === "editor"
+                    ? "solar:pen-new-square-linear"
+                    : "solar:document-text-linear"
+                }
+                className="text-lg"
+              />
+              {view === "editor" ? "Edit" : "Preview"}
+            </button>
+          ))}
+        </div>
+
+        <div className="grid min-w-0 gap-5 xl:grid-cols-[480px_minmax(0,1fr)] xl:gap-8">
           {/* ── Edit panel ── */}
-          <section className="glass rounded-[28px] border border-vintage-cream/15 p-6 shadow-2xl shadow-black/20">
+          <section
+            ref={editorSectionRef}
+            className={`glass rounded-2xl border border-vintage-cream/15 p-3 shadow-2xl shadow-black/20 sm:rounded-[28px] sm:p-6 ${
+              mobileView === "editor" ? "block" : "hidden xl:block"
+            }`}
+          >
             {/* Panel header */}
-            <div className="mb-5 flex items-center justify-between gap-4">
+            <div className="mb-4 flex flex-col gap-3 sm:mb-5 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
               <div>
                 <h2 className="text-xl font-semibold text-vintage-cream">
                   Resume Editor
@@ -4138,24 +4248,32 @@ export default function ResumeBuilderPage() {
                   )}
                 </div>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="grid grid-cols-2 gap-2 sm:flex sm:items-center">
                 <button
                   onClick={handleSaveNow}
                   disabled={saveStatus === "saved"}
-                  className="flex items-center gap-1.5 rounded-full border border-vintage-cream/15 px-3 py-1.5 text-sm font-medium text-vintage-cream/70 transition-colors hover:border-vintage-cream/30 hover:text-vintage-cream disabled:cursor-default disabled:opacity-40"
+                  className="flex min-h-10 items-center justify-center gap-1.5 rounded-xl border border-vintage-cream/15 px-3 py-2 text-sm font-medium text-vintage-cream/70 transition-colors hover:border-vintage-cream/30 hover:text-vintage-cream disabled:cursor-default disabled:opacity-40 sm:min-h-0 sm:rounded-full sm:py-1.5"
                 >
                   <Icon icon="solar:floppy-disk-linear" /> Save
                 </button>
                 <button
                   onClick={handleReset}
-                  className="rounded-full border border-vintage-cream/15 px-3 py-1.5 text-sm font-medium text-vintage-cream/50 transition-colors hover:border-vintage-cream/30 hover:text-vintage-cream"
+                  className="min-h-10 rounded-xl border border-vintage-cream/15 px-3 py-2 text-sm font-medium text-vintage-cream/50 transition-colors hover:border-vintage-cream/30 hover:text-vintage-cream sm:min-h-0 sm:rounded-full sm:py-1.5"
                 >
                   Reset
                 </button>
                 <button
-                  onClick={() => setTypoOpen((v) => !v)}
+                  onClick={handleSaveAsDefaultPreset}
+                  title="Save current resume as your browser default preset"
+                  className="flex min-h-10 items-center justify-center gap-1.5 rounded-xl border border-vintage-cream/15 px-3 py-2 text-sm font-medium text-vintage-cream/60 transition-colors hover:border-vintage-cream/30 hover:text-vintage-cream sm:min-h-0 sm:rounded-full sm:py-1.5"
+                >
+                  <Icon icon="solar:star-linear" className="text-base" />
+                  Default
+                </button>
+                <button
+                  onClick={toggleStylePanel}
                   title="Style & Typography"
-                  className={`flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-sm font-medium transition-colors ${typoOpen ? "border-vintage-burgundy bg-vintage-burgundy/15 text-vintage-cream" : "border-vintage-cream/15 text-vintage-cream/50 hover:border-vintage-cream/30 hover:text-vintage-cream"}`}
+                  className={`flex min-h-10 items-center justify-center gap-1.5 rounded-xl border px-3 py-2 text-sm font-medium transition-colors sm:min-h-0 sm:rounded-full sm:py-1.5 ${typoOpen ? "border-vintage-burgundy bg-vintage-burgundy/15 text-vintage-cream" : "border-vintage-cream/15 text-vintage-cream/50 hover:border-vintage-cream/30 hover:text-vintage-cream"}`}
                 >
                   <Icon icon="solar:palette-bold-duotone" className="text-base" />
                   Style
@@ -4164,20 +4282,57 @@ export default function ResumeBuilderPage() {
             </div>
 
             {/* Career preset selector */}
-            <div className="mb-6 rounded-2xl border border-vintage-cream/10 bg-vintage-slate/20 p-4">
-              <div className="mb-3 flex items-start justify-between gap-3">
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-widest text-vintage-cream/50">
-                    Career Template
-                  </p>
-                  <p className="mt-1 text-xs text-vintage-cream/45">
-                    Swap in ready-made content for your industry while keeping your personal details.
-                  </p>
+            <div className="mb-6 overflow-hidden rounded-2xl border border-vintage-cream/10 bg-vintage-slate/20">
+              <button
+                onClick={() => setCareerTemplateOpen(!careerTemplateOpen)}
+                className="w-full p-4 text-left transition-colors hover:bg-vintage-cream/5"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-widest text-vintage-cream/50">
+                      Career Template
+                    </p>
+                    <p className="mt-1 text-xs text-vintage-cream/45">
+                      Swap in ready-made content for your industry while keeping your personal details.
+                    </p>
+                  </div>
+                  <div className="flex shrink-0 items-center gap-2">
+                    <span className="rounded-full border border-vintage-cream/10 px-2 py-1 text-[10px] uppercase tracking-[0.16em] text-vintage-cream/40">
+                      Content only
+                    </span>
+                    <Icon
+                      icon={
+                        careerTemplateOpen
+                          ? "solar:alt-arrow-up-linear"
+                          : "solar:alt-arrow-down-linear"
+                      }
+                      className="text-lg text-vintage-cream/40 transition-transform"
+                    />
+                  </div>
                 </div>
-                <span className="rounded-full border border-vintage-cream/10 px-2 py-1 text-[10px] uppercase tracking-[0.16em] text-vintage-cream/40">
-                  Content only
-                </span>
-              </div>
+              </button>
+              {careerTemplateOpen && (
+              <div className="border-t border-vintage-cream/5 p-4">
+              {hasCustomDefault && (
+                <div className="mb-4 rounded-xl border border-vintage-burgundy/25 bg-vintage-burgundy/10 p-3">
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <p className="text-sm font-semibold text-vintage-cream/85">
+                        My Default is active
+                      </p>
+                      <p className="mt-1 text-[11px] leading-5 text-vintage-cream/45">
+                        Reset and fresh starts use the preset saved in this browser.
+                      </p>
+                    </div>
+                    <button
+                      onClick={handleClearDefaultPreset}
+                      className="shrink-0 rounded-full border border-vintage-cream/10 px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-vintage-cream/45 transition-colors hover:border-vintage-cream/25 hover:text-vintage-cream"
+                    >
+                      Clear
+                    </button>
+                  </div>
+                </div>
+              )}
               <div className="space-y-4">
                 {CAREER_GROUPS.map((group) => {
                   const groupPresets = CAREER_PRESETS.filter((p) => group.presets.includes(p.id));
@@ -4216,6 +4371,8 @@ export default function ResumeBuilderPage() {
                   );
                 })}
               </div>
+              </div>
+              )}
             </div>
 
             <div className="space-y-3">
@@ -4699,7 +4856,7 @@ export default function ResumeBuilderPage() {
                     </button>
                   </div>
                   {resume.personalDetails.map((fact) => (
-                    <div key={fact.id} className="flex items-center gap-2">
+                    <div key={fact.id} className="grid grid-cols-[minmax(0,1fr)_auto] gap-2 sm:flex sm:items-center">
                       <input
                         value={fact.label}
                         onChange={(e) =>
@@ -4710,7 +4867,7 @@ export default function ResumeBuilderPage() {
                             e.target.value,
                           )
                         }
-                        className="input-field w-[110px] shrink-0 text-xs"
+                        className="input-field col-span-2 text-xs sm:col-span-1 sm:w-[110px] sm:shrink-0"
                         placeholder="Label"
                       />
                       <input
@@ -4723,7 +4880,7 @@ export default function ResumeBuilderPage() {
                             e.target.value,
                           )
                         }
-                        className="input-field flex-1 text-xs"
+                        className="input-field min-w-0 flex-1 text-xs"
                         placeholder="Value"
                       />
                       {resume.personalDetails.length > 1 && (
@@ -4788,8 +4945,12 @@ export default function ResumeBuilderPage() {
           </section>
 
           {/* ── A4 Preview ── */}
-          <section className="space-y-4">
-            <div className="flex items-center justify-between gap-3">
+          <section
+            className={`space-y-3 sm:space-y-4 ${
+              mobileView === "preview" ? "block" : "hidden xl:block"
+            } min-w-0`}
+          >
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <h2 className="text-xl font-semibold text-vintage-cream">
                   Live Preview
@@ -4803,12 +4964,30 @@ export default function ResumeBuilderPage() {
                   </span>
                 </h2>
               </div>
-              <div className="badge">210mm × 297mm</div>
+              <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:overflow-visible sm:pb-0">
+                <div className="flex rounded-xl border border-vintage-cream/10 bg-vintage-navy/50 p-1 xl:hidden">
+                  {(["read", "fit"] as PreviewZoomMode[]).map((mode) => (
+                    <button
+                      key={mode}
+                      type="button"
+                      onClick={() => setPreviewZoomMode(mode)}
+                      className={`min-h-9 rounded-lg px-3 text-xs font-semibold uppercase tracking-[0.12em] transition-colors ${
+                        previewZoomMode === mode
+                          ? "bg-vintage-burgundy text-white"
+                          : "text-vintage-cream/55 hover:bg-vintage-cream/10 hover:text-vintage-cream"
+                      }`}
+                    >
+                      {mode === "read" ? "Read" : "Fit"}
+                    </button>
+                  ))}
+                </div>
+                <div className="badge shrink-0">210mm × 297mm</div>
+              </div>
             </div>
 
             <div
               ref={previewContainerRef}
-              className="overflow-hidden rounded-[28px] border border-vintage-cream/10 bg-black/10 p-4 shadow-2xl shadow-black/20"
+              className="max-h-[76dvh] w-full max-w-full overflow-auto overscroll-contain rounded-2xl border border-vintage-cream/10 bg-black/10 p-2 shadow-2xl shadow-black/20 sm:rounded-[28px] sm:p-4 xl:max-h-none xl:overflow-hidden"
             >
               <div
                 style={{
@@ -4848,6 +5027,51 @@ export default function ResumeBuilderPage() {
       </div>
 
       {/* ── PDF Viewer Modal ─────────────────────────────────────────────── */}
+      <nav className="fixed inset-x-3 bottom-[calc(env(safe-area-inset-bottom)+0.75rem)] z-[9997] grid grid-cols-4 gap-1 rounded-2xl border border-vintage-cream/15 bg-vintage-navy/95 p-1.5 shadow-2xl shadow-black/50 backdrop-blur-xl xl:hidden">
+        <button
+          type="button"
+          onClick={() => showMobileView("editor")}
+          className={`flex min-h-14 flex-col items-center justify-center gap-1 rounded-xl text-[11px] font-semibold ${
+            mobileView === "editor" ? "bg-vintage-burgundy text-white" : "text-vintage-cream/65"
+          }`}
+        >
+          <Icon icon="solar:pen-new-square-linear" className="text-xl" />
+          Edit
+        </button>
+        <button
+          type="button"
+          onClick={() => showMobileView("preview")}
+          className={`flex min-h-14 flex-col items-center justify-center gap-1 rounded-xl text-[11px] font-semibold ${
+            mobileView === "preview" ? "bg-vintage-burgundy text-white" : "text-vintage-cream/65"
+          }`}
+        >
+          <Icon icon="solar:document-text-linear" className="text-xl" />
+          Preview
+        </button>
+        <button
+          type="button"
+          onClick={toggleStylePanel}
+          className={`flex min-h-14 flex-col items-center justify-center gap-1 rounded-xl text-[11px] font-semibold ${
+            typoOpen ? "bg-vintage-burgundy text-white" : "text-vintage-cream/65"
+          }`}
+        >
+          <Icon icon="solar:palette-bold-duotone" className="text-xl" />
+          Style
+        </button>
+        <button
+          type="button"
+          onClick={() => handlePdf("downloading")}
+          disabled={isBusy}
+          className="flex min-h-14 flex-col items-center justify-center gap-1 rounded-xl text-[11px] font-semibold text-vintage-cream/65 disabled:opacity-45"
+        >
+          <Icon
+            icon={pdfAction === "downloading" ? "solar:refresh-linear" : "solar:download-linear"}
+            className={`text-xl ${pdfAction === "downloading" ? "animate-spin" : ""}`}
+          />
+          PDF
+        </button>
+      </nav>
+
       {pdfViewerUrl && (
         <div
           className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm"
@@ -4908,13 +5132,14 @@ export default function ResumeBuilderPage() {
       {/* ── Floating Style & Typography Panel ────────────────────────── */}
       {typoOpen && (
         <div
-          className="fixed z-[9998] w-80 overflow-hidden rounded-2xl border border-vintage-cream/15 bg-vintage-navy/95 shadow-2xl shadow-black/50 backdrop-blur-xl"
-          style={{ left: typoPos.x, top: typoPos.y }}
+          className="fixed inset-x-3 bottom-[calc(env(safe-area-inset-bottom)+5.25rem)] z-[9998] max-h-[72dvh] overflow-hidden rounded-2xl border border-vintage-cream/15 bg-vintage-navy/95 shadow-2xl shadow-black/50 backdrop-blur-xl md:inset-auto md:w-80"
+          style={isMobileSheet ? undefined : { left: typoPos.x, top: typoPos.y }}
         >
           {/* Drag handle */}
           <div
             className="flex cursor-grab select-none items-center justify-between gap-3 border-b border-vintage-cream/10 px-4 py-3 active:cursor-grabbing"
             onPointerDown={(e) => {
+              if (isMobileSheet) return;
               typoDragRef.current = { startX: e.clientX, startY: e.clientY, startPx: typoPos.x, startPy: typoPos.y };
               e.currentTarget.setPointerCapture(e.pointerId);
             }}

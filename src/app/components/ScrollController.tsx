@@ -1,15 +1,27 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import type { PointerEvent } from "react";
+import { usePathname } from "next/navigation";
 import GlobeCanvas from "./GlobeCanvas";
 
 const RADIUS = 44;
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 
 export default function ScrollController() {
+  const pathname = usePathname();
   const [progress, setProgress] = useState(0);
   const [visible, setVisible] = useState(false);
+  const [dragging, setDragging] = useState(false);
   const externalLambdaRef = useRef(0);
+  const dragRef = useRef<{
+    pointerId: number;
+    startX: number;
+    startY: number;
+    startScrollY: number;
+    didDrag: boolean;
+  } | null>(null);
+  const isResumeBuilder = pathname?.startsWith("/resume-builder");
 
   useEffect(() => {
     const onScroll = () => {
@@ -27,10 +39,62 @@ export default function ScrollController() {
   }, []);
 
   const handleClick = () => {
+    if (dragRef.current?.didDrag) return;
     if (progress > 0.88) {
       window.scrollTo({ top: 0, behavior: "smooth" });
     } else {
       window.scrollBy({ top: window.innerHeight * 0.85, behavior: "smooth" });
+    }
+  };
+
+  const handlePointerDown = (event: PointerEvent<HTMLButtonElement>) => {
+    dragRef.current = {
+      pointerId: event.pointerId,
+      startX: event.clientX,
+      startY: event.clientY,
+      startScrollY: window.scrollY,
+      didDrag: false,
+    };
+    setDragging(true);
+    event.currentTarget.setPointerCapture(event.pointerId);
+  };
+
+  const handlePointerMove = (event: PointerEvent<HTMLButtonElement>) => {
+    const drag = dragRef.current;
+    if (!drag || drag.pointerId !== event.pointerId) return;
+
+    const dx = event.clientX - drag.startX;
+    const dy = event.clientY - drag.startY;
+    const distance = Math.hypot(dx, dy);
+
+    if (distance < 5) return;
+
+    drag.didDrag = true;
+    const total = document.documentElement.scrollHeight - window.innerHeight;
+    const nextY = Math.max(0, Math.min(total, drag.startScrollY - dy * 3));
+    window.scrollTo({ top: nextY, behavior: "auto" });
+
+    // Let horizontal thumb movement spin the globe a little while vertical drag scrolls.
+    externalLambdaRef.current += dx * 0.02;
+  };
+
+  const endDrag = (event: PointerEvent<HTMLButtonElement>) => {
+    const drag = dragRef.current;
+    if (!drag || drag.pointerId !== event.pointerId) return;
+
+    setDragging(false);
+    try {
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    } catch {
+      /* ignore */
+    }
+
+    if (drag.didDrag) {
+      window.setTimeout(() => {
+        if (dragRef.current === drag) dragRef.current = null;
+      }, 0);
+    } else {
+      dragRef.current = null;
     }
   };
 
@@ -39,19 +103,37 @@ export default function ScrollController() {
 
   return (
     <button
+      type="button"
       onClick={handleClick}
+      onPointerDown={handlePointerDown}
+      onPointerMove={handlePointerMove}
+      onPointerUp={endDrag}
+      onPointerCancel={endDrag}
       aria-label={atTop ? "Back to top" : "Scroll down"}
       className={[
-        "fixed bottom-6 left-1/2 -translate-x-1/2 z-50 transition-all duration-500 ease-out",
+        "fixed left-1/2 -translate-x-1/2 z-50 touch-none transition-all duration-500 ease-out",
+        isResumeBuilder
+          ? "bottom-[calc(env(safe-area-inset-bottom)+5.75rem)] xl:bottom-6"
+          : "bottom-6",
         visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6 pointer-events-none",
       ].join(" ")}
     >
-      <div className="relative w-[96px] h-[96px] group">
+      <div
+        className={[
+          "relative h-[96px] w-[96px] group transition-transform duration-200",
+          dragging ? "scale-105 cursor-grabbing" : "cursor-grab active:scale-105",
+        ].join(" ")}
+      >
         {/* Outer glow ring */}
         <div className="absolute inset-0 rounded-full bg-[#0081A7]/10 blur-md scale-110 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
         {/* Dark backdrop */}
-        <div className="absolute inset-0 rounded-full bg-[#030014]/70 backdrop-blur-md border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.6)]" />
+        <div
+          className={[
+            "absolute inset-0 rounded-full bg-[#030014]/70 backdrop-blur-md border shadow-[0_8px_32px_rgba(0,0,0,0.6)] transition-colors",
+            dragging ? "border-[#0081A7]/70" : "border-white/10",
+          ].join(" ")}
+        />
 
         {/* Progress ring */}
         <svg
