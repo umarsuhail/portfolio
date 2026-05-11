@@ -6,6 +6,7 @@ import ChatBot from "./chatbot/ChatBot";
 import BackgroundEffects from "./components/BackgroundEffects";
 import SmoothScroll from "./components/SmoothScroll";
 import PageTransition from "./components/PageTransition";
+import ScrollController from "./components/ScrollController";
 
 const quicksand = Quicksand({
   subsets: ["latin"],
@@ -67,6 +68,7 @@ export default function RootLayout({
         <SmoothScroll>
           <PageTransition>{children}</PageTransition>
         </SmoothScroll>
+        <ScrollController />
         <ChatBot />
       </body>
     </html>

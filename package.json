@@ -14,8 +14,11 @@
     "@tsparticles/confetti": "^3.5.0",
     "@tsparticles/engine": "^3.5.0",
     "@tsparticles/react": "^3.0.0",
+    "@types/d3-geo": "^3.1.0",
+    "@types/topojson-client": "^3.1.5",
     "autoprefixer": "^10.5.0",
     "axios": "^1.7.7",
+    "d3-geo": "^3.1.1",
     "dotenv": "^16.4.5",
     "framer-motion": "12.23.25",
     "html2canvas": "^1.4.1",
@@ -26,6 +29,7 @@
     "react": "^18",
     "react-dom": "^18",
     "sharp": "^0.33.5",
+    "topojson-client": "^3.1.0",
     "tsparticles": "^3.5.0"
   },
   "devDependencies": {

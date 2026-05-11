@@ -9,7 +9,7 @@ import type { jsPDF as JsPdf } from "jspdf";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
-type TemplateId = "sidebar" | "professional" | "modern";
+type TemplateId = "sidebar" | "professional" | "modern" | "executive" | "compact" | "accent-line";
 type FontId = "roboto" | "lato" | "raleway" | "playfair" | "merriweather" | "montserrat" | "gelasio" | "ramaraja" | "googlesans" | "urbanist" | "gabriela" | "parkinsans";
 
 type ResumeEntry = {
@@ -19,7 +19,11 @@ type ResumeEntry = {
   period: string;
   details: string;
 };
-type ResumePresetId = "airport-management" | "cabin-crew" | "ground-support";
+type ResumePresetId =
+  | "airport-management" | "cabin-crew" | "ground-support"
+  | "software-engineer" | "it-fresher"
+  | "doctor" | "nurse"
+  | "finance" | "marketing";
 type ResumeFact = {
   id: string;
   label: string;
@@ -216,15 +220,42 @@ const TEMPLATES: {
     desc: "Dark header, two-column body",
     ats: false,
   },
+  {
+    id: "executive",
+    name: "Executive",
+    desc: "Teal accent bar, two-column body — ATS safe",
+    ats: true,
+  },
+  {
+    id: "compact",
+    name: "Compact Clean",
+    desc: "Dense single-column, perfect for ATS parsing",
+    ats: true,
+  },
+  {
+    id: "accent-line",
+    name: "Accent Line",
+    desc: "Bold top colour strip, name/contact split header",
+    ats: true,
+  },
 ];
 
 const TEMPLATE_BASE_SIZES: Record<
   TemplateId,
   { name: number; titleSub: number; heading: number; body: number; detail: number; label: number }
 > = {
-  sidebar:      { name: 30, titleSub: 12.5, heading: 12,   body: 13,   detail: 12.5, label: 11   },
-  professional: { name: 30, titleSub: 12,   heading: 12,   body: 11.5, detail: 11,   label: 11   },
-  modern:       { name: 24, titleSub: 11,   heading: 12,   body: 11.5, detail: 11,   label: 10.5 },
+  sidebar:       { name: 30, titleSub: 12.5, heading: 12,   body: 13,   detail: 12.5, label: 11   },
+  professional:  { name: 30, titleSub: 12,   heading: 12,   body: 11.5, detail: 11,   label: 11   },
+  modern:        { name: 24, titleSub: 11,   heading: 12,   body: 11.5, detail: 11,   label: 10.5 },
+  executive:     { name: 28, titleSub: 12,   heading: 11.5, body: 11.5, detail: 11,   label: 10.5 },
+  compact:       { name: 26, titleSub: 11,   heading: 11,   body: 10.5, detail: 10.5, label: 10   },
+  "accent-line": { name: 28, titleSub: 11.5, heading: 11.5, body: 11.5, detail: 11,   label: 10.5 },
+};
+
+type CareerGroup = {
+  label: string;
+  icon: string;
+  presets: ResumePresetId[];
 };
 
 const CAREER_PRESETS: {
@@ -234,18 +265,19 @@ const CAREER_PRESETS: {
   desc: string;
   recommendedTemplate: TemplateId;
 }[] = [
+  // Aviation
   {
     id: "airport-management",
     name: "Airport Management",
     shortName: "Airport Ops",
-    desc: "FAA, AVSEC, cargo, compliance, and terminal operations keywords.",
+    desc: "AVSEC, cargo, compliance, and terminal operations keywords.",
     recommendedTemplate: "professional",
   },
   {
     id: "cabin-crew",
     name: "Cabin Crew",
     shortName: "Cabin Crew",
-    desc: "Passenger safety, service recovery, grooming, and multilingual support.",
+    desc: "Passenger safety, service delivery, grooming, and multilingual support.",
     recommendedTemplate: "modern",
   },
   {
@@ -255,6 +287,58 @@ const CAREER_PRESETS: {
     desc: "Check-in, baggage, passenger assistance, and frontline terminal support.",
     recommendedTemplate: "professional",
   },
+  // IT
+  {
+    id: "software-engineer",
+    name: "Software Engineer",
+    shortName: "SWE",
+    desc: "Full-stack, system design, CI/CD, and engineering leadership keywords.",
+    recommendedTemplate: "professional",
+  },
+  {
+    id: "it-fresher",
+    name: "IT Fresher / Graduate",
+    shortName: "IT Grad",
+    desc: "Projects, internships, college academics, and entry-level tech skills.",
+    recommendedTemplate: "modern",
+  },
+  // Medical
+  {
+    id: "doctor",
+    name: "Doctor / Physician",
+    shortName: "Doctor",
+    desc: "Clinical rotations, medical education, research, and licensure keywords.",
+    recommendedTemplate: "professional",
+  },
+  {
+    id: "nurse",
+    name: "Nurse / Healthcare",
+    shortName: "Nurse",
+    desc: "Patient care, ward procedures, clinical skills, and nursing certifications.",
+    recommendedTemplate: "professional",
+  },
+  // Business
+  {
+    id: "finance",
+    name: "Finance & Accounting",
+    shortName: "Finance",
+    desc: "Financial analysis, audit, CPA/CFA knowledge, and reporting skills.",
+    recommendedTemplate: "professional",
+  },
+  {
+    id: "marketing",
+    name: "Marketing & Digital",
+    shortName: "Marketing",
+    desc: "Campaign management, SEO/SEM, brand strategy, and analytics tools.",
+    recommendedTemplate: "modern",
+  },
+];
+
+const CAREER_GROUPS: CareerGroup[] = [
+  { label: "Aviation", icon: "solar:plane-bold-duotone",          presets: ["airport-management", "cabin-crew", "ground-support"] },
+  { label: "IT & Tech", icon: "solar:laptop-bold-duotone",         presets: ["software-engineer", "it-fresher"] },
+  { label: "Medical",  icon: "solar:stethoscope-bold-duotone",    presets: ["doctor", "nurse"] },
+  { label: "Business", icon: "solar:chart-bold-duotone",          presets: ["finance", "marketing"] },
 ];
 
 function computeFontSizes(resume: ResumeData) {
@@ -413,10 +497,443 @@ const groundSupportPreset: ResumeData = {
   projects: [],
 };
 
+// ── IT presets ────────────────────────────────────────────────────────────────
+
+const softwareEngineerPreset: ResumeData = {
+  ...initialResume,
+  template: "professional",
+  fontFamily: "roboto",
+  name: "Alex Johnson",
+  title: "Software Engineer",
+  aboutText:
+    "Results-driven Software Engineer with hands-on experience building scalable web applications and distributed systems. Proficient in full-stack development using React, Node.js, and cloud infrastructure. Passionate about clean code, test-driven development, and delivering high-impact features in agile environments.",
+  skillsText:
+    "JavaScript / TypeScript\nReact & Next.js\nNode.js & Express\nPython\nSQL & NoSQL Databases\nREST APIs & GraphQL\nDocker & Kubernetes\nCI/CD (GitHub Actions, Jenkins)\nGit & Version Control\nAgile / Scrum",
+  languagesText: "English",
+  certificationsText:
+    "AWS Certified Developer – Associate\nGoogle Cloud Professional Developer\nMeta Front-End Developer Certificate",
+  achievementsText:
+    "Reduced page load time by 45% through code splitting and lazy loading optimisations<br>Designed and shipped a microservices migration that improved system uptime to 99.9%<br>Led a team of 4 engineers delivering a multi-tenant SaaS product from MVP to 10k+ users",
+  showAchievements: true,
+  showExperience: true,
+  showProjects: true,
+  showSkills: true,
+  showLanguages: true,
+  showContact: true,
+  showPersonalDetails: false,
+  showDeclaration: false,
+  showCertifications: true,
+  showPhoto: false,
+  education: [
+    {
+      id: "edu-se-1",
+      heading: "B.Tech in Computer Science & Engineering",
+      subheading: "",
+      period: "",
+      details: "XYZ University\nGrade: 8.4 / 10 CGPA\n2016 – 2020",
+    },
+  ],
+  experience: [
+    {
+      id: "exp-se-1",
+      heading: "Software Engineer",
+      subheading: "Acme Corp · Full-time",
+      period: "Jan 2022 – Present",
+      details:
+        "Built and maintained React/TypeScript front-end for the company's core SaaS dashboard serving 50k+ daily active users.\nCollaborated with product and design teams in bi-weekly sprints using Jira and Confluence.\nIntegrated third-party payment, analytics, and notification APIs, reducing integration time by 30%.\nMentored two junior engineers and led weekly code-review sessions to enforce best practices.",
+    },
+    {
+      id: "exp-se-2",
+      heading: "Junior Software Developer",
+      subheading: "Startup XYZ · Full-time",
+      period: "Jul 2020 – Dec 2021",
+      details:
+        "Developed RESTful APIs using Node.js and Express, backed by PostgreSQL and Redis.\nImproved test coverage from 40% to 80% by introducing Jest unit and integration tests.\nParticipated in on-call rotations and resolved production incidents with average MTTR under 20 minutes.",
+    },
+  ],
+  projects: [
+    {
+      id: "proj-se-1",
+      heading: "Open-Source Task Manager",
+      subheading: "Personal Project · GitHub",
+      period: "",
+      details:
+        "Full-stack Kanban application built with Next.js, Prisma, and PostgreSQL. Features real-time updates via WebSockets and OAuth2 authentication. 300+ GitHub stars.",
+    },
+  ],
+  contact: [
+    { id: "c-se-1", label: "Phone",    value: "+1 555 000 0000" },
+    { id: "c-se-2", label: "Email",    value: "alex@example.com" },
+    { id: "c-se-3", label: "LinkedIn", value: "linkedin.com/in/alexjohnson" },
+    { id: "c-se-4", label: "GitHub",   value: "github.com/alexjohnson" },
+    { id: "c-se-5", label: "Location", value: "San Francisco, CA" },
+  ],
+  personalDetails: [],
+};
+
+const itFresherPreset: ResumeData = {
+  ...initialResume,
+  template: "modern",
+  fontFamily: "lato",
+  name: "Priya Sharma",
+  title: "IT Graduate | Aspiring Software Developer",
+  aboutText:
+    "Motivated Computer Science graduate with a strong academic foundation in data structures, algorithms, and web development. Completed two internships building React and Python projects. Quick learner with a passion for problem-solving and open-source contribution. Looking for an entry-level developer role to grow and deliver real-world impact.",
+  skillsText:
+    "HTML5 / CSS3 / JavaScript\nReact.js (Academic & Projects)\nPython (Django basics)\nC / C++\nMySQL\nGit & GitHub\nData Structures & Algorithms\nAgile Basics\nFigma (UI Wireframing)\nProblem Solving",
+  languagesText: "English\nHindi",
+  certificationsText:
+    "HackerRank Python Certificate\nUdemy – The Complete JavaScript Course\nNPTEL – Cloud Computing",
+  achievementsText:
+    "Ranked in top 5% on HackerRank for Data Structures challenges<br>Won second place in college-level hackathon with a smart attendance system prototype<br>Completed 6-week web development internship, delivering a responsive e-commerce UI",
+  showAchievements: true,
+  showExperience: true,
+  showProjects: true,
+  showSkills: true,
+  showLanguages: true,
+  showContact: true,
+  showPersonalDetails: true,
+  showDeclaration: true,
+  showCertifications: true,
+  showPhoto: false,
+  education: [
+    {
+      id: "edu-itf-1",
+      heading: "B.Tech in Computer Science & Engineering",
+      subheading: "",
+      period: "",
+      details: "ABC Engineering College\nCGPA: 8.7 / 10\nRelevant Coursework: Operating Systems, DBMS, Computer Networks, Algorithms\n2020 – 2024",
+    },
+    {
+      id: "edu-itf-2",
+      heading: "Higher Secondary (Class XII)",
+      subheading: "",
+      period: "",
+      details: "State Board · Science Stream · 89% · 2020",
+    },
+  ],
+  experience: [
+    {
+      id: "exp-itf-1",
+      heading: "Web Development Intern",
+      subheading: "TechStartup Pvt. Ltd. · Internship",
+      period: "Jun 2023 – Jul 2023",
+      details:
+        "Built responsive UI components using React.js, improving the mobile experience for 5,000+ users.\nFixed 20+ frontend bugs and improved page performance scores by 15 points (Lighthouse).\nCollaborated with senior developers following Agile sprints and daily stand-ups.",
+    },
+  ],
+  projects: [
+    {
+      id: "proj-itf-1",
+      heading: "Smart Attendance System",
+      subheading: "College Hackathon Project",
+      period: "",
+      details:
+        "Built a face-recognition-based attendance system using Python (OpenCV) and Flask. Achieved 92% accuracy on test dataset. Presented at college tech fest.",
+    },
+    {
+      id: "proj-itf-2",
+      heading: "E-Commerce UI Clone",
+      subheading: "Personal Project · React + Tailwind",
+      period: "",
+      details:
+        "Responsive e-commerce front-end with product listing, cart, and checkout pages. Deployed on Netlify.",
+    },
+  ],
+  contact: [
+    { id: "c-itf-1", label: "Phone",    value: "+91 98765 43210" },
+    { id: "c-itf-2", label: "Email",    value: "priya.sharma@email.com" },
+    { id: "c-itf-3", label: "LinkedIn", value: "linkedin.com/in/priyasharma" },
+    { id: "c-itf-4", label: "GitHub",   value: "github.com/priya-dev" },
+    { id: "c-itf-5", label: "Location", value: "Bangalore, India" },
+  ],
+  personalDetails: [
+    { id: "p-itf-1", label: "DOB",         value: "12/04/2002" },
+    { id: "p-itf-2", label: "Gender",      value: "Female" },
+    { id: "p-itf-3", label: "Nationality", value: "Indian" },
+  ],
+};
+
+// ── Medical presets ───────────────────────────────────────────────────────────
+
+const doctorPreset: ResumeData = {
+  ...initialResume,
+  template: "professional",
+  fontFamily: "merriweather",
+  name: "Dr. Sarah Mitchell",
+  title: "MBBS | Junior Doctor",
+  aboutText:
+    "Dedicated medical graduate with an MBBS degree and one year of internship experience across General Medicine, Surgery, and Paediatrics. Strong clinical foundation supported by research publications and active participation in CME programs. Committed to evidence-based patient care and continuous professional development.",
+  skillsText:
+    "Clinical Diagnosis & Patient Assessment\nHistory Taking & Physical Examination\nEmergency & First-Aid Management\nMedication Administration & Pharmacology\nSurgical Assistance\nMedical Record Documentation (EMR)\nIV Line & Basic Procedures\nTeam-Based & Multidisciplinary Care\nMedical Research & Literature Review\nCommunication & Patient Counselling",
+  languagesText: "English",
+  certificationsText:
+    "MBBS – XYZ Medical College (affiliated: ABC University)\nBasic Life Support (BLS) – AHA\nAdvanced Cardiac Life Support (ACLS) – AHA\nMCI / NMC Registration (Registration No. 000000)",
+  achievementsText:
+    "Completed 12-month rotating internship across 6 clinical departments with consistently positive supervisor evaluations<br>Co-authored a case report published in a peer-reviewed medical journal<br>Awarded Best Intern by the department of General Medicine for exemplary patient interaction",
+  showAchievements: true,
+  showExperience: true,
+  showProjects: false,
+  showSkills: true,
+  showLanguages: true,
+  showContact: true,
+  showPersonalDetails: true,
+  showDeclaration: true,
+  showCertifications: true,
+  showPhoto: false,
+  education: [
+    {
+      id: "edu-dr-1",
+      heading: "MBBS (Bachelor of Medicine, Bachelor of Surgery)",
+      subheading: "",
+      period: "",
+      details: "XYZ Medical College, ABC University\nAggregated Score: 68%\nInternship: Jan 2024 – Dec 2024 (Completed)\n2018 – 2024",
+    },
+    {
+      id: "edu-dr-2",
+      heading: "Higher Secondary (Class XII – Science / Biology)",
+      subheading: "",
+      period: "",
+      details: "State Board · 91% · 2018",
+    },
+  ],
+  experience: [
+    {
+      id: "exp-dr-1",
+      heading: "Rotating Intern",
+      subheading: "XYZ Medical College Hospital · Internship",
+      period: "Jan 2024 – Dec 2024",
+      details:
+        "Rotated through General Medicine, Surgery, Orthopaedics, Paediatrics, OBG, and Community Medicine departments.\nAssisted in 100+ surgical procedures including appendectomies, hernia repairs, and minor OT cases.\nManaged 15–20 ward patients daily — taking history, conducting exams, ordering investigations, and presenting cases during rounds.\nHandled emergency triage during weekend on-call duties under supervision of senior residents.",
+    },
+  ],
+  projects: [],
+  contact: [
+    { id: "c-dr-1", label: "Phone",    value: "+91 98000 00000" },
+    { id: "c-dr-2", label: "Email",    value: "sarah.mitchell@email.com" },
+    { id: "c-dr-3", label: "LinkedIn", value: "linkedin.com/in/dr-sarahmitchell" },
+    { id: "c-dr-4", label: "Location", value: "Mumbai, India" },
+  ],
+  personalDetails: [
+    { id: "p-dr-1", label: "DOB",       value: "05/09/1998" },
+    { id: "p-dr-2", label: "Gender",    value: "Female" },
+    { id: "p-dr-3", label: "Reg. No.",  value: "NMC-000000" },
+    { id: "p-dr-4", label: "Nationality", value: "Indian" },
+  ],
+};
+
+const nursePreset: ResumeData = {
+  ...initialResume,
+  template: "professional",
+  fontFamily: "roboto",
+  name: "Rebecca Thomas",
+  title: "Registered Nurse (BSc Nursing)",
+  aboutText:
+    "Compassionate and detail-oriented Registered Nurse with a BSc in Nursing and internship experience in medical-surgical and ICU settings. Skilled in patient assessment, wound care, medication management, and empathetic communication. Dedicated to delivering safe, high-quality, patient-centred care within multidisciplinary teams.",
+  skillsText:
+    "Patient Assessment & Vital Sign Monitoring\nWound Dressing & IV Cannulation\nMedication Administration & Pharmacology Basics\nECG Monitoring & Interpretation\nICU & Critical Care Assistance\nInfection Control & Aseptic Techniques\nEmergency Response (BLS Certified)\nMedical Documentation (EMR / Paper)\nPatient & Family Education\nTeamwork & Handover Communication",
+  languagesText: "English\nMalayalam",
+  certificationsText:
+    "BSc Nursing – Kerala University of Health Sciences\nBasic Life Support (BLS) – AHA\nKerala Nurses & Midwives Council Registration (Reg. No. 000000)",
+  achievementsText:
+    "Completed 6-month internship across medical-surgical, ICU, and paediatric wards with commendation from supervising nurse<br>Achieved 100% compliance score on infection control audits during internship period<br>Volunteer nurse at free community health camp serving 500+ patients",
+  showAchievements: true,
+  showExperience: true,
+  showProjects: false,
+  showSkills: true,
+  showLanguages: true,
+  showContact: true,
+  showPersonalDetails: true,
+  showDeclaration: true,
+  showCertifications: true,
+  showPhoto: false,
+  education: [
+    {
+      id: "edu-nr-1",
+      heading: "BSc Nursing",
+      subheading: "",
+      period: "",
+      details: "College of Nursing, XYZ Hospital\nKeala University of Health Sciences\nAggregate: 72%\n2020 – 2024",
+    },
+    {
+      id: "edu-nr-2",
+      heading: "Higher Secondary (Class XII – Science / Biology)",
+      subheading: "",
+      period: "",
+      details: "Kerala State Board · 85% · 2020",
+    },
+  ],
+  experience: [
+    {
+      id: "exp-nr-1",
+      heading: "Nursing Intern",
+      subheading: "XYZ Multi-Specialty Hospital · Internship",
+      period: "Jul 2023 – Dec 2023",
+      details:
+        "Rotated through Medical-Surgical Ward, ICU, Casualty/ER, OBG, and Paediatrics.\nAssisted in nursing care of 12–15 patients per shift including administering medications and monitoring vitals.\nPerformed wound dressings, catheter care, IV cannulation, and nasogastric tube management under supervision.\nDocumented patient progress notes and nursing care plans in the hospital's EMR system.",
+    },
+  ],
+  projects: [],
+  contact: [
+    { id: "c-nr-1", label: "Phone",    value: "+91 94000 00000" },
+    { id: "c-nr-2", label: "Email",    value: "rebecca.thomas@email.com" },
+    { id: "c-nr-3", label: "LinkedIn", value: "linkedin.com/in/rebeccathomas" },
+    { id: "c-nr-4", label: "Location", value: "Kochi, Kerala" },
+  ],
+  personalDetails: [
+    { id: "p-nr-1", label: "DOB",       value: "14/02/2002" },
+    { id: "p-nr-2", label: "Gender",    value: "Female" },
+    { id: "p-nr-3", label: "Reg. No.",  value: "KNMC-000000" },
+    { id: "p-nr-4", label: "Nationality", value: "Indian" },
+  ],
+};
+
+// ── Business presets ──────────────────────────────────────────────────────────
+
+const financePreset: ResumeData = {
+  ...initialResume,
+  template: "professional",
+  fontFamily: "roboto",
+  name: "Daniel Carter",
+  title: "Finance & Accounting Professional",
+  aboutText:
+    "Detail-oriented Finance professional with 3 years of experience in financial reporting, management accounting, and internal audit. Proficient in Excel, Tally, and ERP systems. Strong analytical mindset with a track record of identifying cost-saving opportunities and ensuring regulatory compliance across financial operations.",
+  skillsText:
+    "Financial Reporting & Analysis\nManagement Accounting & Budgeting\nInternal Audit & Compliance\nAccounts Payable & Receivable\nTax Preparation (GST / Income Tax)\nMS Excel (Pivot, VLOOKUP, Charts)\nTally ERP & SAP Basics\nCash Flow Management\nReconciliation & Ledger Management\nCommunication & Presentation",
+  languagesText: "English",
+  certificationsText:
+    "CA Inter (ICAI) – Group I Cleared\nCertified Management Accountant (CMA) – In Progress\nTally.ERP 9 Certified Professional",
+  achievementsText:
+    "Identified and corrected a payroll miscalculation affecting 200+ employees, saving ₹4.2L in potential penalties<br>Streamlined monthly close process from 7 days to 4 days by building automated Excel reconciliation templates<br>Prepared and filed GST returns for 3 consecutive quarters with zero audit objections",
+  showAchievements: true,
+  showExperience: true,
+  showProjects: false,
+  showSkills: true,
+  showLanguages: true,
+  showContact: true,
+  showPersonalDetails: false,
+  showDeclaration: false,
+  showCertifications: true,
+  showPhoto: false,
+  education: [
+    {
+      id: "edu-fin-1",
+      heading: "Bachelor of Commerce (B.Com) – Finance & Accounting",
+      subheading: "",
+      period: "",
+      details: "XYZ University\nFirst Class · 74%\n2018 – 2021",
+    },
+  ],
+  experience: [
+    {
+      id: "exp-fin-1",
+      heading: "Junior Accountant",
+      subheading: "ABC & Associates CA Firm · Full-time",
+      period: "Mar 2022 – Present",
+      details:
+        "Maintained books of accounts for 15+ client organisations across retail and manufacturing sectors.\nPrepared monthly P&L statements, balance sheets, and cash flow reports for management review.\nFiled GST, TDS, and income tax returns accurately and within deadlines for all assigned clients.\nSupported statutory audit by compiling schedules, reconciling ledgers, and responding to auditor queries.",
+    },
+    {
+      id: "exp-fin-2",
+      heading: "Accounts Intern",
+      subheading: "XYZ Enterprises · Internship",
+      period: "Jun 2021 – Feb 2022",
+      details:
+        "Processed 100+ vendor invoices weekly in Tally ERP with 99.5% accuracy.\nAssisted senior accountants in preparing trial balances and bank reconciliation statements.",
+    },
+  ],
+  projects: [],
+  contact: [
+    { id: "c-fin-1", label: "Phone",    value: "+91 99000 00000" },
+    { id: "c-fin-2", label: "Email",    value: "daniel.carter@email.com" },
+    { id: "c-fin-3", label: "LinkedIn", value: "linkedin.com/in/danielcarter" },
+    { id: "c-fin-4", label: "Location", value: "Delhi, India" },
+  ],
+  personalDetails: [],
+};
+
+const marketingPreset: ResumeData = {
+  ...initialResume,
+  template: "modern",
+  fontFamily: "montserrat",
+  name: "Mia Williams",
+  title: "Digital Marketing Specialist",
+  aboutText:
+    "Creative and data-driven Digital Marketing Specialist with 3 years of experience crafting performance campaigns across search, social, and email channels. Demonstrated success growing organic traffic by 120% and achieving 3× ROAS on paid campaigns. Adept at storytelling, brand positioning, and translating insights into actionable strategies.",
+  skillsText:
+    "Google Ads & Meta Ads\nSEO & On-Page Optimisation\nContent Strategy & Copywriting\nEmail Marketing (Mailchimp, Klaviyo)\nSocial Media Management\nGoogle Analytics 4 & Tag Manager\nA/B Testing & Conversion Optimisation\nCanva & Adobe Express\nMarketing Automation (HubSpot)\nProject Management (Notion, Asana)",
+  languagesText: "English",
+  certificationsText:
+    "Google Ads Search Certification\nHubSpot Content Marketing Certificate\nMeta Certified Digital Marketing Associate\nGoogle Analytics (GA4) Certificate",
+  achievementsText:
+    "Grew organic search traffic by 120% in 8 months through targeted SEO content and technical audits<br>Managed ₹15L/month Google & Meta ad budget, achieving average 3.2× ROAS across all campaigns<br>Launched influencer outreach programme that generated 50+ UGC pieces and 2M+ impressions in Q3",
+  showAchievements: true,
+  showExperience: true,
+  showProjects: true,
+  showSkills: true,
+  showLanguages: true,
+  showContact: true,
+  showPersonalDetails: false,
+  showDeclaration: false,
+  showCertifications: true,
+  showPhoto: false,
+  education: [
+    {
+      id: "edu-mkt-1",
+      heading: "Bachelor of Business Administration (BBA) – Marketing",
+      subheading: "",
+      period: "",
+      details: "ABC University\nFirst Class · 76%\n2017 – 2020",
+    },
+  ],
+  experience: [
+    {
+      id: "exp-mkt-1",
+      heading: "Digital Marketing Specialist",
+      subheading: "GrowthLab Agency · Full-time",
+      period: "Feb 2022 – Present",
+      details:
+        "Planned and executed multi-channel digital campaigns for 8 e-commerce and B2B SaaS clients.\nWrote SEO-optimised blog content (30+ articles) driving 40% increase in organic leads quarter-over-quarter.\nManaged Google Ads accounts totalling ₹15L/month spend with consistent positive ROI reporting.\nBuilt and A/B tested email drip sequences in HubSpot, improving average open rates from 18% to 29%.",
+    },
+    {
+      id: "exp-mkt-2",
+      heading: "Marketing Intern",
+      subheading: "Startup Studio · Internship",
+      period: "Jun 2020 – Jan 2022",
+      details:
+        "Created social media content calendars and graphics for Instagram and LinkedIn (15k+ followers).\nResearched competitor positioning and compiled weekly insight reports for the growth team.",
+    },
+  ],
+  projects: [
+    {
+      id: "proj-mkt-1",
+      heading: "Personal SEO Blog",
+      subheading: "marketingwithmia.com",
+      period: "",
+      details:
+        "Built and grew a niche marketing blog to 8,000 monthly organic visitors using long-tail SEO, internal linking, and featured-snippet optimisation.",
+    },
+  ],
+  contact: [
+    { id: "c-mkt-1", label: "Phone",    value: "+91 96000 00000" },
+    { id: "c-mkt-2", label: "Email",    value: "mia.williams@email.com" },
+    { id: "c-mkt-3", label: "LinkedIn", value: "linkedin.com/in/miawilliams" },
+    { id: "c-mkt-4", label: "Portfolio", value: "marketingwithmia.com" },
+    { id: "c-mkt-5", label: "Location", value: "Bangalore, India" },
+  ],
+  personalDetails: [],
+};
+
 const RESUME_PRESETS: Record<ResumePresetId, ResumeData> = {
   "airport-management": initialResume,
-  "cabin-crew": cabinCrewPreset,
-  "ground-support": groundSupportPreset,
+  "cabin-crew":         cabinCrewPreset,
+  "ground-support":     groundSupportPreset,
+  "software-engineer":  softwareEngineerPreset,
+  "it-fresher":         itFresherPreset,
+  "doctor":             doctorPreset,
+  "nurse":              nursePreset,
+  "finance":            financePreset,
+  "marketing":          marketingPreset,
 };
 
 // ── Utilities ─────────────────────────────────────────────────────────────────
@@ -1476,7 +1993,7 @@ async function createModernPdfBlob(resume: ResumeData): Promise<Blob> {
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function createResumePdfBlob(resume: ResumeData): Promise<Blob> {
-  if (resume.template === "professional")
+  if (resume.template === "professional" || resume.template === "executive" || resume.template === "compact" || resume.template === "accent-line")
     return createProfessionalPdfBlob(resume);
   if (resume.template === "modern") return createModernPdfBlob(resume);
   return createClassicPdfBlob(resume);
@@ -2492,6 +3009,574 @@ function ModernPreview({ resume }: { resume: ResumeData }) {
   );
 }
 
+// ── Preview: Executive ───────────────────────────────────────────────────────
+// Teal left-accent bar, clean two-column body, fully ATS-parseable.
+
+function ExecutivePreview({ resume }: { resume: ResumeData }) {
+  const vc = getVisibleFacts(resume.contact);
+  const vp = getVisibleFacts(resume.personalDetails);
+  const fontDef = RESUME_FONTS.find((f) => f.id === resume.fontFamily);
+  const fontStyle = fontDef ? { fontFamily: fontDef.cssFamily } : {};
+  const sz = computeFontSizes(resume);
+  const TEAL = "#0d7377";
+
+  function ExSection({ title, children }: { title: string; children: ReactNode }) {
+    return (
+      <section className="space-y-[3mm]" style={{ breakInside: "avoid-page", pageBreakInside: "avoid" }}>
+        <div className="flex items-center gap-[2.5mm]">
+          <div style={{ width: "4px", minWidth: "4px", height: "14px", background: TEAL, borderRadius: "2px" }} />
+          <h2 className="font-black uppercase tracking-[0.18em] text-slate-900" style={{ fontSize: "var(--fs-heading)" }}>{title}</h2>
+        </div>
+        <div className="h-px bg-slate-200" />
+        {children}
+      </section>
+    );
+  }
+
+  return (
+    <div
+      style={{ ...fontStyle, "--fs-name": sz.name, "--fs-heading": sz.heading, "--fs-body": sz.body, "--fs-detail": sz.detail, "--fs-label": sz.label } as unknown as React.CSSProperties}
+      className="mx-auto flex min-h-[297mm] w-[210mm] min-w-[210mm] flex-col bg-white text-slate-900 shadow-[0_30px_80px_rgba(0,0,0,0.25)]"
+    >
+      {/* Accent strip */}
+      <div style={{ height: "5px", background: `linear-gradient(90deg, ${TEAL}, #14a2a8)` }} />
+
+      {/* Header */}
+      <div className="px-[12mm] pt-[8mm] pb-[5mm] border-b border-slate-200">
+        <div className="flex items-start justify-between gap-[6mm]">
+          <div>
+            <h1 className="font-black uppercase leading-none tracking-[0.06em] text-slate-900" style={{ fontSize: "var(--fs-name)" }}>
+              {resume.name || "Your Name"}
+            </h1>
+            {resume.title && (
+              <p className="mt-[2mm] font-semibold tracking-[0.2em] uppercase" style={{ fontSize: "var(--fs-label)", color: TEAL }}>
+                {resume.title}
+              </p>
+            )}
+          </div>
+          {vc.length > 0 && (
+            <div className="text-right space-y-[1.5mm] shrink-0">
+              {vc.map((f) => (
+                <p key={f.id} className="text-slate-600 leading-[1.5]" style={{ fontSize: "var(--fs-label)" }}>
+                  {f.value}
+                </p>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Body: left 62% main | right 38% sidebar */}
+      <div className="flex flex-1 px-[12mm] pt-[6mm] pb-[8mm] gap-[8mm]">
+        {/* Main column */}
+        <div className="flex flex-col gap-[6mm]" style={{ flex: "0 0 62%", minWidth: 0 }}>
+          {resume.aboutText && (
+            <ExSection title={resume.aboutTitle || "Profile Summary"}>
+              <p className="text-justify leading-[1.75] text-slate-700" style={{ fontSize: "var(--fs-body)" }} dangerouslySetInnerHTML={{ __html: resume.aboutText }} />
+            </ExSection>
+          )}
+          {resume.showExperience && resume.experience.length > 0 && (
+            <ExSection title="Work Experience">
+              <div className="space-y-[4mm]">
+                {resume.experience.map((e) => (
+                  <article key={e.id} className="space-y-[1.5mm]" style={{ breakInside: "avoid-page", pageBreakInside: "avoid" }}>
+                    <div className="flex items-start justify-between gap-2">
+                      <h3 className="font-extrabold text-slate-900" style={{ fontSize: "var(--fs-detail)" }}>{e.heading}</h3>
+                      {e.period && <span className="shrink-0 text-slate-500" style={{ fontSize: "var(--fs-label)", color: TEAL }}>{e.period}</span>}
+                    </div>
+                    {e.subheading && <p className="italic text-slate-500" style={{ fontSize: "var(--fs-label)" }}>{e.subheading}</p>}
+                    <div className="space-y-[1mm]">
+                      {splitLines(e.details).map((l, i) => (
+                        <div key={i} className="flex items-start gap-[2mm] text-slate-700 leading-[1.65]" style={{ fontSize: "var(--fs-detail)" }}>
+                          <span className="mt-[3px] inline-block h-[4px] w-[4px] shrink-0 rounded-full" style={{ background: TEAL }} />
+                          <span dangerouslySetInnerHTML={{ __html: l }} />
+                        </div>
+                      ))}
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </ExSection>
+          )}
+          {resume.education.length > 0 && (
+            <ExSection title="Education">
+              <div className="space-y-[4mm]">
+                {resume.education.map((e) => (
+                  <article key={e.id} className="space-y-[1.5mm]" style={{ breakInside: "avoid-page", pageBreakInside: "avoid" }}>
+                    <h3 className="font-extrabold text-slate-900" style={{ fontSize: "var(--fs-detail)" }}>{e.heading}</h3>
+                    <div className="space-y-[1mm]">
+                      {[...(e.subheading ? [e.subheading] : []), ...splitLines(e.details), ...(e.period ? [e.period] : [])].map((l, i) => (
+                        <div key={i} className="flex items-start gap-[2mm] text-slate-700 leading-[1.65]" style={{ fontSize: "var(--fs-detail)" }}>
+                          <span className="mt-[3px] inline-block h-[4px] w-[4px] shrink-0 rounded-full" style={{ background: TEAL }} />
+                          <span dangerouslySetInnerHTML={{ __html: l }} />
+                        </div>
+                      ))}
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </ExSection>
+          )}
+          {resume.showProjects && resume.projects.length > 0 && (
+            <ExSection title="Projects">
+              <div className="space-y-[4mm]">
+                {resume.projects.map((e) => (
+                  <article key={e.id} className="space-y-[1.5mm]" style={{ breakInside: "avoid-page", pageBreakInside: "avoid" }}>
+                    <h3 className="font-extrabold text-slate-900" style={{ fontSize: "var(--fs-detail)" }}>{e.heading}</h3>
+                    {e.subheading && <p className="italic text-slate-500" style={{ fontSize: "var(--fs-label)" }}>{e.subheading}</p>}
+                    <div className="space-y-[1mm]">
+                      {splitLines(e.details).map((l, i) => (
+                        <div key={i} className="flex items-start gap-[2mm] text-slate-700 leading-[1.65]" style={{ fontSize: "var(--fs-detail)" }}>
+                          <span className="mt-[3px] inline-block h-[4px] w-[4px] shrink-0 rounded-full" style={{ background: TEAL }} />
+                          <span dangerouslySetInnerHTML={{ __html: l }} />
+                        </div>
+                      ))}
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </ExSection>
+          )}
+          {resume.showAchievements && splitLinesHtml(resume.achievementsText).length > 0 && (
+            <ExSection title="Achievements">
+              <div className="space-y-[1.5mm]">
+                {splitLinesHtml(resume.achievementsText).map((item, i) => (
+                  <div key={i} className="flex items-start gap-[2mm] text-slate-700 leading-[1.65]" style={{ fontSize: "var(--fs-detail)" }}>
+                    <span className="mt-[3px] inline-block h-[4px] w-[4px] shrink-0 rounded-full" style={{ background: TEAL }} />
+                    <span dangerouslySetInnerHTML={{ __html: item }} />
+                  </div>
+                ))}
+              </div>
+            </ExSection>
+          )}
+          {resume.showDeclaration && resume.declarationText && (
+            <ExSection title={resume.declarationTitle || "Declaration"}>
+              <p className="text-justify leading-[1.75] text-slate-700" style={{ fontSize: "var(--fs-body)" }} dangerouslySetInnerHTML={{ __html: resume.declarationText }} />
+            </ExSection>
+          )}
+        </div>
+
+        {/* Sidebar column */}
+        <div className="flex flex-col gap-[6mm] border-l border-slate-200 pl-[6mm]" style={{ flex: "0 0 38%", minWidth: 0 }}>
+          {resume.showSkills && splitLines(resume.skillsText).length > 0 && (
+            <ExSection title="Skills">
+              <div className="space-y-[1.5mm]">
+                {splitLines(resume.skillsText).map((item) => (
+                  <div key={item} className="flex items-center gap-[2mm] text-slate-700" style={{ fontSize: "var(--fs-label)" }}>
+                    <span className="inline-block h-[4px] w-[4px] shrink-0 rounded-full" style={{ background: TEAL }} />
+                    {item}
+                  </div>
+                ))}
+              </div>
+            </ExSection>
+          )}
+          {resume.showCertifications && splitLines(resume.certificationsText).length > 0 && (
+            <ExSection title="Certifications">
+              <div className="space-y-[1.5mm]">
+                {splitLines(resume.certificationsText).map((item) => (
+                  <p key={item} className="text-slate-700 leading-[1.5]" style={{ fontSize: "var(--fs-label)" }}>{item}</p>
+                ))}
+              </div>
+            </ExSection>
+          )}
+          {resume.showLanguages && splitLines(resume.languagesText).length > 0 && (
+            <ExSection title="Languages">
+              <div className="space-y-[1.5mm]">
+                {splitLines(resume.languagesText).map((item) => (
+                  <p key={item} className="text-slate-700" style={{ fontSize: "var(--fs-label)" }}>{item}</p>
+                ))}
+              </div>
+            </ExSection>
+          )}
+          {resume.showPersonalDetails && vp.length > 0 && (
+            <ExSection title="Personal Details">
+              <div className="space-y-[2mm]">
+                {vp.map((f) => (
+                  <p key={f.id} className="text-slate-700 leading-[1.5]" style={{ fontSize: "var(--fs-label)" }}>
+                    {f.label && <span className="font-bold text-slate-800">{f.label}: </span>}{f.value}
+                  </p>
+                ))}
+              </div>
+            </ExSection>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Preview: Compact Clean ────────────────────────────────────────────────────
+// Ultra-tight single-column, ruled dividers, maximum content density for ATS.
+
+function CompactPreview({ resume }: { resume: ResumeData }) {
+  const vc = getVisibleFacts(resume.contact);
+  const vp = getVisibleFacts(resume.personalDetails);
+  const fontDef = RESUME_FONTS.find((f) => f.id === resume.fontFamily);
+  const fontStyle = fontDef ? { fontFamily: fontDef.cssFamily } : {};
+  const sz = computeFontSizes(resume);
+
+  function CSection({ title, children }: { title: string; children: ReactNode }) {
+    return (
+      <section className="space-y-[2mm]" style={{ breakInside: "avoid-page", pageBreakInside: "avoid" }}>
+        <div className="flex items-center gap-[2mm]">
+          <h2 className="font-black uppercase tracking-[0.22em] text-slate-800 whitespace-nowrap" style={{ fontSize: "var(--fs-heading)" }}>{title}</h2>
+          <div className="h-px flex-1 bg-slate-300" />
+        </div>
+        {children}
+      </section>
+    );
+  }
+
+  return (
+    <div
+      style={{ ...fontStyle, "--fs-name": sz.name, "--fs-heading": sz.heading, "--fs-body": sz.body, "--fs-detail": sz.detail, "--fs-label": sz.label } as unknown as React.CSSProperties}
+      className="mx-auto flex min-h-[297mm] w-[210mm] min-w-[210mm] flex-col bg-white px-[13mm] py-[10mm] text-slate-900 shadow-[0_30px_80px_rgba(0,0,0,0.25)]"
+    >
+      {/* Header */}
+      <div className="mb-[5mm] text-center">
+        <h1 className="font-black uppercase tracking-[0.1em] text-slate-900 leading-none" style={{ fontSize: "var(--fs-name)" }}>
+          {resume.name || "Your Name"}
+        </h1>
+        {resume.title && (
+          <p className="mt-[1.5mm] font-semibold uppercase tracking-[0.22em] text-slate-500" style={{ fontSize: "var(--fs-label)" }}>
+            {resume.title}
+          </p>
+        )}
+        {vc.length > 0 && (
+          <p className="mt-[2mm] text-slate-500" style={{ fontSize: "var(--fs-label)" }}>
+            {vc.map((f) => f.value).join("  ·  ")}
+          </p>
+        )}
+        <div className="mx-auto mt-[3mm] h-[2px] w-full bg-slate-800" />
+      </div>
+
+      {/* Sections */}
+      <div className="flex flex-col gap-[4.5mm]">
+        {resume.aboutText && (
+          <CSection title={resume.aboutTitle || "Profile Summary"}>
+            <p className="text-justify leading-[1.7] text-slate-700" style={{ fontSize: "var(--fs-body)" }} dangerouslySetInnerHTML={{ __html: resume.aboutText }} />
+          </CSection>
+        )}
+        {resume.showExperience && resume.experience.length > 0 && (
+          <CSection title="Experience">
+            <div className="space-y-[3mm]">
+              {resume.experience.map((e) => (
+                <article key={e.id} style={{ breakInside: "avoid-page", pageBreakInside: "avoid" }}>
+                  <div className="flex items-baseline justify-between gap-2">
+                    <span className="font-extrabold text-slate-900" style={{ fontSize: "var(--fs-detail)" }}>{e.heading}</span>
+                    {e.period && <span className="shrink-0 text-slate-500 italic" style={{ fontSize: "var(--fs-label)" }}>{e.period}</span>}
+                  </div>
+                  {e.subheading && <p className="text-slate-500 italic" style={{ fontSize: "var(--fs-label)" }}>{e.subheading}</p>}
+                  <div className="mt-[1mm] space-y-[0.75mm]">
+                    {splitLines(e.details).map((l, i) => (
+                      <div key={i} className="flex items-start gap-[2mm] text-slate-700 leading-[1.6]" style={{ fontSize: "var(--fs-detail)" }}>
+                        <span className="mt-[2.5px] inline-block h-[4px] w-[4px] shrink-0 rounded-full bg-slate-400" />
+                        <span dangerouslySetInnerHTML={{ __html: l }} />
+                      </div>
+                    ))}
+                  </div>
+                </article>
+              ))}
+            </div>
+          </CSection>
+        )}
+        {resume.education.length > 0 && (
+          <CSection title="Education">
+            <div className="space-y-[3mm]">
+              {resume.education.map((e) => (
+                <article key={e.id} style={{ breakInside: "avoid-page", pageBreakInside: "avoid" }}>
+                  <div className="flex items-baseline justify-between gap-2">
+                    <span className="font-extrabold text-slate-900" style={{ fontSize: "var(--fs-detail)" }}>{e.heading}</span>
+                    {e.period && <span className="shrink-0 text-slate-500 italic" style={{ fontSize: "var(--fs-label)" }}>{e.period}</span>}
+                  </div>
+                  <div className="mt-[1mm] space-y-[0.75mm]">
+                    {[...(e.subheading ? [e.subheading] : []), ...splitLines(e.details)].map((l, i) => (
+                      <div key={i} className="flex items-start gap-[2mm] text-slate-700 leading-[1.6]" style={{ fontSize: "var(--fs-detail)" }}>
+                        <span className="mt-[2.5px] inline-block h-[4px] w-[4px] shrink-0 rounded-full bg-slate-400" />
+                        <span dangerouslySetInnerHTML={{ __html: l }} />
+                      </div>
+                    ))}
+                  </div>
+                </article>
+              ))}
+            </div>
+          </CSection>
+        )}
+        {resume.showProjects && resume.projects.length > 0 && (
+          <CSection title="Projects">
+            <div className="space-y-[3mm]">
+              {resume.projects.map((e) => (
+                <article key={e.id} style={{ breakInside: "avoid-page", pageBreakInside: "avoid" }}>
+                  <div className="flex items-baseline justify-between gap-2">
+                    <span className="font-extrabold text-slate-900" style={{ fontSize: "var(--fs-detail)" }}>{e.heading}</span>
+                    {e.subheading && <span className="shrink-0 text-slate-500 italic" style={{ fontSize: "var(--fs-label)" }}>{e.subheading}</span>}
+                  </div>
+                  <div className="mt-[1mm] space-y-[0.75mm]">
+                    {splitLines(e.details).map((l, i) => (
+                      <div key={i} className="flex items-start gap-[2mm] text-slate-700 leading-[1.6]" style={{ fontSize: "var(--fs-detail)" }}>
+                        <span className="mt-[2.5px] inline-block h-[4px] w-[4px] shrink-0 rounded-full bg-slate-400" />
+                        <span dangerouslySetInnerHTML={{ __html: l }} />
+                      </div>
+                    ))}
+                  </div>
+                </article>
+              ))}
+            </div>
+          </CSection>
+        )}
+        {/* Skills + Languages + Certs inline */}
+        {(resume.showSkills || resume.showLanguages || resume.showCertifications) && (
+          <CSection title="Skills & Qualifications">
+            <div className="space-y-[1.5mm]">
+              {resume.showSkills && splitLines(resume.skillsText).length > 0 && (
+                <p className="text-slate-700 leading-[1.6]" style={{ fontSize: "var(--fs-label)" }}>
+                  <span className="font-bold text-slate-800">Skills: </span>
+                  {splitLines(resume.skillsText).join("  ·  ")}
+                </p>
+              )}
+              {resume.showCertifications && splitLines(resume.certificationsText).length > 0 && (
+                <p className="text-slate-700 leading-[1.6]" style={{ fontSize: "var(--fs-label)" }}>
+                  <span className="font-bold text-slate-800">Certifications: </span>
+                  {splitLines(resume.certificationsText).join("  ·  ")}
+                </p>
+              )}
+              {resume.showLanguages && splitLines(resume.languagesText).length > 0 && (
+                <p className="text-slate-700 leading-[1.6]" style={{ fontSize: "var(--fs-label)" }}>
+                  <span className="font-bold text-slate-800">Languages: </span>
+                  {splitLines(resume.languagesText).join("  ·  ")}
+                </p>
+              )}
+            </div>
+          </CSection>
+        )}
+        {resume.showAchievements && splitLinesHtml(resume.achievementsText).length > 0 && (
+          <CSection title="Achievements">
+            <div className="space-y-[1mm]">
+              {splitLinesHtml(resume.achievementsText).map((item, i) => (
+                <div key={i} className="flex items-start gap-[2mm] text-slate-700 leading-[1.6]" style={{ fontSize: "var(--fs-detail)" }}>
+                  <span className="mt-[2.5px] inline-block h-[4px] w-[4px] shrink-0 rounded-full bg-slate-400" />
+                  <span dangerouslySetInnerHTML={{ __html: item }} />
+                </div>
+              ))}
+            </div>
+          </CSection>
+        )}
+        {resume.showPersonalDetails && vp.length > 0 && (
+          <CSection title="Personal Details">
+            <div className="flex flex-wrap gap-x-[8mm] gap-y-[1mm]">
+              {vp.map((f) => (
+                <p key={f.id} className="text-slate-700" style={{ fontSize: "var(--fs-label)" }}>
+                  {f.label && <span className="font-bold">{f.label}: </span>}{f.value}
+                </p>
+              ))}
+            </div>
+          </CSection>
+        )}
+        {resume.showDeclaration && resume.declarationText && (
+          <CSection title={resume.declarationTitle || "Declaration"}>
+            <p className="text-justify leading-[1.7] text-slate-700" style={{ fontSize: "var(--fs-body)" }} dangerouslySetInnerHTML={{ __html: resume.declarationText }} />
+          </CSection>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ── Preview: Accent Line ──────────────────────────────────────────────────────
+// Bold 6px indigo top strip, name left / contact pills right, two-column body.
+
+function AccentLinePreview({ resume }: { resume: ResumeData }) {
+  const vc = getVisibleFacts(resume.contact);
+  const vp = getVisibleFacts(resume.personalDetails);
+  const fontDef = RESUME_FONTS.find((f) => f.id === resume.fontFamily);
+  const fontStyle = fontDef ? { fontFamily: fontDef.cssFamily } : {};
+  const sz = computeFontSizes(resume);
+  const INDIGO = "#3730a3";
+
+  function ALSection({ title, children }: { title: string; children: ReactNode }) {
+    return (
+      <section className="space-y-[2.5mm]" style={{ breakInside: "avoid-page", pageBreakInside: "avoid" }}>
+        <div style={{ borderLeft: `3px solid ${INDIGO}`, paddingLeft: "2.5mm" }}>
+          <h2 className="font-black uppercase tracking-[0.18em] text-slate-900" style={{ fontSize: "var(--fs-heading)" }}>{title}</h2>
+        </div>
+        <div className="h-px bg-slate-200" />
+        {children}
+      </section>
+    );
+  }
+
+  return (
+    <div
+      style={{ ...fontStyle, "--fs-name": sz.name, "--fs-heading": sz.heading, "--fs-body": sz.body, "--fs-detail": sz.detail, "--fs-label": sz.label } as unknown as React.CSSProperties}
+      className="mx-auto flex min-h-[297mm] w-[210mm] min-w-[210mm] flex-col bg-white text-slate-900 shadow-[0_30px_80px_rgba(0,0,0,0.25)]"
+    >
+      {/* Top accent strip */}
+      <div style={{ height: "6px", background: `linear-gradient(90deg, ${INDIGO}, #6366f1)` }} />
+
+      {/* Header */}
+      <div className="px-[12mm] pt-[7mm] pb-[5mm]">
+        <div className="flex items-start justify-between gap-[6mm]">
+          <div>
+            <h1 className="font-black uppercase leading-none tracking-[0.06em] text-slate-900" style={{ fontSize: "var(--fs-name)" }}>
+              {resume.name || "Your Name"}
+            </h1>
+            {resume.title && (
+              <p className="mt-[2mm] font-semibold uppercase tracking-[0.22em]" style={{ fontSize: "var(--fs-label)", color: INDIGO }}>
+                {resume.title}
+              </p>
+            )}
+          </div>
+          {vc.length > 0 && (
+            <div className="flex flex-wrap justify-end gap-[1.5mm] shrink-0 max-w-[80mm]">
+              {vc.map((f) => (
+                <span key={f.id} className="text-slate-600 border border-slate-200 rounded-sm px-[2mm] leading-[5mm] bg-slate-50" style={{ fontSize: "var(--fs-label)" }}>
+                  {f.value}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+        <div style={{ height: "2px", background: INDIGO, marginTop: "4mm" }} />
+      </div>
+
+      {/* Body */}
+      <div className="flex flex-1 px-[12mm] pb-[8mm] gap-[8mm]">
+        {/* Main 60% */}
+        <div className="flex flex-col gap-[5.5mm]" style={{ flex: "0 0 60%", minWidth: 0 }}>
+          {resume.aboutText && (
+            <ALSection title={resume.aboutTitle || "Profile Summary"}>
+              <p className="text-justify leading-[1.75] text-slate-700" style={{ fontSize: "var(--fs-body)" }} dangerouslySetInnerHTML={{ __html: resume.aboutText }} />
+            </ALSection>
+          )}
+          {resume.showExperience && resume.experience.length > 0 && (
+            <ALSection title="Work Experience">
+              <div className="space-y-[4mm]">
+                {resume.experience.map((e) => (
+                  <article key={e.id} className="space-y-[1.5mm]" style={{ breakInside: "avoid-page", pageBreakInside: "avoid" }}>
+                    <div className="flex items-start justify-between gap-2">
+                      <h3 className="font-extrabold text-slate-900" style={{ fontSize: "var(--fs-detail)" }}>{e.heading}</h3>
+                      {e.period && <span className="shrink-0 font-medium" style={{ fontSize: "var(--fs-label)", color: INDIGO }}>{e.period}</span>}
+                    </div>
+                    {e.subheading && <p className="italic text-slate-500" style={{ fontSize: "var(--fs-label)" }}>{e.subheading}</p>}
+                    <div className="space-y-[1mm]">
+                      {splitLines(e.details).map((l, i) => (
+                        <div key={i} className="flex items-start gap-[2mm] text-slate-700 leading-[1.65]" style={{ fontSize: "var(--fs-detail)" }}>
+                          <span className="mt-[3px] inline-block h-[4px] w-[4px] shrink-0 rounded-full" style={{ background: INDIGO }} />
+                          <span dangerouslySetInnerHTML={{ __html: l }} />
+                        </div>
+                      ))}
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </ALSection>
+          )}
+          {resume.education.length > 0 && (
+            <ALSection title="Education">
+              <div className="space-y-[3.5mm]">
+                {resume.education.map((e) => (
+                  <article key={e.id} className="space-y-[1.5mm]" style={{ breakInside: "avoid-page", pageBreakInside: "avoid" }}>
+                    <h3 className="font-extrabold text-slate-900" style={{ fontSize: "var(--fs-detail)" }}>{e.heading}</h3>
+                    <div className="space-y-[1mm]">
+                      {[...(e.subheading ? [e.subheading] : []), ...splitLines(e.details), ...(e.period ? [e.period] : [])].map((l, i) => (
+                        <div key={i} className="flex items-start gap-[2mm] text-slate-700 leading-[1.65]" style={{ fontSize: "var(--fs-detail)" }}>
+                          <span className="mt-[3px] inline-block h-[4px] w-[4px] shrink-0 rounded-full" style={{ background: INDIGO }} />
+                          <span dangerouslySetInnerHTML={{ __html: l }} />
+                        </div>
+                      ))}
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </ALSection>
+          )}
+          {resume.showProjects && resume.projects.length > 0 && (
+            <ALSection title="Projects">
+              <div className="space-y-[3.5mm]">
+                {resume.projects.map((e) => (
+                  <article key={e.id} className="space-y-[1.5mm]" style={{ breakInside: "avoid-page", pageBreakInside: "avoid" }}>
+                    <h3 className="font-extrabold text-slate-900" style={{ fontSize: "var(--fs-detail)" }}>{e.heading}</h3>
+                    {e.subheading && <p className="italic text-slate-500" style={{ fontSize: "var(--fs-label)" }}>{e.subheading}</p>}
+                    <div className="space-y-[1mm]">
+                      {splitLines(e.details).map((l, i) => (
+                        <div key={i} className="flex items-start gap-[2mm] text-slate-700 leading-[1.65]" style={{ fontSize: "var(--fs-detail)" }}>
+                          <span className="mt-[3px] inline-block h-[4px] w-[4px] shrink-0 rounded-full" style={{ background: INDIGO }} />
+                          <span dangerouslySetInnerHTML={{ __html: l }} />
+                        </div>
+                      ))}
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </ALSection>
+          )}
+          {resume.showAchievements && splitLinesHtml(resume.achievementsText).length > 0 && (
+            <ALSection title="Achievements">
+              <div className="space-y-[1.5mm]">
+                {splitLinesHtml(resume.achievementsText).map((item, i) => (
+                  <div key={i} className="flex items-start gap-[2mm] text-slate-700 leading-[1.65]" style={{ fontSize: "var(--fs-detail)" }}>
+                    <span className="mt-[3px] inline-block h-[4px] w-[4px] shrink-0 rounded-full" style={{ background: INDIGO }} />
+                    <span dangerouslySetInnerHTML={{ __html: item }} />
+                  </div>
+                ))}
+              </div>
+            </ALSection>
+          )}
+          {resume.showDeclaration && resume.declarationText && (
+            <ALSection title={resume.declarationTitle || "Declaration"}>
+              <p className="text-justify leading-[1.75] text-slate-700" style={{ fontSize: "var(--fs-body)" }} dangerouslySetInnerHTML={{ __html: resume.declarationText }} />
+            </ALSection>
+          )}
+        </div>
+
+        {/* Sidebar 40% */}
+        <div className="flex flex-col gap-[5.5mm] border-l-2 pl-[6mm]" style={{ flex: "0 0 40%", minWidth: 0, borderLeftColor: INDIGO + "33" }}>
+          {resume.showSkills && splitLines(resume.skillsText).length > 0 && (
+            <ALSection title="Skills">
+              <div className="flex flex-wrap gap-[1.5mm]">
+                {splitLines(resume.skillsText).map((item) => (
+                  <span key={item} className="rounded-md border px-[2.5mm] leading-[5mm] text-slate-700" style={{ fontSize: "var(--fs-label)", borderColor: INDIGO + "40", color: INDIGO }}>
+                    {item}
+                  </span>
+                ))}
+              </div>
+            </ALSection>
+          )}
+          {resume.showCertifications && splitLines(resume.certificationsText).length > 0 && (
+            <ALSection title="Certifications">
+              <div className="space-y-[1.5mm]">
+                {splitLines(resume.certificationsText).map((item) => (
+                  <p key={item} className="leading-[1.5] text-slate-700" style={{ fontSize: "var(--fs-label)" }}>{item}</p>
+                ))}
+              </div>
+            </ALSection>
+          )}
+          {resume.showLanguages && splitLines(resume.languagesText).length > 0 && (
+            <ALSection title="Languages">
+              <div className="space-y-[1mm]">
+                {splitLines(resume.languagesText).map((item) => (
+                  <p key={item} className="text-slate-700" style={{ fontSize: "var(--fs-label)" }}>{item}</p>
+                ))}
+              </div>
+            </ALSection>
+          )}
+          {resume.showPersonalDetails && vp.length > 0 && (
+            <ALSection title="Personal Details">
+              <div className="space-y-[2mm]">
+                {vp.map((f) => (
+                  <p key={f.id} className="text-slate-700 leading-[1.5]" style={{ fontSize: "var(--fs-label)" }}>
+                    {f.label && <span className="font-bold text-slate-800">{f.label}: </span>}{f.value}
+                  </p>
+                ))}
+              </div>
+            </ALSection>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ── Edit form helpers ─────────────────────────────────────────────────────────
 
 function ToggleField({
@@ -2587,6 +3672,10 @@ export default function ResumeBuilderPage() {
   const previewContainerRef = useRef<HTMLDivElement>(null);
   const [previewScale, setPreviewScale] = useState(1);
   const [scaledHeight, setScaledHeight] = useState(0);
+  const [typoOpen, setTypoOpen] = useState(false);
+  const [typoTab, setTypoTab] = useState<"typeface" | "sizes" | "layout">("typeface");
+  const [typoPos, setTypoPos] = useState({ x: 24, y: 140 });
+  const typoDragRef = useRef<{ startX: number; startY: number; startPx: number; startPy: number } | null>(null);
 
   // Inject Google Fonts stylesheet once
   useEffect(() => {
@@ -3063,64 +4152,14 @@ export default function ResumeBuilderPage() {
                 >
                   Reset
                 </button>
-              </div>
-            </div>
-
-            {/* Template selector */}
-            <div className="mb-6">
-              <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-vintage-cream/50">
-                Template
-              </p>
-              <div className="grid grid-cols-3 gap-2">
-                {TEMPLATES.map((t) => (
-                  <button
-                    key={t.id}
-                    onClick={() => upd("template", t.id)}
-                    className={`relative rounded-xl border p-3 text-left transition-all ${resume.template === t.id ? "border-vintage-burgundy bg-vintage-burgundy/15 shadow-sm shadow-vintage-burgundy/20" : "border-vintage-cream/10 hover:border-vintage-cream/25"}`}
-                  >
-                    {t.ats && (
-                      <span className="absolute right-2 top-2 rounded-full bg-green-800/50 px-1.5 py-0.5 text-[9px] font-bold text-green-300">
-                        ATS
-                      </span>
-                    )}
-                    {/* Mini layout icon */}
-                    <div className="mb-2 flex gap-1">
-                      {t.id === "sidebar" && (
-                        <>
-                          <div className="h-6 w-[30%] rounded-[2px] bg-vintage-cream/20" />
-                          <div className="h-6 flex-1 space-y-1 rounded-[2px] bg-vintage-cream/10 p-1">
-                            <div className="h-1 w-3/4 rounded bg-vintage-cream/30" />
-                            <div className="h-1 w-1/2 rounded bg-vintage-cream/20" />
-                          </div>
-                        </>
-                      )}
-                      {t.id === "professional" && (
-                        <div className="h-6 flex-1 space-y-1 rounded-[2px] bg-vintage-cream/10 p-1">
-                          <div className="mx-auto h-1.5 w-1/2 rounded bg-vintage-cream/40" />
-                          <div className="h-1 w-full rounded bg-vintage-cream/20" />
-                          <div className="h-1 w-4/5 rounded bg-vintage-cream/20" />
-                        </div>
-                      )}
-                      {t.id === "modern" && (
-                        <div className="flex-1 space-y-1 overflow-hidden rounded-[2px]">
-                          <div className="h-2.5 w-full bg-vintage-cream/30" />
-                          <div className="flex gap-1 p-1">
-                            <div className="h-3 w-[35%] rounded-[1px] bg-vintage-cream/20" />
-                            <div className="h-3 flex-1 space-y-0.5 rounded-[1px] bg-vintage-cream/10">
-                              <div className="h-0.5 w-3/4 rounded bg-vintage-cream/30" />
-                            </div>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                    <p className="text-[10px] font-bold uppercase tracking-wide text-vintage-cream/80">
-                      {t.name}
-                    </p>
-                    <p className="mt-0.5 text-[9px] text-vintage-cream/40">
-                      {t.desc}
-                    </p>
-                  </button>
-                ))}
+                <button
+                  onClick={() => setTypoOpen((v) => !v)}
+                  title="Style & Typography"
+                  className={`flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-sm font-medium transition-colors ${typoOpen ? "border-vintage-burgundy bg-vintage-burgundy/15 text-vintage-cream" : "border-vintage-cream/15 text-vintage-cream/50 hover:border-vintage-cream/30 hover:text-vintage-cream"}`}
+                >
+                  <Icon icon="solar:palette-bold-duotone" className="text-base" />
+                  Style
+                </button>
               </div>
             </div>
 
@@ -3132,128 +4171,54 @@ export default function ResumeBuilderPage() {
                     Career Template
                   </p>
                   <p className="mt-1 text-xs text-vintage-cream/45">
-                    Swap in aviation-ready content for airport ops, cabin crew, or ground support while keeping your personal details.
+                    Swap in ready-made content for your industry while keeping your personal details.
                   </p>
                 </div>
                 <span className="rounded-full border border-vintage-cream/10 px-2 py-1 text-[10px] uppercase tracking-[0.16em] text-vintage-cream/40">
                   Content only
                 </span>
               </div>
-              <div className="grid gap-2">
-                {CAREER_PRESETS.map((preset) => (
-                  <button
-                    key={preset.id}
-                    onClick={() => applyCareerPreset(preset.id)}
-                    className="rounded-xl border border-vintage-cream/10 bg-vintage-navy/30 p-3 text-left transition-all hover:border-vintage-cream/25 hover:bg-vintage-cream/5"
-                  >
-                    <div className="flex items-center justify-between gap-3">
-                      <div>
-                        <p className="text-sm font-semibold text-vintage-cream/85">
-                          {preset.name}
-                        </p>
-                        <p className="mt-1 text-[11px] leading-5 text-vintage-cream/45">
-                          {preset.desc}
+              <div className="space-y-4">
+                {CAREER_GROUPS.map((group) => {
+                  const groupPresets = CAREER_PRESETS.filter((p) => group.presets.includes(p.id));
+                  return (
+                    <div key={group.label}>
+                      <div className="mb-2 flex items-center gap-2">
+                        <Icon icon={group.icon} className="text-[15px] text-vintage-burgundy" />
+                        <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-vintage-cream/50">
+                          {group.label}
                         </p>
                       </div>
-                      <span className="shrink-0 rounded-full bg-vintage-burgundy/15 px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-vintage-burgundy">
-                        {preset.shortName}
-                      </span>
+                      <div className="grid gap-2">
+                        {groupPresets.map((preset) => (
+                          <button
+                            key={preset.id}
+                            onClick={() => applyCareerPreset(preset.id)}
+                            className="rounded-xl border border-vintage-cream/10 bg-vintage-navy/30 p-3 text-left transition-all hover:border-vintage-cream/25 hover:bg-vintage-cream/5"
+                          >
+                            <div className="flex items-center justify-between gap-3">
+                              <div>
+                                <p className="text-sm font-semibold text-vintage-cream/85">
+                                  {preset.name}
+                                </p>
+                                <p className="mt-1 text-[11px] leading-5 text-vintage-cream/45">
+                                  {preset.desc}
+                                </p>
+                              </div>
+                              <span className="shrink-0 rounded-full bg-vintage-burgundy/15 px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-vintage-burgundy">
+                                {preset.shortName}
+                              </span>
+                            </div>
+                          </button>
+                        ))}
+                      </div>
                     </div>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Font picker */}
-            <div className="mb-6">
-              <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-vintage-cream/50">
-                Font
-              </p>
-              <div className="grid grid-cols-1 gap-2">
-                {RESUME_FONTS.map((f) => (
-                  <button
-                    key={f.id}
-                    onClick={() => upd("fontFamily", f.id)}
-                    className={`flex items-center justify-between rounded-xl border px-4 py-2.5 text-left transition-all ${resume.fontFamily === f.id ? "border-vintage-burgundy bg-vintage-burgundy/15 shadow-sm shadow-vintage-burgundy/20" : "border-vintage-cream/10 hover:border-vintage-cream/25"}`}
-                  >
-                    <span
-                      style={{ fontFamily: f.cssFamily }}
-                      className="text-[15px] font-semibold text-vintage-cream/90"
-                    >
-                      {f.name}
-                    </span>
-                    <span className="text-[10px] text-vintage-cream/40">
-                      {f.label}
-                    </span>
-                  </button>
-                ))}
+                  );
+                })}
               </div>
             </div>
 
             <div className="space-y-3">
-              {/* Typography */}
-              <SectionCard title="Typography" defaultOpen={false}>
-                <div className="space-y-4">
-                  {/* Overall */}
-                  <div>
-                    <p className="mb-2 text-xs font-medium text-vintage-cream/70">Overall size</p>
-                    <div className="flex items-center gap-2">
-                      <button
-                        onClick={() => updFontSize("overall", -1)}
-                        disabled={resume.fontSizes.overall <= -5}
-                        className="flex h-7 w-7 items-center justify-center rounded-md border border-vintage-cream/20 text-base text-vintage-cream/70 hover:bg-vintage-cream/10 disabled:opacity-30"
-                      >−</button>
-                      <span className="min-w-[2rem] text-center text-xs text-vintage-cream/60">
-                        {resume.fontSizes.overall > 0 ? `+${resume.fontSizes.overall}` : resume.fontSizes.overall}
-                      </span>
-                      <button
-                        onClick={() => updFontSize("overall", 1)}
-                        disabled={resume.fontSizes.overall >= 5}
-                        className="flex h-7 w-7 items-center justify-center rounded-md border border-vintage-cream/20 text-base text-vintage-cream/70 hover:bg-vintage-cream/10 disabled:opacity-30"
-                      >+</button>
-                      {resume.fontSizes.overall !== 0 && (
-                        <button
-                          onClick={() => updFontSize("overall", -resume.fontSizes.overall)}
-                          className="ml-1 text-[10px] text-vintage-cream/40 hover:text-vintage-cream/70"
-                        >reset</button>
-                      )}
-                    </div>
-                  </div>
-                  {/* Per-field */}
-                  <div className="space-y-2">
-                    <p className="text-xs font-medium text-vintage-cream/70">Per section</p>
-                    {(
-                      [
-                        { key: "name",    label: "Name" },
-                        { key: "heading", label: "Headings" },
-                        { key: "body",    label: "Body text" },
-                        { key: "detail",  label: "Details / bullets" },
-                        { key: "label",   label: "Labels / chips" },
-                      ] as { key: keyof FontSizes; label: string }[]
-                    ).map(({ key, label }) => (
-                      <div key={key} className="flex items-center justify-between">
-                        <span className="text-xs text-vintage-cream/60">{label}</span>
-                        <div className="flex items-center gap-1.5">
-                          <button
-                            onClick={() => updFontSize(key, -1)}
-                            disabled={resume.fontSizes[key] <= -5}
-                            className="flex h-6 w-6 items-center justify-center rounded border border-vintage-cream/20 text-xs text-vintage-cream/70 hover:bg-vintage-cream/10 disabled:opacity-30"
-                          >−</button>
-                          <span className="min-w-[1.75rem] text-center text-[11px] text-vintage-cream/60">
-                            {resume.fontSizes[key] > 0 ? `+${resume.fontSizes[key]}` : resume.fontSizes[key]}
-                          </span>
-                          <button
-                            onClick={() => updFontSize(key, 1)}
-                            disabled={resume.fontSizes[key] >= 5}
-                            className="flex h-6 w-6 items-center justify-center rounded border border-vintage-cream/20 text-xs text-vintage-cream/70 hover:bg-vintage-cream/10 disabled:opacity-30"
-                          >+</button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </SectionCard>
-
               {/* Basic Info */}
               <SectionCard title="Basic Info">
                 <div className="space-y-3">
@@ -3865,6 +4830,12 @@ export default function ResumeBuilderPage() {
                       <ProfessionalPreview resume={resume} />
                     ) : resume.template === "modern" ? (
                       <ModernPreview resume={resume} />
+                    ) : resume.template === "executive" ? (
+                      <ExecutivePreview resume={resume} />
+                    ) : resume.template === "compact" ? (
+                      <CompactPreview resume={resume} />
+                    ) : resume.template === "accent-line" ? (
+                      <AccentLinePreview resume={resume} />
                     ) : (
                       <ClassicPreview resume={resume} />
                     )}
@@ -3931,6 +4902,259 @@ export default function ResumeBuilderPage() {
                 title="Resume PDF Preview"
               />
             </div>
+          </div>
+        </div>
+      )}
+      {/* ── Floating Style & Typography Panel ────────────────────────── */}
+      {typoOpen && (
+        <div
+          className="fixed z-[9998] w-80 overflow-hidden rounded-2xl border border-vintage-cream/15 bg-vintage-navy/95 shadow-2xl shadow-black/50 backdrop-blur-xl"
+          style={{ left: typoPos.x, top: typoPos.y }}
+        >
+          {/* Drag handle */}
+          <div
+            className="flex cursor-grab select-none items-center justify-between gap-3 border-b border-vintage-cream/10 px-4 py-3 active:cursor-grabbing"
+            onPointerDown={(e) => {
+              typoDragRef.current = { startX: e.clientX, startY: e.clientY, startPx: typoPos.x, startPy: typoPos.y };
+              e.currentTarget.setPointerCapture(e.pointerId);
+            }}
+            onPointerMove={(e) => {
+              if (!typoDragRef.current) return;
+              const dx = e.clientX - typoDragRef.current.startX;
+              const dy = e.clientY - typoDragRef.current.startY;
+              setTypoPos({
+                x: Math.max(0, Math.min(window.innerWidth - 320, typoDragRef.current.startPx + dx)),
+                y: Math.max(0, Math.min(window.innerHeight - 60, typoDragRef.current.startPy + dy)),
+              });
+            }}
+            onPointerUp={() => { typoDragRef.current = null; }}
+            onPointerCancel={() => { typoDragRef.current = null; }}
+          >
+            <div className="flex items-center gap-2">
+              <Icon icon="solar:palette-bold-duotone" className="text-lg text-vintage-burgundy" />
+              <span className="text-sm font-semibold text-vintage-cream/85">Style & Typography</span>
+            </div>
+            <button
+              onClick={() => setTypoOpen(false)}
+              className="flex h-7 w-7 items-center justify-center rounded-lg text-vintage-cream/40 hover:bg-vintage-cream/10 hover:text-vintage-cream"
+              aria-label="Close panel"
+            >
+              <Icon icon="solar:close-linear" className="text-base" />
+            </button>
+          </div>
+
+          {/* Tabs */}
+          <div className="flex border-b border-vintage-cream/10 px-4">
+            {(["typeface", "sizes", "layout"] as const).map((tab) => (
+              <button
+                key={tab}
+                onClick={() => setTypoTab(tab)}
+                className={`mr-5 -mb-px border-b-2 pb-2 pt-2.5 text-xs font-semibold uppercase tracking-[0.14em] transition-colors ${
+                  typoTab === tab
+                    ? "border-vintage-burgundy text-vintage-cream"
+                    : "border-transparent text-vintage-cream/40 hover:text-vintage-cream/70"
+                }`}
+              >
+                {tab === "typeface" ? "Typeface" : tab === "sizes" ? "Sizes" : "Layout"}
+              </button>
+            ))}
+          </div>
+
+          {/* Tab content */}
+          <div className="max-h-[min(70vh,520px)] overflow-y-auto p-4">
+            {/* Typeface tab */}
+            {typoTab === "typeface" && (
+              <div className="grid grid-cols-1 gap-2">
+                {RESUME_FONTS.map((f) => (
+                  <button
+                    key={f.id}
+                    onClick={() => upd("fontFamily", f.id)}
+                    className={`flex items-center justify-between rounded-xl border px-4 py-2.5 text-left transition-all ${
+                      resume.fontFamily === f.id
+                        ? "border-vintage-burgundy bg-vintage-burgundy/15 shadow-sm shadow-vintage-burgundy/20"
+                        : "border-vintage-cream/10 hover:border-vintage-cream/25"
+                    }`}
+                  >
+                    <span style={{ fontFamily: f.cssFamily }} className="text-[15px] font-semibold text-vintage-cream/90">
+                      {f.name}
+                    </span>
+                    <span className="text-[10px] text-vintage-cream/40">{f.label}</span>
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {/* Sizes tab */}
+            {typoTab === "sizes" && (
+              <div className="space-y-4">
+                <div>
+                  <p className="mb-2 text-xs font-medium text-vintage-cream/60">Overall size</p>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => updFontSize("overall", -1)}
+                      disabled={resume.fontSizes.overall <= -5}
+                      className="flex h-8 w-8 items-center justify-center rounded-lg border border-vintage-cream/20 text-vintage-cream/70 hover:bg-vintage-cream/10 disabled:opacity-30"
+                    >−</button>
+                    <span className="min-w-[2.25rem] text-center text-sm text-vintage-cream/70">
+                      {resume.fontSizes.overall > 0 ? `+${resume.fontSizes.overall}` : resume.fontSizes.overall}
+                    </span>
+                    <button
+                      onClick={() => updFontSize("overall", 1)}
+                      disabled={resume.fontSizes.overall >= 5}
+                      className="flex h-8 w-8 items-center justify-center rounded-lg border border-vintage-cream/20 text-vintage-cream/70 hover:bg-vintage-cream/10 disabled:opacity-30"
+                    >+</button>
+                    {resume.fontSizes.overall !== 0 && (
+                      <button
+                        onClick={() => updFontSize("overall", -resume.fontSizes.overall)}
+                        className="ml-1 text-[11px] text-vintage-cream/40 hover:text-vintage-cream/70"
+                      >reset</button>
+                    )}
+                  </div>
+                </div>
+                <div className="h-px bg-vintage-cream/10" />
+                <div className="space-y-2.5">
+                  <p className="text-xs font-medium text-vintage-cream/60">Per element</p>
+                  {(
+                    [
+                      { key: "name",    label: "Name" },
+                      { key: "heading", label: "Headings" },
+                      { key: "body",    label: "Body text" },
+                      { key: "detail",  label: "Details / bullets" },
+                      { key: "label",   label: "Labels / chips" },
+                    ] as { key: keyof FontSizes; label: string }[]
+                  ).map(({ key, label }) => (
+                    <div key={key} className="flex items-center justify-between">
+                      <span className="text-xs text-vintage-cream/60">{label}</span>
+                      <div className="flex items-center gap-1.5">
+                        <button
+                          onClick={() => updFontSize(key, -1)}
+                          disabled={resume.fontSizes[key] <= -5}
+                          className="flex h-6 w-6 items-center justify-center rounded border border-vintage-cream/20 text-xs text-vintage-cream/70 hover:bg-vintage-cream/10 disabled:opacity-30"
+                        >−</button>
+                        <span className="min-w-[1.75rem] text-center text-[11px] text-vintage-cream/60">
+                          {resume.fontSizes[key] > 0 ? `+${resume.fontSizes[key]}` : resume.fontSizes[key]}
+                        </span>
+                        <button
+                          onClick={() => updFontSize(key, 1)}
+                          disabled={resume.fontSizes[key] >= 5}
+                          className="flex h-6 w-6 items-center justify-center rounded border border-vintage-cream/20 text-xs text-vintage-cream/70 hover:bg-vintage-cream/10 disabled:opacity-30"
+                        >+</button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Layout tab */}
+            {typoTab === "layout" && (
+              <div className="grid grid-cols-1 gap-3">
+                {TEMPLATES.map((t) => (
+                  <button
+                    key={t.id}
+                    onClick={() => upd("template", t.id)}
+                    className={`relative rounded-xl border p-4 text-left transition-all ${
+                      resume.template === t.id
+                        ? "border-vintage-burgundy bg-vintage-burgundy/15 shadow-sm shadow-vintage-burgundy/20"
+                        : "border-vintage-cream/10 hover:border-vintage-cream/25"
+                    }`}
+                  >
+                    {t.ats && (
+                      <span className="absolute right-3 top-3 rounded-full bg-green-800/50 px-1.5 py-0.5 text-[9px] font-bold text-green-300">ATS</span>
+                    )}
+                    <div className="mb-3 flex gap-1.5">
+                      {t.id === "sidebar" && (
+                        <>
+                          <div className="h-9 w-[30%] rounded-[2px] bg-vintage-cream/20" />
+                          <div className="h-9 flex-1 space-y-1.5 rounded-[2px] bg-vintage-cream/10 p-1.5">
+                            <div className="h-1.5 w-3/4 rounded bg-vintage-cream/30" />
+                            <div className="h-1 w-1/2 rounded bg-vintage-cream/20" />
+                            <div className="h-1 w-5/6 rounded bg-vintage-cream/15" />
+                          </div>
+                        </>
+                      )}
+                      {t.id === "professional" && (
+                        <div className="h-9 flex-1 space-y-1.5 rounded-[2px] bg-vintage-cream/10 p-1.5">
+                          <div className="mx-auto h-1.5 w-1/2 rounded bg-vintage-cream/40" />
+                          <div className="h-1 w-full rounded bg-vintage-cream/20" />
+                          <div className="h-1 w-4/5 rounded bg-vintage-cream/20" />
+                          <div className="h-1 w-3/5 rounded bg-vintage-cream/15" />
+                        </div>
+                      )}
+                      {t.id === "modern" && (
+                        <div className="flex-1 space-y-1 overflow-hidden rounded-[2px]">
+                          <div className="h-3 w-full bg-vintage-cream/30" />
+                          <div className="flex gap-1 p-1">
+                            <div className="h-5 w-[35%] rounded-[1px] bg-vintage-cream/20" />
+                            <div className="h-5 flex-1 space-y-1 rounded-[1px] bg-vintage-cream/10 p-0.5">
+                              <div className="h-1 w-3/4 rounded bg-vintage-cream/30" />
+                              <div className="h-0.5 w-1/2 rounded bg-vintage-cream/20" />
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                      {t.id === "executive" && (
+                        <div className="flex-1 overflow-hidden rounded-[2px] bg-vintage-cream/10">
+                          <div className="h-1 w-full bg-teal-500/50" />
+                          <div className="flex gap-1 p-1">
+                            <div className="flex-1 space-y-1">
+                              <div className="h-1.5 w-1/2 rounded bg-vintage-cream/40" />
+                              <div className="h-1 w-4/5 rounded bg-vintage-cream/20" />
+                              <div className="h-1 w-3/5 rounded bg-vintage-cream/15" />
+                            </div>
+                            <div className="w-[32%] space-y-1 border-l border-vintage-cream/15 pl-1">
+                              <div className="h-1 w-full rounded bg-teal-500/30" />
+                              <div className="h-0.5 w-5/6 rounded bg-vintage-cream/15" />
+                              <div className="h-0.5 w-4/6 rounded bg-vintage-cream/15" />
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                      {t.id === "compact" && (
+                        <div className="flex-1 space-y-0.5 rounded-[2px] bg-vintage-cream/10 p-1">
+                          <div className="mx-auto h-1.5 w-2/5 rounded bg-vintage-cream/40" />
+                          <div className="h-px w-full bg-vintage-cream/30" />
+                          <div className="h-1 w-full rounded bg-vintage-cream/20" />
+                          <div className="h-px w-full bg-vintage-cream/15" />
+                          <div className="h-1 w-3/4 rounded bg-vintage-cream/20" />
+                          <div className="h-1 w-4/5 rounded bg-vintage-cream/15" />
+                        </div>
+                      )}
+                      {t.id === "accent-line" && (
+                        <div className="flex-1 overflow-hidden rounded-[2px] bg-vintage-cream/10">
+                          <div className="h-1.5 w-full bg-indigo-500/50" />
+                          <div className="flex items-center justify-between p-1">
+                            <div className="h-1.5 w-1/3 rounded bg-vintage-cream/40" />
+                            <div className="flex gap-0.5">
+                              <div className="h-1 w-6 rounded bg-indigo-400/30" />
+                              <div className="h-1 w-5 rounded bg-indigo-400/30" />
+                            </div>
+                          </div>
+                          <div className="h-px mx-1 bg-indigo-400/30" />
+                          <div className="flex gap-1 p-1">
+                            <div className="flex-1 space-y-0.5">
+                              <div className="h-1 w-4/5 rounded bg-vintage-cream/20" />
+                              <div className="h-0.5 w-3/5 rounded bg-vintage-cream/15" />
+                            </div>
+                            <div className="w-[35%] space-y-0.5 border-l border-indigo-400/20 pl-0.5">
+                              <div className="h-1 w-full rounded bg-indigo-400/25" />
+                              <div className="h-0.5 w-4/5 rounded bg-vintage-cream/15" />
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <p className="text-sm font-bold text-vintage-cream/85">{t.name}</p>
+                      {resume.template === t.id && (
+                        <Icon icon="solar:check-circle-bold" className="text-base text-vintage-burgundy" />
+                      )}
+                    </div>
+                    <p className="mt-1 text-[11px] text-vintage-cream/45">{t.desc}</p>
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       )}
