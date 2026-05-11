@@ -5,7 +5,7 @@ import confidential from "../public/images/confidential.png";
 
 export const texts = {
   about:
-    "Full-Stack Software Architect with 6+ years of experience driving innovation with React, Next.js, and Node.js. Expertise in scalable system design, modern UI/UX development, and building high-performance web applications. Proficient in Adobe Creative Suite for design-development synergy.",
+    "Full-Stack Software Architect with 8+ years of experience driving innovation with React, Next.js, and Node.js. Expertise in scalable system design, modern UI/UX development, and building high-performance web applications. Proficient in Adobe Creative Suite for design-development synergy.",
 };
 
 export const skills = [
@@ -55,6 +55,6 @@ export const projects = [
 ];
 
 export const about_me =
-  "As a Full-Stack Software Architect with over 6 years of hands-on experience, I specialize in driving innovation through React, Next.js, and Node.js. My expertise lies in scalable system design and building high-performance, user-centric web applications that deliver exceptional experiences. I hold a B.Tech in Computer Engineering from KMP College of Engineering (2014-2018) and have continuously expanded my skills through certifications in frontend development and graphic design. My career journey has taken me from UI Developer at Uvionics Tech to Software Engineer at Aspire Systems, then to Development Team Lead at Epixel Solutions, and I am currently working at EFR (Emirates Face Recognition) as an Application Developer. Throughout this journey, I have mastered the JavaScript ecosystem, led development teams, and delivered enterprise-level solutions. I am passionate about performance optimization, accessibility, and creating seamless responsive interfaces. Beyond coding, I bring proficiency in Adobe Creative Suite, enabling me to bridge the gap between design and development. My goal is to continue architecting innovative solutions that make a meaningful impact while staying at the forefront of emerging technologies.";
+  "As a Full-Stack Software Architect with over 8 years of hands-on experience, I specialize in driving innovation through React, Next.js, and Node.js. My expertise lies in scalable system design and building high-performance, user-centric web applications that deliver exceptional experiences. I hold a B.Tech in Computer Engineering from KMP College of Engineering (2014-2018) and have continuously expanded my skills through certifications in frontend development and graphic design. My career journey has taken me from UI Developer at Uvionics Tech to Software Engineer at Aspire Systems, then to Development Team Lead at Epixel Solutions, and I am currently working at EFR (Emirates Face Recognition) as an Application Developer. Throughout this journey, I have mastered the JavaScript ecosystem, led development teams, and delivered enterprise-level solutions. I am passionate about performance optimization, accessibility, and creating seamless responsive interfaces. Beyond coding, I bring proficiency in Adobe Creative Suite, enabling me to bridge the gap between design and development. My goal is to continue architecting innovative solutions that make a meaningful impact while staying at the forefront of emerging technologies.";
 
 export const resumeUrl = process.env.NEXT_PUBLIC_RESUME_URL?.trim() || "";

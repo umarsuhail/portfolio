@@ -17,7 +17,7 @@ const REQUEST_TIMEOUT_MS = 10_000;
 const PROFILE_CONTEXT = `
 Name: Umar
 Role: Full-Stack Software Architect
-Experience: 6+ years
+Experience: 8+ years
 Core Stack: React, Next.js, TypeScript, JavaScript, Node.js, Redux, Tailwind CSS
 Strengths: scalable system design, high-performance frontend architecture, UI/UX focused product delivery
 Current Position: Currently working at EFR (Emirates Face Recognition) as an Application Developer

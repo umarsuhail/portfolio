@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import mediaDefaultPhoto from "../../public/images/Media.jpg";
-import { ChangeEvent, ReactNode, useEffect, useRef, useState } from "react";
+import { ChangeEvent, ReactNode, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Icon } from "@iconify/react";
 import type { jsPDF as JsPdf } from "jspdf";
 
@@ -280,19 +280,19 @@ const initialResume: ResumeData = {
   title: "Airport Management Professional",
   aboutTitle: "Profile Summary",
   aboutText:
-    "Ambitious aviation management candidate with an IATA-certified foundation in aviation security, cargo operations, and passenger-facing airport support. Currently pursuing a BBA in Human Resource Management to combine workforce leadership with safe, efficient terminal operations. Prepared to support compliance, service recovery, and a smooth passenger experience in high-pressure environments.",
+    "Motivated and detail-oriented BBA candidate specialising in Human Resource Management, with a completed IATA-certified Diploma in Airport Management. Strong communication skills with a calm, customer-focused approach and a clear goal to build a career in the aviation industry. Equipped with academic knowledge of passenger handling, terminal workflows, aviation security, and cargo operations — eager to bring these foundations into a professional airport environment.",
   declarationTitle: "Declaration",
   declarationText:
     "I hereby declare that the above information is true and correct to the best of my knowledge and belief.",
   skillsText:
-    "FAA Part 139 awareness\nICAO Standards familiarity\nAVSEC Protocols\nAir Cargo Operations\nGround Handling Coordination\nPassenger Service Recovery\nConflict Resolution\nWorkforce Scheduling\nEmergency Response Coordination\nRisk Assessment\nOperational Efficiency\nStakeholder Communication",
+    "Aviation Security (AVSEC) Basics\nAir Cargo Operations Fundamentals\nAirport Operations Awareness\nAmadeus & Sabre GDS\nPassenger Service Basics\nCustomer Communication\nTeam Collaboration\nDocumentation & Reporting\nTime Management\nHR Fundamentals (BBA)",
   languagesText: "English\nMalayalam",
   certificationsText:
     "IATA Certified Airport Professional - Aviation Security & Cargo Operations\nSabre GDS\nAmadeus GDS",
   achievementsText:
     "Completed Amadeus and Sabre GDS training with distinction during airport management studies<br>Participated in airport simulation exercises focused on passenger flow, terminal coordination, and safety response<br>Translated customer-facing experience into aviation-ready strengths such as service recovery, calm communication, and conflict handling",
   showAchievements: true,
-  showExperience: false,
+  showExperience: true,
   showProjects: false,
   showSkills: true,
   showLanguages: true,
@@ -329,7 +329,16 @@ const initialResume: ResumeData = {
       details: "Kerala State Board\n2021 - 2023",
     },
   ],
-  experience: [],
+  experience: [
+    {
+      id: "experience-ux-1",
+      heading: "UX Contributor — User Journey & Planning",
+      subheading: "Generic Ticketing Application · Academic / Personal Project",
+      period: "",
+      details:
+        "Contributed to the planning and definition of end-to-end user journeys for a ticketing application, mapping key flows including registration, event discovery, seat selection, payment, and e-ticket retrieval.\nParticipated in requirements gathering sessions to translate user pain points — such as booking confusion and long queue waits — into structured user stories aligned with the development roadmap.\nCreated low-fidelity wireframes and journey maps for core screens (home, listing, checkout, confirmation), facilitating early-stage design reviews with team members.\nCollaborated on the definition of user personas and edge-case scenarios — including first-time buyers and group bookings — to ensure the flow was accessible and friction-free.\nAssisted in documenting the application's userflow logic for handoff to the development team, ensuring feature specifications matched intended user experience outcomes.\nConducted informal usability walkthroughs with peers to validate flow assumptions, noting friction points that were incorporated into the next planning iteration.",
+    },
+  ],
   projects: [],
   contact: [
     { id: "contact-1", label: "Phone", value: "8891412426" },
@@ -353,9 +362,9 @@ const cabinCrewPreset: ResumeData = {
   aboutText:
     "Service-oriented aviation candidate with an IATA-backed foundation in passenger handling, cabin safety awareness, and conflict resolution. Recognized for calm communication, professional presentation, and multilingual passenger support in fast-paced environments. Ready to deliver a safe, welcoming onboard experience while supporting service excellence and regulatory discipline.",
   skillsText:
-    "Passenger Safety Awareness\nIn-flight Service Standards\nPassenger Handling\nConflict De-escalation\nEmergency Response Awareness\nCross-cultural Communication\nTeam Coordination\nService Recovery\nTime Management\nGrooming & Professional Etiquette\nUpselling Support\nMultilingual Passenger Assistance",
+    "Cabin Safety Awareness (Academic)\nPassenger Service Basics\nEmergency Procedures Awareness\nCustomer Communication\nTeam Collaboration\nGrooming & Presentation\nTime Management\nMultilingual Communication\nConflict Handling Basics\nAmadeus & Sabre GDS",
   certificationsText:
-    "IATA Certified Airport Professional - Aviation Security & Cargo Operations\nSabre GDS\nAmadeus GDS\nFirst Aid / CPR (Add if completed)\nDG Awareness / Safety Training (Add if completed)",
+    "IATA Certified Airport Professional - Aviation Security & Cargo Operations\nSabre GDS\nAmadeus GDS",
   achievementsText:
     "Built passenger-facing communication skills through service-oriented environments where calm issue resolution and courtesy were essential<br>Maintained professionalism and service quality during high-volume, time-sensitive interactions<br>Developed aviation-ready awareness of safety, service flow, and customer confidence through airport studies and simulations",
   showExperience: true,
@@ -364,12 +373,12 @@ const cabinCrewPreset: ResumeData = {
   education: [...initialResume.education],
   experience: [
     {
-      id: "cabin-experience-1",
-      heading: "Customer Experience & Service Support",
-      subheading: "Transferable experience template",
-      period: "Add dates",
+      id: "experience-ux-1",
+      heading: "UX Contributor — User Journey & Planning",
+      subheading: "Generic Ticketing Application · Academic / Personal Project",
+      period: "",
       details:
-        "Resolved customer concerns with empathy and composure during peak service hours\nDelivered clear instructions and reassurance to first-time or anxious customers\nMaintained grooming, punctuality, and teamwork standards in a public-facing setting\nHandled service recovery professionally to protect brand experience and customer trust\nSupported team coordination to keep operations running on schedule",
+        "Contributed to the planning and definition of end-to-end user journeys for a ticketing application, mapping key flows including registration, event discovery, seat selection, payment, and e-ticket retrieval.\nParticipated in requirements gathering sessions to translate user pain points — such as booking confusion and long queue waits — into structured user stories aligned with the development roadmap.\nCreated low-fidelity wireframes and journey maps for core screens (home, listing, checkout, confirmation), facilitating early-stage design reviews with team members.\nCollaborated on the definition of user personas and edge-case scenarios — including first-time buyers and group bookings — to ensure the flow was accessible and friction-free.\nAssisted in documenting the application's userflow logic for handoff to the development team, ensuring feature specifications matched intended user experience outcomes.\nConducted informal usability walkthroughs with peers to validate flow assumptions, noting friction points that were incorporated into the next planning iteration.",
     },
   ],
   projects: [],
@@ -380,25 +389,25 @@ const groundSupportPreset: ResumeData = {
   template: "professional",
   title: "Airport Ground Staff & Passenger Support Candidate",
   aboutText:
-    "Detail-oriented aviation candidate with an IATA-certified background in AVSEC and cargo operations, supported by BBA studies in Human Resource Management. Skilled in passenger assistance, check-in support, baggage coordination, and terminal-side problem solving. Focused on safe, efficient ground operations and a smooth passenger experience across busy airport environments.",
+    "Aspiring airport ground operations professional with an IATA-certified diploma in Airport Management and an ongoing BBA in Human Resource Management. Academic foundation covers check-in procedures, baggage handling awareness, passenger service basics, and terminal operations. Eager to apply classroom knowledge in a hands-on ground support role.",
   skillsText:
-    "Check-in & Boarding Support\nPassenger Assistance\nBaggage Coordination\nTerminal Operations Support\nAVSEC Protocols\nAir Cargo Operations\nGround Handling Operations\nCrowd Flow Coordination\nDocumentation Accuracy\nConflict Resolution\nService Recovery\nOperational Safety Awareness",
+    "Check-in & Boarding Procedures (Academic)\nPassenger Service Awareness (Academic)\nBaggage Handling Fundamentals (Academic)\nAirport Operations Basics\nAVSEC Awareness\nAmadeus & Sabre GDS\nCustomer Communication\nDocumentation Accuracy\nTeam Collaboration\nTime Management",
   certificationsText:
     "IATA Certified Airport Professional - Aviation Security & Cargo Operations\nSabre GDS\nAmadeus GDS",
   achievementsText:
-    "Built frontline service skills that translate directly to terminal support, check-in assistance, and passenger issue handling<br>Strengthened operational discipline through airport-focused coursework in security, cargo, and service coordination<br>Practiced aviation terminology and workflow awareness through reservation-system and passenger-processing exercises",
+    "Completed IATA-certified coursework covering ground operations, passenger handling procedures, and terminal safety protocols<br>Studied check-in and baggage coordination workflows through airport management training and GDS simulation exercises<br>Developed awareness of documentation standards and passenger communication practices through academic coursework",
   showExperience: true,
   showProjects: false,
   showPhoto: false,
   education: [...initialResume.education],
   experience: [
     {
-      id: "ground-experience-1",
-      heading: "Passenger Service / Frontline Support",
-      subheading: "Transferable experience template",
-      period: "Add dates",
+      id: "experience-ux-1",
+      heading: "UX Contributor — User Journey & Planning",
+      subheading: "Generic Ticketing Application · Academic / Personal Project",
+      period: "",
       details:
-        "Assisted customers quickly and accurately in fast-paced service environments\nHandled complaints, queue pressure, and special requests while maintaining professionalism\nSupported documentation accuracy, basic system updates, and handoff communication across teams\nPrioritized safety, punctuality, and smooth service delivery during busy operational periods\nWorked collaboratively to maintain workflow continuity and customer satisfaction",
+        "Contributed to the planning and definition of end-to-end user journeys for a ticketing application, mapping key flows including registration, event discovery, seat selection, payment, and e-ticket retrieval.\nParticipated in requirements gathering sessions to translate user pain points — such as booking confusion and long queue waits — into structured user stories aligned with the development roadmap.\nCreated low-fidelity wireframes and journey maps for core screens (home, listing, checkout, confirmation), facilitating early-stage design reviews with team members.\nCollaborated on the definition of user personas and edge-case scenarios — including first-time buyers and group bookings — to ensure the flow was accessible and friction-free.\nAssisted in documenting the application's userflow logic for handoff to the development team, ensuring feature specifications matched intended user experience outcomes.\nConducted informal usability walkthroughs with peers to validate flow assumptions, noting friction points that were incorporated into the next planning iteration.",
     },
   ],
   projects: [],
@@ -2038,6 +2047,32 @@ function ProfessionalPreview({ resume }: { resume: ResumeData }) {
   const fontStyle = fontDef ? { fontFamily: fontDef.cssFamily } : {};
   const sz = computeFontSizes(resume);
   const showPhoto = resume.showPhoto && resume.photoDataUrl;
+  const rootRef = useRef<HTMLDivElement>(null);
+
+  // Push sections that land inside a new page's top margin zone down to the correct inset
+  useLayoutEffect(() => {
+    const root = rootRef.current;
+    if (!root) return;
+    const pageH = 297 * (96 / 25.4);
+    const padT = 12 * (96 / 25.4);
+    const sects = Array.from(root.querySelectorAll<HTMLElement>("section"));
+    sects.forEach((s) => { s.style.marginTop = ""; });
+    for (let pass = 0; pass < 8; pass++) {
+      let hit = false;
+      const rootTop = root.getBoundingClientRect().top;
+      sects.forEach((s) => {
+        const t = s.getBoundingClientRect().top - rootTop;
+        const pg = Math.floor(t / pageH);
+        if (pg === 0) return;
+        const pos = t - pg * pageH;
+        if (pos < padT) {
+          s.style.marginTop = `${(parseFloat(s.style.marginTop) || 0) + (padT - pos)}px`;
+          hit = true;
+        }
+      });
+      if (!hit) break;
+    }
+  }, [resume]);
 
   function AtsSection({
     title,
@@ -2062,7 +2097,8 @@ function ProfessionalPreview({ resume }: { resume: ResumeData }) {
   return (
     <div
       style={{ ...fontStyle, '--fs-name': sz.name, '--fs-heading': sz.heading, '--fs-body': sz.body, '--fs-detail': sz.detail, '--fs-label': sz.label } as unknown as React.CSSProperties}
-      className="mx-auto flex min-h-[297mm] w-[210mm] min-w-[210mm] flex-col bg-white px-[15mm] py-[12mm] text-slate-900 shadow-[0_30px_80px_rgba(0,0,0,0.25)]"
+      ref={rootRef}
+      className="relative mx-auto flex min-h-[297mm] w-[210mm] min-w-[210mm] flex-col bg-white px-[15mm] py-[12mm] text-slate-900 shadow-[0_30px_80px_rgba(0,0,0,0.25)]"
     >
       <div className="mb-[6mm] shrink-0">
         {showPhoto ? (
@@ -3125,9 +3161,6 @@ export default function ResumeBuilderPage() {
                     </div>
                   </button>
                 ))}
-              </div>
-              <div className="mt-3 rounded-xl border border-amber-400/15 bg-amber-500/5 px-3 py-2 text-[11px] leading-5 text-amber-100/70">
-                Tip: ATS-focused roles usually perform better without a photo and without generic filler like “hard worker” or “team player.” Let achievements and aviation keywords do the heavy lifting.
               </div>
             </div>
 
