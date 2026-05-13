@@ -2155,6 +2155,57 @@ function RichEditor({
 
 // ── Preview shared components ─────────────────────────────────────────────────
 
+// Pushes any <section> that lands inside the top printable-margin zone of
+// page 2+ down to the safe inset. Reused by every continuous (non-paginated)
+// preview so content is not clipped by printer bleed on follow-on pages.
+function useTopPagePush(
+  rootRef: React.RefObject<HTMLDivElement | null>,
+  deps: unknown,
+  topMarginMm = 12,
+) {
+  useLayoutEffect(() => {
+    const root = rootRef.current;
+    if (!root) return;
+    const mmToPx = 96 / 25.4;
+    const pageH = 297 * mmToPx;
+    const padT = topMarginMm * mmToPx;
+    const sects = Array.from(root.querySelectorAll<HTMLElement>("section"));
+    sects.forEach((s) => { s.style.marginTop = ""; });
+    for (let pass = 0; pass < 8; pass++) {
+      let hit = false;
+      const rootTop = root.getBoundingClientRect().top;
+      sects.forEach((s) => {
+        const t = s.getBoundingClientRect().top - rootTop;
+        const pg = Math.floor(t / pageH);
+        if (pg === 0) return;
+        const pos = t - pg * pageH;
+        if (pos < padT) {
+          s.style.marginTop = `${(parseFloat(s.style.marginTop) || 0) + (padT - pos)}px`;
+          hit = true;
+        }
+      });
+      if (!hit) break;
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [deps]);
+}
+
+function ResumePhotoBlock({
+  src,
+  className = "h-[30mm] w-[26mm] shrink-0 rounded-sm border border-slate-200 object-cover object-top shadow-sm",
+}: { src: string; className?: string }) {
+  return (
+    <Image
+      src={src}
+      alt="Profile"
+      width={110}
+      height={120}
+      unoptimized
+      className={className}
+    />
+  );
+}
+
 function ResumeSection({
   title,
   children,
@@ -2568,31 +2619,7 @@ function ProfessionalPreview({ resume }: { resume: ResumeData }) {
   const sz = computeFontSizes(resume);
   const showPhoto = resume.showPhoto && resume.photoDataUrl;
   const rootRef = useRef<HTMLDivElement>(null);
-
-  // Push sections that land inside a new page's top margin zone down to the correct inset
-  useLayoutEffect(() => {
-    const root = rootRef.current;
-    if (!root) return;
-    const pageH = 297 * (96 / 25.4);
-    const padT = 12 * (96 / 25.4);
-    const sects = Array.from(root.querySelectorAll<HTMLElement>("section"));
-    sects.forEach((s) => { s.style.marginTop = ""; });
-    for (let pass = 0; pass < 8; pass++) {
-      let hit = false;
-      const rootTop = root.getBoundingClientRect().top;
-      sects.forEach((s) => {
-        const t = s.getBoundingClientRect().top - rootTop;
-        const pg = Math.floor(t / pageH);
-        if (pg === 0) return;
-        const pos = t - pg * pageH;
-        if (pos < padT) {
-          s.style.marginTop = `${(parseFloat(s.style.marginTop) || 0) + (padT - pos)}px`;
-          hit = true;
-        }
-      });
-      if (!hit) break;
-    }
-  }, [resume]);
+  useTopPagePush(rootRef, resume);
 
   function AtsSection({
     title,
@@ -2816,6 +2843,8 @@ function ModernPreview({ resume }: { resume: ResumeData }) {
   const fontDef = RESUME_FONTS.find((f) => f.id === resume.fontFamily);
   const fontStyle = fontDef ? { fontFamily: fontDef.cssFamily } : {};
   const sz = computeFontSizes(resume);
+  const rootRef = useRef<HTMLDivElement>(null);
+  useTopPagePush(rootRef, resume);
 
   function ModernSidebar({
     title,
@@ -2859,6 +2888,7 @@ function ModernPreview({ resume }: { resume: ResumeData }) {
 
   return (
     <div
+      ref={rootRef}
       style={{ ...fontStyle, '--fs-name': sz.name, '--fs-heading': sz.heading, '--fs-body': sz.body, '--fs-detail': sz.detail, '--fs-label': sz.label } as unknown as React.CSSProperties}
       className="mx-auto flex min-h-[297mm] w-[210mm] min-w-[210mm] flex-col bg-white text-slate-900 shadow-[0_30px_80px_rgba(0,0,0,0.25)]"
     >
@@ -3022,6 +3052,9 @@ function ExecutivePreview({ resume }: { resume: ResumeData }) {
   const fontStyle = fontDef ? { fontFamily: fontDef.cssFamily } : {};
   const sz = computeFontSizes(resume);
   const TEAL = "#0d7377";
+  const showPhoto = resume.showPhoto && resume.photoDataUrl;
+  const rootRef = useRef<HTMLDivElement>(null);
+  useTopPagePush(rootRef, resume);
 
   function ExSection({ title, children }: { title: string; children: ReactNode }) {
     return (
@@ -3038,6 +3071,7 @@ function ExecutivePreview({ resume }: { resume: ResumeData }) {
 
   return (
     <div
+      ref={rootRef}
       style={{ ...fontStyle, "--fs-name": sz.name, "--fs-heading": sz.heading, "--fs-body": sz.body, "--fs-detail": sz.detail, "--fs-label": sz.label } as unknown as React.CSSProperties}
       className="mx-auto flex min-h-[297mm] w-[210mm] min-w-[210mm] flex-col bg-white text-slate-900 shadow-[0_30px_80px_rgba(0,0,0,0.25)]"
     >
@@ -3047,7 +3081,7 @@ function ExecutivePreview({ resume }: { resume: ResumeData }) {
       {/* Header */}
       <div className="px-[12mm] pt-[8mm] pb-[5mm] border-b border-slate-200">
         <div className="flex items-start justify-between gap-[6mm]">
-          <div>
+          <div className="min-w-0">
             <h1 className="font-black uppercase leading-none tracking-[0.06em] text-slate-900" style={{ fontSize: "var(--fs-name)" }}>
               {resume.name || "Your Name"}
             </h1>
@@ -3056,15 +3090,28 @@ function ExecutivePreview({ resume }: { resume: ResumeData }) {
                 {resume.title}
               </p>
             )}
+            {showPhoto && vc.length > 0 && (
+              <div className="mt-[3mm] space-y-[1.5mm]">
+                {vc.map((f) => (
+                  <p key={f.id} className="text-slate-600 leading-[1.5]" style={{ fontSize: "var(--fs-label)" }}>
+                    {f.value}
+                  </p>
+                ))}
+              </div>
+            )}
           </div>
-          {vc.length > 0 && (
-            <div className="text-right space-y-[1.5mm] shrink-0">
-              {vc.map((f) => (
-                <p key={f.id} className="text-slate-600 leading-[1.5]" style={{ fontSize: "var(--fs-label)" }}>
-                  {f.value}
-                </p>
-              ))}
-            </div>
+          {showPhoto ? (
+            <ResumePhotoBlock src={resume.photoDataUrl} />
+          ) : (
+            vc.length > 0 && (
+              <div className="text-right space-y-[1.5mm] shrink-0">
+                {vc.map((f) => (
+                  <p key={f.id} className="text-slate-600 leading-[1.5]" style={{ fontSize: "var(--fs-label)" }}>
+                    {f.value}
+                  </p>
+                ))}
+              </div>
+            )
           )}
         </div>
       </div>
@@ -3217,6 +3264,9 @@ function CompactPreview({ resume }: { resume: ResumeData }) {
   const fontDef = RESUME_FONTS.find((f) => f.id === resume.fontFamily);
   const fontStyle = fontDef ? { fontFamily: fontDef.cssFamily } : {};
   const sz = computeFontSizes(resume);
+  const showPhoto = resume.showPhoto && resume.photoDataUrl;
+  const rootRef = useRef<HTMLDivElement>(null);
+  useTopPagePush(rootRef, resume);
 
   function CSection({ title, children }: { title: string; children: ReactNode }) {
     return (
@@ -3232,23 +3282,47 @@ function CompactPreview({ resume }: { resume: ResumeData }) {
 
   return (
     <div
+      ref={rootRef}
       style={{ ...fontStyle, "--fs-name": sz.name, "--fs-heading": sz.heading, "--fs-body": sz.body, "--fs-detail": sz.detail, "--fs-label": sz.label } as unknown as React.CSSProperties}
       className="mx-auto flex min-h-[297mm] w-[210mm] min-w-[210mm] flex-col bg-white px-[13mm] py-[10mm] text-slate-900 shadow-[0_30px_80px_rgba(0,0,0,0.25)]"
     >
       {/* Header */}
-      <div className="mb-[5mm] text-center">
-        <h1 className="font-black uppercase tracking-[0.1em] text-slate-900 leading-none" style={{ fontSize: "var(--fs-name)" }}>
-          {resume.name || "Your Name"}
-        </h1>
-        {resume.title && (
-          <p className="mt-[1.5mm] font-semibold uppercase tracking-[0.22em] text-slate-500" style={{ fontSize: "var(--fs-label)" }}>
-            {resume.title}
-          </p>
-        )}
-        {vc.length > 0 && (
-          <p className="mt-[2mm] text-slate-500" style={{ fontSize: "var(--fs-label)" }}>
-            {vc.map((f) => f.value).join("  ·  ")}
-          </p>
+      <div className="mb-[5mm]">
+        {showPhoto ? (
+          <div className="flex items-center gap-[6mm]">
+            <div className="flex-1 text-left min-w-0">
+              <h1 className="font-black uppercase tracking-[0.1em] text-slate-900 leading-none" style={{ fontSize: "var(--fs-name)" }}>
+                {resume.name || "Your Name"}
+              </h1>
+              {resume.title && (
+                <p className="mt-[1.5mm] font-semibold uppercase tracking-[0.22em] text-slate-500" style={{ fontSize: "var(--fs-label)" }}>
+                  {resume.title}
+                </p>
+              )}
+              {vc.length > 0 && (
+                <p className="mt-[2mm] text-slate-500" style={{ fontSize: "var(--fs-label)" }}>
+                  {vc.map((f) => f.value).join("  ·  ")}
+                </p>
+              )}
+            </div>
+            <ResumePhotoBlock src={resume.photoDataUrl} />
+          </div>
+        ) : (
+          <div className="text-center">
+            <h1 className="font-black uppercase tracking-[0.1em] text-slate-900 leading-none" style={{ fontSize: "var(--fs-name)" }}>
+              {resume.name || "Your Name"}
+            </h1>
+            {resume.title && (
+              <p className="mt-[1.5mm] font-semibold uppercase tracking-[0.22em] text-slate-500" style={{ fontSize: "var(--fs-label)" }}>
+                {resume.title}
+              </p>
+            )}
+            {vc.length > 0 && (
+              <p className="mt-[2mm] text-slate-500" style={{ fontSize: "var(--fs-label)" }}>
+                {vc.map((f) => f.value).join("  ·  ")}
+              </p>
+            )}
+          </div>
         )}
         <div className="mx-auto mt-[3mm] h-[2px] w-full bg-slate-800" />
       </div>
@@ -3395,6 +3469,9 @@ function AccentLinePreview({ resume }: { resume: ResumeData }) {
   const fontStyle = fontDef ? { fontFamily: fontDef.cssFamily } : {};
   const sz = computeFontSizes(resume);
   const INDIGO = "#3730a3";
+  const showPhoto = resume.showPhoto && resume.photoDataUrl;
+  const rootRef = useRef<HTMLDivElement>(null);
+  useTopPagePush(rootRef, resume);
 
   function ALSection({ title, children }: { title: string; children: ReactNode }) {
     return (
@@ -3410,6 +3487,7 @@ function AccentLinePreview({ resume }: { resume: ResumeData }) {
 
   return (
     <div
+      ref={rootRef}
       style={{ ...fontStyle, "--fs-name": sz.name, "--fs-heading": sz.heading, "--fs-body": sz.body, "--fs-detail": sz.detail, "--fs-label": sz.label } as unknown as React.CSSProperties}
       className="mx-auto flex min-h-[297mm] w-[210mm] min-w-[210mm] flex-col bg-white text-slate-900 shadow-[0_30px_80px_rgba(0,0,0,0.25)]"
     >
@@ -3419,7 +3497,7 @@ function AccentLinePreview({ resume }: { resume: ResumeData }) {
       {/* Header */}
       <div className="px-[12mm] pt-[7mm] pb-[5mm]">
         <div className="flex items-start justify-between gap-[6mm]">
-          <div>
+          <div className="min-w-0 flex-1">
             <h1 className="font-black uppercase leading-none tracking-[0.06em] text-slate-900" style={{ fontSize: "var(--fs-name)" }}>
               {resume.name || "Your Name"}
             </h1>
@@ -3428,15 +3506,28 @@ function AccentLinePreview({ resume }: { resume: ResumeData }) {
                 {resume.title}
               </p>
             )}
+            {showPhoto && vc.length > 0 && (
+              <div className="mt-[3mm] flex flex-wrap gap-[1.5mm]">
+                {vc.map((f) => (
+                  <span key={f.id} className="text-slate-600 border border-slate-200 rounded-sm px-[2mm] leading-[5mm] bg-slate-50" style={{ fontSize: "var(--fs-label)" }}>
+                    {f.value}
+                  </span>
+                ))}
+              </div>
+            )}
           </div>
-          {vc.length > 0 && (
-            <div className="flex flex-wrap justify-end gap-[1.5mm] shrink-0 max-w-[80mm]">
-              {vc.map((f) => (
-                <span key={f.id} className="text-slate-600 border border-slate-200 rounded-sm px-[2mm] leading-[5mm] bg-slate-50" style={{ fontSize: "var(--fs-label)" }}>
-                  {f.value}
-                </span>
-              ))}
-            </div>
+          {showPhoto ? (
+            <ResumePhotoBlock src={resume.photoDataUrl} />
+          ) : (
+            vc.length > 0 && (
+              <div className="flex flex-wrap justify-end gap-[1.5mm] shrink-0 max-w-[80mm]">
+                {vc.map((f) => (
+                  <span key={f.id} className="text-slate-600 border border-slate-200 rounded-sm px-[2mm] leading-[5mm] bg-slate-50" style={{ fontSize: "var(--fs-label)" }}>
+                    {f.value}
+                  </span>
+                ))}
+              </div>
+            )
           )}
         </div>
         <div style={{ height: "2px", background: INDIGO, marginTop: "4mm" }} />
@@ -3675,6 +3766,7 @@ export default function ResumeBuilderPage() {
   const [isMobileSheet, setIsMobileSheet] = useState(false);
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const editorSectionRef = useRef<HTMLElement>(null);
+  const previewSectionRef = useRef<HTMLElement>(null);
   const previewRef = useRef<HTMLDivElement>(null);
   const scaleWrapperRef = useRef<HTMLDivElement>(null);
   const previewContainerRef = useRef<HTMLDivElement>(null);
@@ -3991,16 +4083,8 @@ export default function ResumeBuilderPage() {
       ? `<script>window.addEventListener('load',function(){document.fonts.ready.then(function(){setTimeout(function(){window.print();},900);})})<\/script>`
       : "";
 
-    return `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>${(resume.name || "Resume").replace(/[<>&"]/g, "")}</title>
-  ${sheetLinks}
-  ${inlineStyles}
-  <style>
-    @page { size: 210mm 297mm; margin: 0; }
+    const viewerStyles = opts.autoprint
+      ? `
     html, body { margin: 0; padding: 0; background: white; }
     .resume-preview-stack {
       gap: 0 !important;
@@ -4016,6 +4100,53 @@ export default function ResumeBuilderPage() {
       break-after: auto;
       page-break-after: auto;
     }
+  `
+      : `
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background: #0b1220;
+      overflow: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    body {
+      min-width: 210mm;
+    }
+    .resume-preview-stack {
+      gap: 0 !important;
+      width: 210mm !important;
+      min-width: 210mm !important;
+      margin: 0 auto !important;
+    }
+    .resume-preview-page {
+      box-shadow: none !important;
+      margin: 0 !important;
+      break-after: page;
+      page-break-after: always;
+    }
+    .resume-preview-page:last-child {
+      break-after: auto;
+      page-break-after: auto;
+    }
+    @media (max-width: 1024px) {
+      .resume-preview-stack {
+        margin: 0 !important;
+      }
+    }
+  `;
+
+    return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>${(resume.name || "Resume").replace(/[<>&"]/g, "")}</title>
+  ${sheetLinks}
+  ${inlineStyles}
+  <style>
+    @page { size: 210mm 297mm; margin: 0; }
+    ${viewerStyles}
   </style>
   ${printScript}
 </head>
@@ -4117,14 +4248,27 @@ export default function ResumeBuilderPage() {
     setMobileView(view);
     requestAnimationFrame(() => {
       const target =
-        view === "editor" ? editorSectionRef.current : previewContainerRef.current;
+        view === "editor" ? editorSectionRef.current : previewSectionRef.current;
       target?.scrollIntoView({ behavior: "smooth", block: "start" });
     });
   }
 
   function toggleStylePanel() {
-    setMobileView("editor");
-    setTypoOpen((open) => !open);
+    setTypoOpen((open) => {
+      const next = !open;
+      if (next) {
+        // Bring the preview into view so live style/font/size tweaks are
+        // visible while the floating Style panel is open.
+        requestAnimationFrame(() => {
+          previewSectionRef.current?.scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+          });
+        });
+        setMobileView("preview");
+      }
+      return next;
+    });
   }
 
   const isBusy = pdfAction !== "idle";
@@ -4214,9 +4358,7 @@ export default function ResumeBuilderPage() {
           {/* ── Edit panel ── */}
           <section
             ref={editorSectionRef}
-            className={`glass rounded-2xl border border-vintage-cream/15 p-3 shadow-2xl shadow-black/20 sm:rounded-[28px] sm:p-6 ${
-              mobileView === "editor" ? "block" : "hidden xl:block"
-            }`}
+            className="glass rounded-2xl border border-vintage-cream/15 p-3 shadow-2xl shadow-black/20 sm:rounded-[28px] sm:p-6"
           >
             {/* Panel header */}
             <div className="mb-4 flex flex-col gap-3 sm:mb-5 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
@@ -4946,9 +5088,8 @@ export default function ResumeBuilderPage() {
 
           {/* ── A4 Preview ── */}
           <section
-            className={`space-y-3 sm:space-y-4 ${
-              mobileView === "preview" ? "block" : "hidden xl:block"
-            } min-w-0`}
+            ref={previewSectionRef}
+            className="space-y-3 sm:space-y-4 min-w-0 scroll-mt-24"
           >
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
@@ -5074,15 +5215,22 @@ export default function ResumeBuilderPage() {
 
       {pdfViewerUrl && (
         <div
-          className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm"
+          className="fixed inset-0 z-[9999] flex items-stretch justify-center bg-black/80 p-0 backdrop-blur-sm sm:items-center sm:p-4"
           onClick={(e) => e.target === e.currentTarget && closePdfViewer()}
         >
           <div
-            className="relative flex w-full max-w-4xl flex-col overflow-hidden rounded-2xl border border-vintage-cream/15 bg-[#0d1117] shadow-[0_40px_100px_rgba(0,0,0,0.7)]"
-            style={{ height: "calc(100vh - 2rem)" }}
+            className="relative flex h-[100dvh] w-full flex-col overflow-hidden border border-vintage-cream/15 bg-[#0d1117] shadow-[0_40px_100px_rgba(0,0,0,0.7)] sm:h-[calc(100vh-2rem)] sm:max-w-4xl sm:rounded-2xl"
           >
+            <button
+              onClick={closePdfViewer}
+              className="absolute right-3 top-[calc(env(safe-area-inset-top)+0.75rem)] z-20 flex h-10 w-10 items-center justify-center rounded-xl border border-vintage-cream/20 bg-[#0d1117]/90 text-vintage-cream/80 backdrop-blur transition-colors hover:border-vintage-cream/40 hover:text-vintage-cream sm:hidden"
+              aria-label="Close viewer"
+            >
+              <Icon icon="solar:close-linear" className="text-lg" />
+            </button>
+
             {/* Header */}
-            <div className="flex shrink-0 items-center justify-between border-b border-vintage-cream/10 bg-[#0d1117] px-5 py-3.5">
+            <div className="flex shrink-0 items-center justify-between border-b border-vintage-cream/10 bg-[#0d1117] px-3 py-3 pr-14 sm:px-5 sm:pr-5 sm:py-3.5">
               <div className="flex items-center gap-3">
                 <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-vintage-burgundy/20">
                   <Icon
@@ -5091,10 +5239,10 @@ export default function ResumeBuilderPage() {
                   />
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-vintage-cream">
+                  <p className="text-xs font-semibold text-vintage-cream sm:text-sm">
                     {resume.name || "Resume"} &mdash; PDF Preview
                   </p>
-                  <p className="text-[11px] text-vintage-cream/40">
+                  <p className="hidden text-[11px] text-vintage-cream/40 sm:block">
                     A4 · 210 × 297 mm ·{" "}
                     {TEMPLATES.find((t) => t.id === resume.template)?.name}
                   </p>
@@ -5103,14 +5251,14 @@ export default function ResumeBuilderPage() {
               <div className="flex items-center gap-2">
                 <button
                   onClick={handleViewerDownload}
-                  className="btn-primary py-2 text-sm"
+                  className="btn-primary px-3 py-2 text-xs sm:text-sm"
                 >
                   <Icon icon="solar:download-linear" className="text-base" />
-                  Download
+                  <span className="hidden sm:inline">Download</span>
                 </button>
                 <button
                   onClick={closePdfViewer}
-                  className="flex h-9 w-9 items-center justify-center rounded-xl border border-vintage-cream/15 text-vintage-cream/60 transition-colors hover:border-vintage-cream/30 hover:text-vintage-cream"
+                  className="hidden h-9 w-9 items-center justify-center rounded-xl border border-vintage-cream/15 text-vintage-cream/60 transition-colors hover:border-vintage-cream/30 hover:text-vintage-cream sm:flex"
                   aria-label="Close viewer"
                 >
                   <Icon icon="solar:close-linear" className="text-lg" />

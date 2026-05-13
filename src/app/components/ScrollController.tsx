@@ -4,15 +4,18 @@ import { useEffect, useRef, useState } from "react";
 import type { PointerEvent } from "react";
 import { usePathname } from "next/navigation";
 import GlobeCanvas from "./GlobeCanvas";
+import useIsMobile from "./useIsMobile";
 
 const RADIUS = 44;
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 
 export default function ScrollController() {
   const pathname = usePathname();
+  const isMobile = useIsMobile();
   const [progress, setProgress] = useState(0);
   const [visible, setVisible] = useState(false);
   const [dragging, setDragging] = useState(false);
+  const [showHint, setShowHint] = useState(true);
   const externalLambdaRef = useRef(0);
   const dragRef = useRef<{
     pointerId: number;
@@ -24,21 +27,38 @@ export default function ScrollController() {
   const isResumeBuilder = pathname?.startsWith("/resume-builder");
 
   useEffect(() => {
+    let ticking = false;
+
     const onScroll = () => {
-      const scrolled = window.scrollY;
-      const total = document.documentElement.scrollHeight - window.innerHeight;
-      const p = total > 0 ? Math.min(1, scrolled / total) : 0;
-      setProgress(p);
-      setVisible(scrolled > 80);
-      // 2 full rotations across the entire page length
-      externalLambdaRef.current = p * 720;
+      if (ticking) return;
+      ticking = true;
+
+      requestAnimationFrame(() => {
+        const scrolled = window.scrollY;
+        const total = document.documentElement.scrollHeight - window.innerHeight;
+        const p = total > 0 ? Math.min(1, scrolled / total) : 0;
+        setProgress(p);
+        setVisible(scrolled > (isMobile ? 120 : 80));
+        // 2 full rotations across the entire page length
+        if (!isMobile) {
+          externalLambdaRef.current = p * 720;
+        }
+        ticking = false;
+      });
     };
     window.addEventListener("scroll", onScroll, { passive: true });
     onScroll();
     return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  }, [isMobile]);
+
+  useEffect(() => {
+    if (!isMobile || !visible || !showHint) return;
+    const timer = window.setTimeout(() => setShowHint(false), 5000);
+    return () => window.clearTimeout(timer);
+  }, [isMobile, visible, showHint]);
 
   const handleClick = () => {
+    setShowHint(false);
     if (dragRef.current?.didDrag) return;
     if (progress > 0.88) {
       window.scrollTo({ top: 0, behavior: "smooth" });
@@ -48,6 +68,8 @@ export default function ScrollController() {
   };
 
   const handlePointerDown = (event: PointerEvent<HTMLButtonElement>) => {
+    setShowHint(false);
+
     dragRef.current = {
       pointerId: event.pointerId,
       startX: event.clientX,
@@ -111,7 +133,7 @@ export default function ScrollController() {
       onPointerCancel={endDrag}
       aria-label={atTop ? "Back to top" : "Scroll down"}
       className={[
-        "fixed left-1/2 -translate-x-1/2 z-50 touch-none transition-all duration-500 ease-out",
+        "fixed left-1/2 -translate-x-1/2 z-50 touch-pan-y transition-all duration-500 ease-out",
         isResumeBuilder
           ? "bottom-[calc(env(safe-area-inset-bottom)+5.75rem)] xl:bottom-6"
           : "bottom-6",
@@ -120,7 +142,7 @@ export default function ScrollController() {
     >
       <div
         className={[
-          "relative h-[96px] w-[96px] group transition-transform duration-200",
+          `${isMobile ? "h-[68px] w-[68px]" : "h-[96px] w-[96px]"} relative group transition-transform duration-200`,
           dragging ? "scale-105 cursor-grabbing" : "cursor-grab active:scale-105",
         ].join(" ")}
       >
@@ -162,18 +184,25 @@ export default function ScrollController() {
         </svg>
 
         {/* Globe */}
-        <div className="absolute inset-0 flex items-center justify-center pb-3">
-          <GlobeCanvas
-            size={68}
-            globeRadius={30}
-            speed={8}
-            tilt={16}
-            externalLambdaRef={externalLambdaRef}
-          />
-        </div>
+        {!isMobile ? (
+          <div className="absolute inset-0 flex items-center justify-center pb-3">
+            <GlobeCanvas
+              size={68}
+              globeRadius={30}
+              speed={8}
+              tilt={16}
+              externalLambdaRef={externalLambdaRef}
+            />
+          </div>
+        ) : (
+          <div className="absolute inset-0 flex items-center justify-center text-[#0081A7] text-sm font-semibold">
+            {atTop ? "↑" : `${Math.round(progress * 100)}%`}
+          </div>
+        )}
 
         {/* Percentage / icon at bottom */}
-        <div className="absolute bottom-[10px] left-0 right-0 flex justify-center">
+        {!isMobile && (
+          <div className="absolute bottom-[10px] left-0 right-0 flex justify-center">
           {atTop ? (
             <svg
               width="10" height="10" viewBox="0 0 10 10"
@@ -187,8 +216,15 @@ export default function ScrollController() {
               {Math.round(progress * 100)}%
             </span>
           )}
-        </div>
+          </div>
+        )}
       </div>
+
+      {isMobile && visible && showHint && (
+        <span className="pointer-events-none absolute left-1/2 top-full mt-2 -translate-x-1/2 whitespace-nowrap rounded-full border border-white/10 bg-[#030014]/80 px-2 py-1 text-[10px] font-medium tracking-wide text-white/65 backdrop-blur-sm">
+          Drag up/down to scroll
+        </span>
+      )}
     </button>
   );
 }

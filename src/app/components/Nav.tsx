@@ -18,21 +18,30 @@ export default function Nav() {
   const [activeSection, setActiveSection] = useState("");
 
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
+    let ticking = false;
 
-      const sections = ["projects", "skills", "contact"];
-      for (const section of sections) {
-        const element = document.getElementById(section);
-        if (element) {
-          const rect = element.getBoundingClientRect();
-          if (rect.top <= 150 && rect.bottom >= 150) {
-            setActiveSection(`#${section}`);
-            return;
+    const handleScroll = () => {
+      if (ticking) return;
+      ticking = true;
+
+      requestAnimationFrame(() => {
+        setScrolled(window.scrollY > 50);
+
+        const sections = ["projects", "skills", "contact"];
+        for (const section of sections) {
+          const element = document.getElementById(section);
+          if (element) {
+            const rect = element.getBoundingClientRect();
+            if (rect.top <= 150 && rect.bottom >= 150) {
+              setActiveSection(`#${section}`);
+              ticking = false;
+              return;
+            }
           }
         }
-      }
-      setActiveSection("");
+        setActiveSection("");
+        ticking = false;
+      });
     };
 
     window.addEventListener("scroll", handleScroll);

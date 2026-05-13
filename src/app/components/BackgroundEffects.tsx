@@ -1,18 +1,40 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import useIsMobile from "./useIsMobile";
 
 export default function BackgroundEffects() {
+  const isMobile = useIsMobile();
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const frameRef = useRef<number | null>(null);
 
   useEffect(() => {
+    if (isMobile) return;
+
     const handleMouseMove = (e: MouseEvent) => {
-      setMousePosition({ x: e.clientX, y: e.clientY });
+      if (frameRef.current) return;
+      frameRef.current = requestAnimationFrame(() => {
+        setMousePosition({ x: e.clientX, y: e.clientY });
+        frameRef.current = null;
+      });
     };
 
     window.addEventListener("mousemove", handleMouseMove);
-    return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, []);
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      if (frameRef.current) cancelAnimationFrame(frameRef.current);
+    };
+  }, [isMobile]);
+
+  if (isMobile) {
+    return (
+      <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
+        <div className="absolute inset-0 bg-vintage-navy" />
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-72 h-72 bg-vintage-burgundy/10 rounded-full blur-[90px]" />
+        <div className="absolute inset-0 vintage-texture" />
+      </div>
+    );
+  }
 
   return (
     <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">

@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { Icon } from "@iconify/react";
+import useIsMobile from "./useIsMobile";
 
 const projects = [
   {
@@ -115,6 +116,9 @@ const projects = [
 const categories = ["All", ...new Set(projects.map((p) => p.category))];
 
 export default function ProjectsA() {
+  const isMobile = useIsMobile();
+  const prefersReducedMotion = useReducedMotion();
+  const shouldReduceMotion = isMobile || prefersReducedMotion;
   const [activeCategory, setActiveCategory] = useState("All");
   const [expandedProject, setExpandedProject] = useState<string | null>(null);
 
@@ -164,16 +168,16 @@ export default function ProjectsA() {
           ))}
         </motion.div>
 
-        <motion.div layout className="grid md:grid-cols-2 gap-6">
+        <motion.div layout={!shouldReduceMotion} className="grid md:grid-cols-2 gap-6">
           <AnimatePresence mode="popLayout">
             {filteredProjects.map((project, index) => (
               <motion.div
                 key={project.title}
-                layout
+                layout={!shouldReduceMotion}
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.9 }}
-                transition={{ duration: 0.4, delay: index * 0.1 }}
+                transition={{ duration: shouldReduceMotion ? 0.2 : 0.4, delay: shouldReduceMotion ? 0 : index * 0.1 }}
                 className="group"
               >
                 <div className="rounded-xl overflow-hidden card-hover h-full flex flex-col p-4 bg-gradient-to-r from-vintage-burgundy to-vintage-burgundy/80 shadow-2xl border border-white/10 backdrop-blur-md">

@@ -1,9 +1,10 @@
 "use client";
 
 import { useState, useMemo, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { Icon } from "@iconify/react";
 import { skills } from "@/utils/constants";
+import useIsMobile from "./useIsMobile";
 
 interface Splatter {
   id: number;
@@ -124,6 +125,9 @@ const GraffitiSplatter = ({ splatter }: { splatter: Splatter }) => {
 };
 
 export default function SkillsUniverse() {
+  const isMobile = useIsMobile();
+  const prefersReducedMotion = useReducedMotion();
+  const shouldReduceMotion = isMobile || prefersReducedMotion;
   const [skillState, setSkillState] = useState<SkillWithSplatters[]>(
     skills.map((s) => ({ ...s, splatters: [] }))
   );
@@ -141,6 +145,8 @@ export default function SkillsUniverse() {
   }, [filter, skillState]);
 
   const handleGraffiti = useCallback((e: React.MouseEvent, skillName: string) => {
+    if (shouldReduceMotion) return;
+
     const rect = e.currentTarget.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
@@ -179,7 +185,7 @@ export default function SkillsUniverse() {
         })
       );
     }, 1000);
-  }, []);
+  }, [shouldReduceMotion]);
 
   return (
     <section
@@ -225,19 +231,19 @@ export default function SkillsUniverse() {
         </motion.div>
 
         <motion.div
-          layout
+          layout={!shouldReduceMotion}
           className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4"
         >
           <AnimatePresence mode="popLayout">
             {filteredSkills.map((skill, index) => (
               <motion.div
                 key={skill.name}
-                layout
+                layout={!shouldReduceMotion}
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.8 }}
-                transition={{ duration: 0.3, delay: index * 0.05 }}
-                whileHover={{ scale: 1.05, y: -5 }}
+                transition={{ duration: shouldReduceMotion ? 0.2 : 0.3, delay: shouldReduceMotion ? 0 : index * 0.05 }}
+                whileHover={shouldReduceMotion ? undefined : { scale: 1.05, y: -5 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={(e) => handleGraffiti(e, skill.name)}
                 className="relative group cursor-pointer overflow-visible"
@@ -277,14 +283,16 @@ export default function SkillsUniverse() {
           </AnimatePresence>
         </motion.div>
 
-        <motion.p
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          className="text-center text-vintage-cream/40 text-sm mt-8"
-        >
-          🎨 Click on skills to spray paint them!
-        </motion.p>
+        {!shouldReduceMotion && (
+          <motion.p
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            className="text-center text-vintage-cream/40 text-sm mt-8"
+          >
+            🎨 Click on skills to spray paint them!
+          </motion.p>
+        )}
       </div>
     </section>
   );
