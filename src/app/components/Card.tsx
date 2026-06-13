@@ -7,7 +7,7 @@ import profile from "../../public/images/me-s.jpg";
 import { texts } from "@/utils/constants";
 
 const stats = [
-  { value: "6+", label: "Years Experience" },
+  { value: "7+", label: "Years Experience" },
   { value: "50+", label: "Projects Delivered" },
   { value: "30+", label: "Happy Clients" },
   { value: "99%", label: "Client Satisfaction" },
@@ -52,7 +52,7 @@ export default function Card() {
               Hi, I&apos;m{" "}
               <span className="gradient-text">Umar Suhail</span>
               <br />
-              <span className="text-vintage-cream/90">Software Architect</span>
+              <span className="text-vintage-cream/90">Lead Frontend Engineer</span>
             </motion.h1>
 
             <motion.p

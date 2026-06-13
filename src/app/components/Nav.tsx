@@ -72,7 +72,7 @@ export default function Nav() {
               <span className="text-vintage-cream font-semibold text-lg group-hover:text-vintage-burgundy transition-colors">
                 Umar Suhail
               </span>
-              <span className="block text-xs text-vintage-cream/50">Software Architect</span>
+              <span className="block text-xs text-vintage-cream/50">Lead Frontend Engineer</span>
             </div>
           </Link>
 

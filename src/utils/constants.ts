@@ -5,7 +5,7 @@ import confidential from "../public/images/confidential.png";
 
 export const texts = {
   about:
-    "Full-Stack Software Architect with 8+ years of experience driving innovation with React, Next.js, and Node.js. Expertise in scalable system design, modern UI/UX development, and building high-performance web applications. Proficient in Adobe Creative Suite for design-development synergy.",
+    "Lead Frontend Engineer with 7+ years building scalable React & Next.js applications at Emirates Face Recognition (EFR), UAE. Specialising in UI/UX design, frontend architecture, TypeScript, and performance optimisation — available for senior engineering roles.",
 };
 
 export const skills = [
@@ -55,6 +55,7 @@ export const projects = [
 ];
 
 export const about_me =
-  "As a Full-Stack Software Architect with over 8 years of hands-on experience, I specialize in driving innovation through React, Next.js, and Node.js. My expertise lies in scalable system design and building high-performance, user-centric web applications that deliver exceptional experiences. I hold a B.Tech in Computer Engineering from KMP College of Engineering (2014-2018) and have continuously expanded my skills through certifications in frontend development and graphic design. My career journey has taken me from UI Developer at Uvionics Tech to Software Engineer at Aspire Systems, then to Development Team Lead at Epixel Solutions, and I am currently working at EFR (Emirates Face Recognition) as an Application Developer. Throughout this journey, I have mastered the JavaScript ecosystem, led development teams, and delivered enterprise-level solutions. I am passionate about performance optimization, accessibility, and creating seamless responsive interfaces. Beyond coding, I bring proficiency in Adobe Creative Suite, enabling me to bridge the gap between design and development. My goal is to continue architecting innovative solutions that make a meaningful impact while staying at the forefront of emerging technologies.";
+  "Lead Frontend Engineer with 7+ years of hands-on experience building high-performance, scalable web applications. Currently at Emirates Face Recognition (EFR) in UAE as an Application Developer, leading React component architecture and performance optimisation. Previously Development Team Lead at Epixel Solutions, Software Engineer at Aspire Systems, and UI Developer at Uvionics Tech. Deep expertise across the full React ecosystem — Next.js, TypeScript, Redux Toolkit, Tailwind CSS, and modern CI/CD pipelines. Equally fluent in UI/UX design with proficiency in Figma and Adobe Creative Suite, enabling seamless design-to-development delivery.";
 
-export const resumeUrl = process.env.NEXT_PUBLIC_RESUME_URL?.trim() || "";
+export const resumeUrl =
+  process.env.NEXT_PUBLIC_RESUME_URL?.trim() || "/umar-suhail-resume-2026.pdf";
