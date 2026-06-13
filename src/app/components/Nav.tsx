@@ -108,11 +108,12 @@ export default function Nav() {
               <span>Resume Builder</span>
             </Link>
             <a
-              href="mailto:umarsuhail112@gmail.com"
+              href="/umar-suhail-resume-2026.pdf"
+              download="Umar-Suhail-Resume.pdf"
               className="btn-secondary text-sm px-4 py-2"
             >
-              <Icon icon="solar:letter-bold-duotone" className="text-lg" />
-              <span>Email Me</span>
+              <Icon icon="solar:file-download-bold-duotone" className="text-lg" />
+              <span>Download CV</span>
             </a>
             <a
               href="https://wa.me/971568323258"
@@ -190,11 +191,12 @@ export default function Nav() {
                   Resume Builder
                 </Link>
                 <a
-                  href="mailto:umarsuhail112@gmail.com"
+                  href="/umar-suhail-resume-2026.pdf"
+                  download="Umar-Suhail-Resume.pdf"
                   className="btn-secondary justify-center"
                 >
-                  <Icon icon="solar:letter-bold-duotone" />
-                  Email Me
+                  <Icon icon="solar:file-download-bold-duotone" />
+                  Download CV
                 </a>
                 <a
                   href="https://wa.me/971568323258"

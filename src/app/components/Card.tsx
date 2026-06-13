@@ -78,6 +78,14 @@ export default function Card() {
                 <Icon icon="solar:eye-bold" className="text-lg" />
                 View Projects
               </a>
+              <a
+                href="/umar-suhail-resume-2026.pdf"
+                download="Umar-Suhail-Resume.pdf"
+                className="btn-secondary"
+              >
+                <Icon icon="solar:file-download-bold" className="text-lg" />
+                Download CV
+              </a>
             </motion.div>
 
             <motion.div

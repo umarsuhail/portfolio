@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import mediaDefaultPhoto from "../../public/images/Media.jpg";
 import { ChangeEvent, ReactNode, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Icon } from "@iconify/react";
 import type { jsPDF as JsPdf } from "jspdf";
@@ -428,17 +427,16 @@ const initialResume: ResumeData = {
   ],
   projects: [],
   contact: [
-    { id: "contact-1", label: "Phone", value: "8891412426" },
-    { id: "contact-2", label: "Email", value: "sshahanavn@gmail.com" },
-    { id: "contact-3", label: "LinkedIn", value: "linkedin.com/in/shahana VN" },
-    { id: "contact-4", label: "Location", value: "Thrissur, Kerala" },
+    { id: "contact-1", label: "Email", value: "amail@gmail.com" },
+    { id: "contact-2", label: "LinkedIn", value: "linkedin.com/in/aname" },
+    { id: "contact-3", label: "Location", value: "Thrissur, Kerala" },
   ],
   personalDetails: [
-    { id: "personal-1", label: "DOB", value: "17/03/2006" },
+    { id: "personal-1", label: "DOB", value: "11/12/2000" },
     { id: "personal-2", label: "Gender", value: "Female" },
     { id: "personal-3", label: "Blood Group", value: "AB+" },
     { id: "personal-4", label: "Nationality", value: "Indian" },
-    { id: "personal-5", label: "Passport No", value: "AK117356" },
+    { id: "personal-5", label: "Passport No", value: "223111111" },
   ],
 };
 
@@ -3739,18 +3737,7 @@ function SectionCard({
 
 // ── Misc ──────────────────────────────────────────────────────────────────────
 
-function loadDefaultPhoto(onLoad: (dataUrl: string) => void) {
-  fetch(mediaDefaultPhoto.src)
-    .then((res) => res.blob())
-    .then((blob) => {
-      const reader = new FileReader();
-      reader.onload = () => {
-        if (typeof reader.result === "string") onLoad(reader.result);
-      };
-      reader.readAsDataURL(blob);
-    })
-    .catch(() => {});
-}
+
 
 // ── Page ──────────────────────────────────────────────────────────────────────
 
@@ -3839,15 +3826,7 @@ export default function ResumeBuilderPage() {
     }
     setResume(cloneResumeData(resolved));
     setIsStorageReady(true);
-    if (!resolved.photoDataUrl) {
-      loadDefaultPhoto((dataUrl) =>
-        setResume((cur) => ({
-          ...cur,
-          photoDataUrl: dataUrl,
-          showPhoto: cur.showPhoto,
-        })),
-      );
-    }
+
   }, []);
 
   // Debounced auto-save
@@ -4218,15 +4197,7 @@ export default function ResumeBuilderPage() {
     } catch {
       /* ignore */
     }
-    if (!defaultResume.photoDataUrl) {
-      loadDefaultPhoto((dataUrl) =>
-        setResume((cur) => ({
-          ...cur,
-          photoDataUrl: dataUrl,
-          showPhoto: cur.showPhoto,
-        })),
-      );
-    }
+
   }
 
   function applyCareerPreset(presetId: ResumePresetId) {
