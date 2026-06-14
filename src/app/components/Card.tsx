@@ -125,64 +125,71 @@ export default function Card() {
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.45 }}
-              className="flex flex-wrap gap-3"
+              className="flex flex-wrap gap-3 items-center"
             >
-              {/* Primary — gold */}
-              <a
+              {/* Primary — gold gradient + shimmer */}
+              <motion.a
                 href="#contact"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm text-white transition-all duration-200 active:scale-95"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm text-white landing-btn-primary"
                 style={{
                   background: `linear-gradient(135deg, ${GOLD_DEEP} 0%, ${GOLD_DARK} 100%)`,
                   boxShadow: `0 4px 14px rgba(138,106,26,0.35), 0 1px 3px rgba(138,106,26,0.2)`,
                 }}
+                whileHover={{
+                  scale: 1.04,
+                  y: -3,
+                  boxShadow: "0 10px 28px rgba(138,106,26,0.50), 0 3px 8px rgba(138,106,26,0.28)",
+                  transition: { duration: 0.16, ease: "easeOut" },
+                }}
+                whileTap={{ scale: 0.97, transition: { duration: 0.1 } }}
               >
                 <Icon icon="solar:chat-round-dots-bold" className="text-base" />
                 Get In Touch
-              </a>
-              {/* Secondary — steel border */}
-              <a
+              </motion.a>
+
+              {/* Secondary — white + steel border + shimmer */}
+              <motion.a
                 href="#projects"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm transition-all duration-200 active:scale-95"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm landing-btn-secondary"
                 style={{
                   color: NAVY,
                   background: "#FFFFFF",
                   border: `1px solid rgba(15,23,42,0.14)`,
                   boxShadow: "0 1px 3px rgba(0,0,0,0.07), 0 4px 12px rgba(0,0,0,0.04)",
                 }}
-                onMouseEnter={(e) => {
-                  (e.currentTarget as HTMLElement).style.borderColor = "rgba(15,23,42,0.28)";
-                  (e.currentTarget as HTMLElement).style.background = "#EEF0F6";
+                whileHover={{
+                  scale: 1.04,
+                  y: -3,
+                  boxShadow: "0 8px 24px rgba(15,23,42,0.11), 0 2px 6px rgba(15,23,42,0.06)",
+                  transition: { duration: 0.16, ease: "easeOut" },
                 }}
-                onMouseLeave={(e) => {
-                  (e.currentTarget as HTMLElement).style.borderColor = "rgba(15,23,42,0.14)";
-                  (e.currentTarget as HTMLElement).style.background = "#FFFFFF";
-                }}
+                whileTap={{ scale: 0.97, transition: { duration: 0.1 } }}
               >
                 <Icon icon="solar:eye-bold" className="text-base" />
                 View Projects
-              </a>
-              <a
+              </motion.a>
+
+              <motion.a
                 href="/umar-suhail-resume-2026.pdf"
                 download="Umar-Suhail-Resume.pdf"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm transition-all duration-200 active:scale-95"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm landing-btn-secondary"
                 style={{
                   color: NAVY,
                   background: "#FFFFFF",
                   border: `1px solid rgba(15,23,42,0.14)`,
                   boxShadow: "0 1px 3px rgba(0,0,0,0.07), 0 4px 12px rgba(0,0,0,0.04)",
                 }}
-                onMouseEnter={(e) => {
-                  (e.currentTarget as HTMLElement).style.borderColor = "rgba(15,23,42,0.28)";
-                  (e.currentTarget as HTMLElement).style.background = "#EEF0F6";
+                whileHover={{
+                  scale: 1.04,
+                  y: -3,
+                  boxShadow: "0 8px 24px rgba(15,23,42,0.11), 0 2px 6px rgba(15,23,42,0.06)",
+                  transition: { duration: 0.16, ease: "easeOut" },
                 }}
-                onMouseLeave={(e) => {
-                  (e.currentTarget as HTMLElement).style.borderColor = "rgba(15,23,42,0.14)";
-                  (e.currentTarget as HTMLElement).style.background = "#FFFFFF";
-                }}
+                whileTap={{ scale: 0.97, transition: { duration: 0.1 } }}
               >
                 <Icon icon="solar:file-download-bold" className="text-base" />
                 Download CV
-              </a>
+              </motion.a>
             </motion.div>
 
             {/* Social links */}
@@ -276,7 +283,12 @@ export default function Card() {
                 initial={{ opacity: 0, scale: 0.85 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.7 }}
-                className="absolute -bottom-4 -right-4 bg-white rounded-2xl px-4 py-3 flex items-center gap-3"
+                whileHover={{
+                  y: -8,
+                  scale: 1.07,
+                  transition: { duration: 0.2, ease: "easeOut" },
+                }}
+                className="absolute -bottom-4 -right-4 bg-white rounded-2xl px-4 py-3 flex items-center gap-3 landing-badge"
                 style={{
                   boxShadow: "0 4px 24px rgba(15,23,42,0.12), 0 1px 4px rgba(15,23,42,0.06), 0 0 0 1px rgba(15,23,42,0.04)",
                 }}
@@ -298,7 +310,12 @@ export default function Card() {
                 initial={{ opacity: 0, scale: 0.85 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.85 }}
-                className="absolute -top-4 -left-4 bg-white rounded-2xl px-4 py-3 flex items-center gap-3"
+                whileHover={{
+                  y: -8,
+                  scale: 1.07,
+                  transition: { duration: 0.2, ease: "easeOut" },
+                }}
+                className="absolute -top-4 -left-4 bg-white rounded-2xl px-4 py-3 flex items-center gap-3 landing-badge"
                 style={{
                   boxShadow: "0 4px 24px rgba(15,23,42,0.12), 0 1px 4px rgba(15,23,42,0.06), 0 0 0 1px rgba(15,23,42,0.04)",
                 }}

@@ -3,8 +3,6 @@ import type { Metadata } from "next";
 import Card from "./components/Card";
 import "./css/landing.css";
 
-export const experimental_ppr = true;
-
 export const metadata: Metadata = {
   alternates: { canonical: "/" },
 };
@@ -84,7 +82,7 @@ export default function Home() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
-      <main data-landing className="relative">
+      <main data-landing className="relative min-h-screen" style={{ background: "#F8F9FB" }}>
         <Card />
 
         <Suspense fallback={<SectionSkeleton height="py-24" />}>
