@@ -5,7 +5,7 @@ import confidential from "../public/images/confidential.png";
 
 export const texts = {
   about:
-    "Lead Frontend Engineer with 7+ years building scalable React & Next.js applications at Emirates Face Recognition (EFR), UAE. Specialising in UI/UX design, frontend architecture, TypeScript, and performance optimisation — available for senior engineering roles.",
+    "Software developer from India, based in Dubai, UAE — Lead Frontend Engineer with 7+ years building scalable React & Next.js applications at Emirates Face Recognition (EFR). Specialising in UI/UX design, TypeScript, and frontend architecture.",
 };
 
 export const skills = [
@@ -55,7 +55,7 @@ export const projects = [
 ];
 
 export const about_me =
-  "Lead Frontend Engineer with 7+ years of hands-on experience building high-performance, scalable web applications. Currently at Emirates Face Recognition (EFR) in UAE as an Application Developer, leading React component architecture and performance optimisation. Previously Development Team Lead at Epixel Solutions, Software Engineer at Aspire Systems, and UI Developer at Uvionics Tech. Deep expertise across the full React ecosystem — Next.js, TypeScript, Redux Toolkit, Tailwind CSS, and modern CI/CD pipelines. Equally fluent in UI/UX design with proficiency in Figma and Adobe Creative Suite, enabling seamless design-to-development delivery.";
+  "I'm Umar Suhail, a software developer from India currently based in Dubai, UAE. As a Lead Frontend Engineer with 7+ years of experience, I build high-performance web applications at Emirates Face Recognition (EFR), Dubai. My career spans UI Developer at Uvionics Tech (India), Software Engineer at Aspire Systems (India), Development Team Lead at Epixel Solutions (India), and now Application Developer at EFR (UAE). I specialise in React, Next.js, TypeScript, Redux Toolkit, Tailwind CSS, and UI/UX design with Figma and Adobe Creative Suite.";
 
 export const resumeUrl =
   process.env.NEXT_PUBLIC_RESUME_URL?.trim() || "/umar-suhail-resume-2026.pdf";

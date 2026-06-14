@@ -6,7 +6,7 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        disallow: ["/api/revalidate"],
+        disallow: ["/api/revalidate", "/course/", "/course"],
       },
     ],
     sitemap: "https://umar.website/sitemap.xml",

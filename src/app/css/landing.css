@@ -1,0 +1,254 @@
+/*
+ * Premium steel & gold theme — scoped to [data-landing].
+ * Only applied to the home page ( / ).
+ *
+ * Palette:
+ *   Background  : cool pearl → light steel → warm gold shimmer
+ *   Text-1      : #0F172A  (deep slate, max contrast)
+ *   Text-2      : #334155  (slate-700)
+ *   Text-3      : #64748B  (slate-500)
+ *   Gold rich   : #C8A84B  (decorative, gradients)
+ *   Gold deep   : #8A6A1A  (functional, WCAG AA)
+ *   Gold dark   : #5F4A10  (button darken)
+ *   Steel       : #475569  (slate-600)
+ *   Navy        : #0F172A  (gradient end)
+ *   Surface     : #FFFFFF  (cards)
+ *   Alt surface : #EFF2F8  (alternate sections)
+ *   Footer      : #E5E8F0
+ */
+
+/* ── Canvas ──────────────────────────────────────────────────────────────── */
+[data-landing] {
+  color: #0F172A;
+}
+
+/* Gradient background — replaces flat BackgroundEffects */
+[data-landing]::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 10% 30%, rgba(200,168,75,0.09)  0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 90% 70%, rgba(71,85,105,0.07)   0%, transparent 55%),
+    radial-gradient(ellipse 50% 40% at 50% 95%, rgba(200,168,75,0.05)  0%, transparent 50%),
+    linear-gradient(160deg, #F8F9FB 0%, #F3F5F9 45%, #F6F4EF 75%, #EFF2F8 100%);
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* ── Section alternation ─────────────────────────────────────────────────── */
+[data-landing] section {
+  position: relative;
+}
+
+/* Remove dark absolute overlay divs */
+[data-landing] section > div.absolute.inset-0,
+[data-landing] section > div[class*="absolute"][class*="inset-0"][class*="bg-gradient"],
+[data-landing] section > div[class*="absolute"][class*="inset-0"][class*="bg-vintage"] {
+  background: transparent !important;
+  opacity: 0 !important;
+}
+
+/* Soften decorative blobs */
+[data-landing] section > div[class*="absolute"][class*="blur"][class*="bg-vintage-burgundy"],
+[data-landing] section > div[class*="absolute"][class*="blur"][class*="bg-vintage-cream"],
+[data-landing] section > div[class*="absolute"][class*="blur"][class*="bg-vintage-slate"] {
+  opacity: 0.04 !important;
+}
+
+/* ── Text overrides ──────────────────────────────────────────────────────── */
+/* Only override cream/white on NON-icon text; icons inside dark containers keep white via inline style */
+[data-landing] .text-vintage-cream,
+[data-landing] [class*="text-vintage-cream"],
+[data-landing] .section-title {
+  color: #0F172A !important;
+}
+/* .text-white class override: skip direct icon elements (they use inline color now) */
+[data-landing] :not(svg):not([class*="iconify"]).text-white {
+  color: #0F172A !important;
+}
+
+[data-landing] .section-subtitle,
+[data-landing] [class*="text-white\/70"],
+[data-landing] [class*="text-vintage-cream\/70"] {
+  color: #334155 !important;
+}
+
+[data-landing] [class*="text-white\/60"],
+[data-landing] [class*="text-vintage-cream\/60"],
+[data-landing] [class*="text-white\/50"],
+[data-landing] [class*="text-vintage-cream\/50"] {
+  color: #64748B !important;
+}
+
+/* Gold accents — replace burgundy */
+[data-landing] .text-vintage-burgundy,
+[data-landing] [class*="text-vintage-burgundy"] {
+  color: #8A6A1A !important;
+}
+
+/* ── Cards & surfaces ────────────────────────────────────────────────────── */
+[data-landing] .vintage-card {
+  background: #ffffff !important;
+  border-color: rgba(15,23,42,0.07) !important;
+  box-shadow: 0 1px 3px rgba(15,23,42,0.06), 0 4px 20px rgba(15,23,42,0.04) !important;
+}
+
+[data-landing] .glass,
+[data-landing] .glass-dark,
+[data-landing] [class*="bg-white\/5"],
+[data-landing] [class*="bg-white\/\[0.02\]"] {
+  background: #ffffff !important;
+  border-color: rgba(15,23,42,0.07) !important;
+  box-shadow: 0 1px 3px rgba(15,23,42,0.06), 0 8px 24px rgba(15,23,42,0.05) !important;
+  backdrop-filter: none !important;
+}
+
+/* Experience timeline cards */
+[data-landing] [class*="border-white\/10"] {
+  border-color: rgba(15,23,42,0.08) !important;
+  background: #ffffff !important;
+  box-shadow: 0 1px 3px rgba(15,23,42,0.06), 0 8px 30px rgba(15,23,42,0.05) !important;
+}
+
+[data-landing] [class*="hover\:border-white\/20"]:hover {
+  border-color: rgba(15,23,42,0.15) !important;
+}
+
+/* Skill / tag chips */
+[data-landing] [class*="bg-white\/10"] {
+  background: rgba(71,85,105,0.08) !important;
+  color: #334155 !important;
+}
+[data-landing] [class*="bg-vintage-slate\/"] {
+  background: rgba(71,85,105,0.06) !important;
+}
+
+/* ── Badges ──────────────────────────────────────────────────────────────── */
+[data-landing] .badge {
+  background: rgba(71,85,105,0.07) !important;
+  color: #334155 !important;
+  border-color: rgba(71,85,105,0.14) !important;
+}
+[data-landing] .badge-primary {
+  background: rgba(200,168,75,0.09) !important;
+  color: #8A6A1A !important;
+  border-color: rgba(200,168,75,0.3) !important;
+}
+
+/* ── Section backgrounds ─────────────────────────────────────────────────── */
+[data-landing] [class*="bg-white\/\[0.02\]"],
+[data-landing] section.bg-white\/\[0\.02\] {
+  background: #EFF2F8 !important;
+}
+
+/* Gradient section tints */
+[data-landing] [class*="from-violet-600\/20"],
+[data-landing] [class*="bg-gradient-to-r"][class*="from-violet"] {
+  background: linear-gradient(to right, rgba(200,168,75,0.07), rgba(71,85,105,0.06)) !important;
+}
+
+/* ── Timeline line ───────────────────────────────────────────────────────── */
+[data-landing] [class*="bg-gradient-to-b"][class*="from-vintage-burgundy"] {
+  background: linear-gradient(
+    to bottom,
+    rgba(200,168,75,0.5),
+    rgba(71,85,105,0.25),
+    transparent
+  ) !important;
+}
+
+/* Timeline nodes */
+[data-landing] [class*="border-vintage-burgundy"] {
+  border-color: #C8A84B !important;
+}
+
+/* ── Buttons ─────────────────────────────────────────────────────────────── */
+[data-landing] .btn-primary {
+  background: linear-gradient(135deg, #8A6A1A 0%, #5F4A10 100%) !important;
+  color: #ffffff !important;
+  border-color: transparent !important;
+  box-shadow: 0 4px 14px rgba(138,106,26,0.32) !important;
+}
+[data-landing] .btn-primary:hover {
+  box-shadow: 0 6px 20px rgba(138,106,26,0.42) !important;
+}
+
+[data-landing] .btn-secondary {
+  background: #ffffff !important;
+  color: #0F172A !important;
+  border-color: rgba(15,23,42,0.13) !important;
+  box-shadow: 0 1px 3px rgba(15,23,42,0.07) !important;
+}
+[data-landing] .btn-secondary:hover {
+  background: #EEF0F6 !important;
+  border-color: rgba(15,23,42,0.25) !important;
+}
+
+/* ── Form / inputs ───────────────────────────────────────────────────────── */
+[data-landing] .input-field,
+[data-landing] input,
+[data-landing] textarea {
+  background: #ffffff !important;
+  border-color: rgba(15,23,42,0.12) !important;
+  color: #0F172A !important;
+}
+[data-landing] input::placeholder,
+[data-landing] textarea::placeholder {
+  color: #94A3B8 !important;
+}
+[data-landing] input:focus,
+[data-landing] textarea:focus {
+  border-color: #C8A84B !important;
+  box-shadow: 0 0 0 3px rgba(200,168,75,0.15) !important;
+}
+
+/* ── Social icon buttons ─────────────────────────────────────────────────── */
+[data-landing] [class*="bg-vintage-slate\/50"] {
+  background: #ffffff !important;
+  border-color: rgba(15,23,42,0.10) !important;
+}
+[data-landing] [class*="hover\:bg-vintage-burgundy\/20"]:hover {
+  background: rgba(200,168,75,0.08) !important;
+  border-color: rgba(200,168,75,0.3) !important;
+}
+
+/* ── Gradient text ───────────────────────────────────────────────────────── */
+[data-landing] .gradient-text {
+  background: linear-gradient(135deg, #C8A84B 0%, #0F172A 100%) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+}
+
+/* ── Footer ──────────────────────────────────────────────────────────────── */
+[data-landing] footer {
+  background: #E5E8F0 !important;
+  border-top-color: rgba(15,23,42,0.08) !important;
+}
+[data-landing] footer [class*="border-vintage-cream\/"] {
+  border-color: rgba(15,23,42,0.08) !important;
+}
+[data-landing] footer a {
+  color: #475569;
+}
+[data-landing] footer a:hover {
+  color: #8A6A1A;
+}
+
+/* ── Section dividers ────────────────────────────────────────────────────── */
+[data-landing] [class*="border-vintage-cream\/10"],
+[data-landing] [class*="border-vintage-cream\/20"] {
+  border-color: rgba(15,23,42,0.07) !important;
+}
+
+/* ── Alternate section bg ────────────────────────────────────────────────── */
+[data-landing] #experience,
+[data-landing] #skills {
+  background: #EFF2F8;
+}
+
+/* ── Card hover lift ─────────────────────────────────────────────────────── */
+[data-landing] .card-hover:hover {
+  box-shadow: 0 12px 40px rgba(15,23,42,0.11), 0 2px 8px rgba(15,23,42,0.06) !important;
+}
