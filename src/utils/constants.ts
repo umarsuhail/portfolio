@@ -1,7 +1,7 @@
-﻿import bot from "../public/images/bot.jpg";
-import web from "../public/images/web.jpg";
-import business_2 from "../public/images/business-2.png";
-import confidential from "../public/images/confidential.png";
+﻿import bot from "../../public/images/bot.jpg";
+import web from "../../public/images/web.jpg";
+import business_2 from "../../public/images/business-2.png";
+import confidential from "../../public/images/confidential.png";
 
 export const texts = {
   about:
@@ -24,6 +24,13 @@ export const skills = [
 ];
 
 export const projects = [
+  {
+    name: "Dashboard v2 — Transaction & Revenue Monitoring",
+    about:
+      "Led migration of a legacy Angular multi-tenant transaction and operations dashboard into a fast, component-driven Next.js + TypeScript frontend. Implemented multi-tenant support, role/permission access, transaction monitoring, KYC workflows, billing analytics, secure document/media handling, and server-side APIs for exports and heavy operations.",
+    image: business_2,
+    stacks: ["Next.js", "React", "TypeScript", "Node.js", "Docker"],
+  },
   {
     name: "AI CHATBOTS",
     about:

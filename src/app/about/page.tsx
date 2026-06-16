@@ -2,10 +2,8 @@
 
 import { motion } from "framer-motion";
 import { Icon } from "@iconify/react";
-import Image from "next/image";
 import Link from "next/link";
 import { about_me, resumeUrl } from "../../utils/constants";
-import profile from "../../public/images/me-s.jpg";
 
 const hobbies = [
   {
@@ -53,7 +51,8 @@ const values = [
 
 export default function AboutPage() {
   const resumeHref =
-    resumeUrl || "mailto:umarsuhail112@gmail.com?subject=Request%20for%20Resume";
+    resumeUrl ||
+    "mailto:umarsuhail112@gmail.com?subject=Request%20for%20Resume";
   const isResumeConfigured = Boolean(resumeUrl);
 
   return (
@@ -111,19 +110,27 @@ export default function AboutPage() {
               transition={{ duration: 0.6, delay: 0.2 }}
               className="flex justify-center"
             >
-              <div className="relative">
-                <div className="absolute -inset-4 bg-gradient-to-r from-violet-600 to-purple-600 rounded-3xl blur-2xl opacity-30" />
-                <div className="relative glass rounded-3xl p-2">
-                  <Image
-                    src={profile}
-                    alt="Umar Suhail"
-                    width={400}
-                    height={400}
-                    className="rounded-2xl object-cover"
-                    style={{ objectPosition: 'top' }}
-                    priority
-                  />
-                </div>
+              <script
+                src="https://platform.linkedin.com/badges/js/profile.js"
+                async
+                defer
+                type="text/javascript"
+              ></script>
+              <div
+                className="badge-base LI-profile-badge"
+                data-locale="en_US"
+                data-size="large"
+                data-theme="light"
+                data-type="VERTICAL"
+                data-vanity="umar-suhail"
+                data-version="v1"
+              >
+                <a
+                  className="badge-base__link LI-simple-link"
+                  href="https://ae.linkedin.com/in/umar-suhail?trk=profile-badge"
+                >
+                  Umar Suhail
+                </a>
               </div>
             </motion.div>
           </div>
@@ -191,7 +198,9 @@ export default function AboutPage() {
                 transition={{ delay: index * 0.1 }}
                 className="glass rounded-2xl overflow-hidden card-hover"
               >
-                <div className={`h-32 bg-gradient-to-r ${hobby.color} flex items-center justify-center`}>
+                <div
+                  className={`h-32 bg-gradient-to-r ${hobby.color} flex items-center justify-center`}
+                >
                   <Icon icon={hobby.icon} className="text-6xl" />
                 </div>
                 <div className="p-6">
@@ -217,7 +226,8 @@ export default function AboutPage() {
               Ready to Build Something Amazing?
             </h2>
             <p className="text-white/70 text-lg mb-8 max-w-2xl mx-auto">
-              I&apos;m always excited to work on new projects and collaborate with innovative teams.
+              I&apos;m always excited to work on new projects and collaborate
+              with innovative teams.
             </p>
             <div className="flex flex-wrap justify-center gap-4">
               <Link href="/#contact" className="btn-primary">

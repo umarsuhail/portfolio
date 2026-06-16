@@ -7,6 +7,7 @@ import BackgroundEffects from "./components/BackgroundEffects";
 import SmoothScroll from "./components/SmoothScroll";
 import PageTransition from "./components/PageTransition";
 import ScrollController from "./components/ScrollController";
+import HoverSound from "./components/HoverSound";
 
 const BASE_URL = "https://umar.website";
 
@@ -251,6 +252,7 @@ export default function RootLayout({
           <PageTransition>{children}</PageTransition>
         </SmoothScroll>
         <ScrollController />
+        <HoverSound />
         <ChatBot />
       </body>
     </html>

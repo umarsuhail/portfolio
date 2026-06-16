@@ -39,10 +39,8 @@ export default function ScrollController() {
         const p = total > 0 ? Math.min(1, scrolled / total) : 0;
         setProgress(p);
         setVisible(scrolled > (isMobile ? 120 : 80));
-        // 2 full rotations across the entire page length
-        if (!isMobile) {
-          externalLambdaRef.current = p * 720;
-        }
+        // 2 full rotations across the entire page length (desktop + mobile)
+        externalLambdaRef.current = p * 720;
         ticking = false;
       });
     };
@@ -184,45 +182,63 @@ export default function ScrollController() {
         </svg>
 
         {/* Globe */}
-        {!isMobile ? (
-          <div className="absolute inset-0 flex items-center justify-center pb-3">
-            <GlobeCanvas
-              size={68}
-              globeRadius={30}
-              speed={8}
-              tilt={16}
-              externalLambdaRef={externalLambdaRef}
-            />
-          </div>
-        ) : (
-          <div className="absolute inset-0 flex items-center justify-center text-[#0081A7] text-sm font-semibold">
-            {atTop ? "↑" : `${Math.round(progress * 100)}%`}
-          </div>
-        )}
+        <div
+          className={[
+            "absolute inset-0 flex items-center justify-center",
+            isMobile ? "pb-2.5" : "pb-3",
+          ].join(" ")}
+        >
+          <GlobeCanvas
+            size={isMobile ? 46 : 68}
+            globeRadius={isMobile ? 20 : 30}
+            speed={8}
+            tilt={16}
+            externalLambdaRef={externalLambdaRef}
+          />
+        </div>
 
         {/* Percentage / icon at bottom */}
-        {!isMobile && (
-          <div className="absolute bottom-[10px] left-0 right-0 flex justify-center">
+        <div
+          className={[
+            "absolute left-0 right-0 flex justify-center",
+            isMobile ? "bottom-[6px]" : "bottom-[10px]",
+          ].join(" ")}
+        >
           {atTop ? (
             <svg
-              width="10" height="10" viewBox="0 0 10 10"
+              width={isMobile ? "11" : "10"} height={isMobile ? "11" : "10"} viewBox="0 0 10 10"
               className="text-[#0081A7] fill-current opacity-90"
               aria-hidden="true"
             >
               <path d="M5 1 L9 7 L1 7 Z" />
             </svg>
           ) : (
-            <span className="text-[9px] font-semibold tracking-wide text-white/50 leading-none tabular-nums">
+            <span
+              className={[
+                "font-semibold tracking-wide text-white/50 leading-none tabular-nums",
+                isMobile ? "text-[10px]" : "text-[9px]",
+              ].join(" ")}
+            >
               {Math.round(progress * 100)}%
             </span>
           )}
-          </div>
-        )}
+        </div>
       </div>
 
-      {isMobile && visible && showHint && (
+      {/* First-time drag hint (mobile) */}
+      {isMobile && visible && showHint && !atTop && (
         <span className="pointer-events-none absolute left-1/2 top-full mt-2 -translate-x-1/2 whitespace-nowrap rounded-full border border-white/10 bg-[#030014]/80 px-2 py-1 text-[10px] font-medium tracking-wide text-white/65 backdrop-blur-sm">
           Drag up/down to scroll
+        </span>
+      )}
+
+      {/* Back-to-top hint when the page is fully scrolled */}
+      {visible && atTop && (
+        <span className="pointer-events-none absolute left-1/2 bottom-full mb-2 -translate-x-1/2 flex items-center gap-1 whitespace-nowrap rounded-full border border-[#0081A7]/40 bg-[#030014]/85 px-2.5 py-1 text-[10px] font-semibold tracking-wide text-[#7fd4ec] backdrop-blur-sm animate-pulse">
+          <svg width="9" height="9" viewBox="0 0 10 10" className="fill-current" aria-hidden="true">
+            <path d="M5 1 L9 7 L1 7 Z" />
+          </svg>
+          {isMobile ? "Tap to scroll up" : "Click to scroll up"}
         </span>
       )}
     </button>

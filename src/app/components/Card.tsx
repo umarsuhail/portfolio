@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { Icon } from "@iconify/react";
-import profile from "../../public/images/me-s.jpg";
+import profile from "../../../public/images/me-s.jpg";
 import { texts } from "@/utils/constants";
 
 const stats = [
