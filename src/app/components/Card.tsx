@@ -8,9 +8,9 @@ import { texts } from "@/utils/constants";
 
 const stats = [
   { value: "7+",  label: "Years Experience" },
-  { value: "50+", label: "Projects Delivered" },
-  { value: "30+", label: "Happy Clients" },
-  { value: "99%", label: "Client Satisfaction" },
+  { value: "6+",  label: "Projects Delivered" },
+  { value: "1M+", label: "Transactions Monitored" },
+  { value: "50+", label: "Tenant Configurations" },
 ];
 
 const socialLinks = [

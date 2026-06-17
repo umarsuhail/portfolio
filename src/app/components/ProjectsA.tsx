@@ -34,6 +34,29 @@ const projects = [
     year: "2025",
   },
   {
+    title: "Telecom Onboarding Dashboard",
+    role: "Frontend Developer",
+    overview:
+      "A configurable analytics dashboard for telecom customer onboarding — interactive charts, sortable tables, and multi-dimension filters with a side-by-side comparison view and KPI tracking. Built with a config-driven setup and shipped as a static export deployed on-premise via IIS.",
+    contributions: [
+      "Built interactive charts, sortable tables, and multi-dimension filters for onboarding analytics",
+      "Developed a side-by-side comparison view and KPI cards to track onboarding performance across periods",
+      "Implemented a config-driven setup so dashboards, metrics, and filters are defined declaratively",
+      "Delivered authentication pages and packaged the app as a static export served on-premise through IIS",
+      "Added periodic polling to keep metrics current without manual refresh",
+    ],
+    results: [
+      { metric: "1.1M", label: "Records Compared" },
+      { metric: "Config", label: "Driven Dashboards" },
+      { metric: "IIS", label: "On-Prem Deploy" },
+    ],
+    tech: ["Next.js", "TypeScript", "Redux", "TailwindCSS", "IIS"],
+    icon: "solar:chart-2-bold-duotone",
+    color: "from-vintage-slate to-vintage-navy",
+    category: "Web App",
+    year: "2025",
+  },
+  {
     title: "Loyalty Rewards Platform",
     role: "Lead Frontend Developer",
     overview:
