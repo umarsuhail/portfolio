@@ -9,7 +9,7 @@ import PageTransition from "./components/PageTransition";
 import ScrollController from "./components/ScrollController";
 import UISound from "./components/UISound";
 
-const BASE_URL = "https://umar.website";
+const BASE_URL = "https://www.umar.website";
 
 const quicksand = Quicksand({
   subsets: ["latin"],

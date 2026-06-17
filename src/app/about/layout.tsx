@@ -8,7 +8,7 @@ export const metadata: Metadata = {
     canonical: "/about",
   },
   openGraph: {
-    url: "https://umar.website/about",
+    url: "https://www.umar.website/about",
     title: "About Umar Suhail | Lead Frontend Engineer",
     description:
       "Senior frontend engineer at EFR, UAE. Deep expertise in React, Next.js, TypeScript, design systems, and performance optimisation.",

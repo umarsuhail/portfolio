@@ -290,7 +290,6 @@ export default function SkillsUniverse() {
             viewport={{ once: true }}
             className="text-center text-vintage-cream/40 text-sm mt-8"
           >
-            🎨 Click on skills to spray paint them!
           </motion.p>
         )}
       </div>

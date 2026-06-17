@@ -9,7 +9,7 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ["/api/revalidate", "/course/", "/course"],
       },
     ],
-    sitemap: "https://umar.website/sitemap.xml",
-    host: "https://umar.website",
+    sitemap: "https://www.umar.website/sitemap.xml",
+    host: "https://www.umar.website",
   };
 }

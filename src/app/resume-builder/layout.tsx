@@ -8,7 +8,7 @@ export const metadata: Metadata = {
     canonical: "/resume-builder",
   },
   openGraph: {
-    url: "https://umar.website/resume-builder",
+    url: "https://www.umar.website/resume-builder",
     title: "Free Resume Builder – Professional PDF Templates",
     description:
       "Create and download a polished, ATS-ready resume in minutes. Templates for software engineers, nurses, cabin crew, finance, and marketing professionals.",
