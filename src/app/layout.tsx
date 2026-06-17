@@ -71,7 +71,7 @@ export const metadata: Metadata = {
     siteName: "Umar Suhail",
     images: [
       {
-        url:    "/images/me-s.jpg",
+        url:    "/images/me-s.jpeg",
         width:  1200,
         height: 630,
         alt:    "Umar Suhail – Lead Frontend Engineer, Dubai UAE",
@@ -87,7 +87,7 @@ export const metadata: Metadata = {
     card:        "summary_large_image",
     title:       "Umar Suhail | Lead Frontend Engineer – UAE & India",
     description: "Software developer from India, based in Dubai UAE. 7+ years React & Next.js.",
-    images:      ["/images/me-s.jpg"],
+    images:      ["/images/me-s.jpeg"],
   },
   robots: {
     index:  true,
@@ -116,7 +116,7 @@ const person = {
     "Umar Suhail is a Lead Frontend Engineer and Software Developer from India, currently based in Dubai, UAE. With 7+ years of experience building high-performance React and Next.js applications, he works at Emirates Face Recognition (EFR) and specialises in UI/UX design, TypeScript, design systems, and performance optimisation.",
   image: {
     "@type":  "ImageObject",
-    url:      `${BASE_URL}/images/me-s.jpg`,
+    url:      `${BASE_URL}/images/me-s.jpeg`,
     width:    400,
     height:   400,
   },

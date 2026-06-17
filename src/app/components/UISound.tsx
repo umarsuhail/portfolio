@@ -3,15 +3,15 @@
 import { useEffect } from "react";
 
 /**
- * Plays UI sounds via event delegation on the document, so every current and
- * future clickable element is covered without per-component wiring:
- *   - click / tap  → pop.mp3   (all devices, incl. phones — a tap is a gesture)
- *   - hover        → hover.wav (desktop pointers only; touch devices can't hover)
+ * UI sounds via event delegation (mounted once globally):
+ *   - click / tap on any clickable element → pop.mp3   (all devices)
+ *   - hover on opt-in [data-hover-sound]   → hover.wav  (desktop pointers only)
  */
 const CLICKABLE_SELECTOR =
   'a[href], button, [role="button"], [role="tab"], [role="menuitem"], ' +
   'input:not([type="hidden"]), select, textarea, label[for], summary, ' +
-  '[onclick], [data-hover-sound], .cursor-pointer';
+  '[onclick], .cursor-pointer';
+const HOVER_OPT_IN = "[data-hover-sound]";
 
 export default function UISound() {
   useEffect(() => {
@@ -35,7 +35,7 @@ export default function UISound() {
       (el as HTMLButtonElement).disabled === true ||
       el.getAttribute("aria-disabled") === "true";
 
-    // ── Click / tap — works on every device (the tap itself is the gesture) ──
+    // ── Click / tap — any clickable element, all devices (the tap is the gesture) ──
     const onClick = (e: MouseEvent) => {
       const target = (e.target as Element | null)?.closest?.(CLICKABLE_SELECTOR);
       if (!target || isDisabled(target)) return;
@@ -43,14 +43,14 @@ export default function UISound() {
     };
     document.addEventListener("click", onClick);
 
-    // ── Hover — desktop (fine pointer) only ──
+    // ── Hover — opt-in elements only, desktop pointers only ──
     let lastTarget: Element | null = null;
     let unlocked = false;
     const unlock = () => {
       unlocked = true;
     };
     const onOver = (e: PointerEvent) => {
-      const target = (e.target as Element | null)?.closest?.(CLICKABLE_SELECTOR);
+      const target = (e.target as Element | null)?.closest?.(HOVER_OPT_IN);
       if (!target || target === lastTarget || isDisabled(target)) return;
       lastTarget = target;
       if (unlocked) play(hoverSound, 0.3);
@@ -63,7 +63,6 @@ export default function UISound() {
     };
 
     if (canHover) {
-      // Browsers block audio until the first gesture — unlock once for hover.
       window.addEventListener("pointerdown", unlock, { once: true });
       window.addEventListener("keydown", unlock, { once: true });
       document.addEventListener("pointerover", onOver);

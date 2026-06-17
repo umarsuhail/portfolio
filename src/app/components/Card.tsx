@@ -130,6 +130,7 @@ export default function Card() {
               {/* Primary — gold gradient + shimmer */}
               <motion.a
                 href="#contact"
+                data-hover-sound
                 className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm text-white landing-btn-primary"
                 style={{
                   background: `linear-gradient(135deg, ${GOLD_DEEP} 0%, ${GOLD_DARK} 100%)`,
@@ -150,6 +151,7 @@ export default function Card() {
               {/* Secondary — white + steel border + shimmer */}
               <motion.a
                 href="#projects"
+                data-hover-sound
                 className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm landing-btn-secondary"
                 style={{
                   color: NAVY,
@@ -172,6 +174,7 @@ export default function Card() {
               <motion.a
                 href="/umar-suhail-resume-2026.pdf"
                 download="Umar-Suhail-Resume.pdf"
+                data-hover-sound
                 className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm landing-btn-secondary"
                 style={{
                   color: NAVY,
