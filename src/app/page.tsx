@@ -23,7 +23,7 @@ const faqSchema = {
       name: "Who is Umar Suhail?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Umar Suhail is a Lead Frontend Engineer and software developer from India, currently based in Dubai, UAE. With 7+ years of experience, he builds high-performance web applications using React and Next.js, and currently works at Emirates Face Recognition (EFR) in Dubai.",
+        text: "Umar Suhail is a Lead Frontend Engineer and software developer from India, currently based in Abu Dhabi, UAE. With 7+ years of experience, he builds high-performance web applications using React and Next.js, and currently works at Emirates Face Recognition (EFR) in Abu Dhabi.",
       },
     },
     {
@@ -39,7 +39,7 @@ const faqSchema = {
       name: "Where does Umar Suhail work?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Umar Suhail works at Emirates Face Recognition (EFR) in Dubai, UAE, as an Application Developer. Previously he was Development Team Lead at Epixel Solutions, Software Engineer at Aspire Systems, and UI Developer at Uvionics Tech — all in India.",
+        text: "Umar Suhail works at Emirates Face Recognition (EFR) in Abu Dhabi, UAE, as an Application Developer. Previously he was Development Team Lead at Epixel Solutions, Software Engineer at Aspire Systems, and UI Developer at Uvionics Tech — all in India.",
       },
     },
     {

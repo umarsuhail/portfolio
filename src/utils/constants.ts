@@ -5,7 +5,7 @@ import confidential from "../../public/images/confidential.png";
 
 export const texts = {
   about:
-    "Software developer from India, based in Dubai, UAE — Lead Frontend Engineer with 7+ years building scalable React & Next.js applications at Emirates Face Recognition (EFR). Specialising in UI/UX design, TypeScript, and frontend architecture.",
+    "Software developer from India, based in Abu Dhabi, UAE — Lead Frontend Engineer with 7+ years building scalable React & Next.js applications at Emirates Face Recognition (EFR). Specialising in UI/UX design, TypeScript, and frontend architecture.",
 };
 
 export const skills = [
@@ -62,7 +62,7 @@ export const projects = [
 ];
 
 export const about_me =
-  "I'm Umar Suhail, a software developer from India currently based in Dubai, UAE. As a Lead Frontend Engineer with 7+ years of experience, I build high-performance web applications at Emirates Face Recognition (EFR), Dubai. My career spans UI Developer at Uvionics Tech (India), Software Engineer at Aspire Systems (India), Development Team Lead at Epixel Solutions (India), and now Application Developer at EFR (UAE). I specialise in React, Next.js, TypeScript, Redux Toolkit, Tailwind CSS, and UI/UX design with Figma and Adobe Creative Suite.";
+  "I'm Umar Suhail, a software developer from India currently based in Abu Dhabi, UAE. As a Lead Frontend Engineer with 7+ years of experience, I build high-performance web applications at Emirates Face Recognition (EFR), Abu Dhabi. My career spans UI Developer at Uvionics Tech (India), Software Engineer at Aspire Systems (India), Development Team Lead at Epixel Solutions (India), and now Application Developer at EFR (UAE). I specialise in React, Next.js, TypeScript, Redux Toolkit, Tailwind CSS, and UI/UX design with Figma and Adobe Creative Suite.";
 
 export const resumeUrl =
   process.env.NEXT_PUBLIC_RESUME_URL?.trim() || "/umar-suhail-resume-2026.pdf";

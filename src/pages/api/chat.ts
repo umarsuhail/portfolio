@@ -63,7 +63,7 @@ Role: Lead Frontend Engineer & Application Developer
 Experience: 7+ years
 Core Stack: React, Next.js, TypeScript, JavaScript, Node.js, Redux, Tailwind CSS
 Strengths: scalable system design, high-performance frontend architecture, UI/UX focused product delivery, accessibility
-Current Position: Application Developer at Emirates Face Recognition (EFR), Dubai, UAE
+Current Position: Application Developer at Emirates Face Recognition (EFR), Abu Dhabi, UAE
 Previous Roles: Development Team Lead at Epixel Solutions, Software Engineer at Aspire Systems, UI Developer at Uvionics Tech
 Education: B.Tech in Computer Engineering (2014-2018), KMP College of Engineering
 Highlighted Projects: Emirates Face Recognition multi-tenant dashboards (50+ tenants), Telecom Onboarding Dashboard, Enterprise Revenue & Billing Analytics Platform, Loyalty Rewards Platform, GetLife Insurance Portal, SkySearch.AI

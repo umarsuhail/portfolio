@@ -8,6 +8,7 @@ import SmoothScroll from "./components/SmoothScroll";
 import PageTransition from "./components/PageTransition";
 import ScrollController from "./components/ScrollController";
 import UISound from "./components/UISound";
+import CustomCursor from "./components/CustomCursor";
 
 const BASE_URL = "https://www.umar.website";
 
@@ -30,7 +31,7 @@ export const metadata: Metadata = {
     template: "%s | Umar Suhail",
   },
   description:
-    "Umar Suhail – Lead Frontend Engineer & Software Developer from India, based in UAE. 7+ years building React & Next.js applications at Emirates Face Recognition (EFR), Dubai. Expert in TypeScript, UI/UX design, and frontend architecture.",
+    "Umar Suhail – Lead Frontend Engineer & Software Developer from India, based in UAE. 7+ years building React & Next.js applications at Emirates Face Recognition (EFR), Abu Dhabi. Expert in TypeScript, UI/UX design, and frontend architecture.",
   keywords: [
     "Umar Suhail",
     "Umar Suhail developer",
@@ -39,14 +40,14 @@ export const metadata: Metadata = {
     "Umar Suhail React developer",
     "Umar Suhail frontend engineer",
     "Lead Frontend Engineer UAE",
-    "React Developer Dubai",
+    "React Developer Abu Dhabi",
     "Next.js Developer UAE",
     "Frontend Engineer India",
     "TypeScript Expert",
-    "UI/UX Engineer Dubai",
+    "UI/UX Engineer Abu Dhabi",
     "Emirates Face Recognition developer",
     "software engineer UAE India",
-    "React.js developer Dubai",
+    "React.js developer Abu Dhabi",
     "JavaScript developer UAE",
   ],
   authors: [{ name: "Umar Suhail", url: BASE_URL }],
@@ -67,14 +68,14 @@ export const metadata: Metadata = {
     url:         BASE_URL,
     title:       "Umar Suhail | Lead Frontend Engineer – UAE & India",
     description:
-      "Umar Suhail, Lead Frontend Engineer from India based in Dubai, UAE. 7+ years of React, Next.js & TypeScript expertise at Emirates Face Recognition.",
+      "Umar Suhail, Lead Frontend Engineer from India based in Abu Dhabi, UAE. 7+ years of React, Next.js & TypeScript expertise at Emirates Face Recognition.",
     siteName: "Umar Suhail",
     images: [
       {
         url:    "/images/me-s.jpeg",
         width:  1200,
         height: 630,
-        alt:    "Umar Suhail – Lead Frontend Engineer, Dubai UAE",
+        alt:    "Umar Suhail – Lead Frontend Engineer, Abu Dhabi UAE",
       },
     ],
   },
@@ -86,7 +87,7 @@ export const metadata: Metadata = {
   twitter: {
     card:        "summary_large_image",
     title:       "Umar Suhail | Lead Frontend Engineer – UAE & India",
-    description: "Software developer from India, based in Dubai UAE. 7+ years React & Next.js.",
+    description: "Software developer from India, based in Abu Dhabi UAE. 7+ years React & Next.js.",
     images:      ["/images/me-s.jpeg"],
   },
   robots: {
@@ -113,7 +114,7 @@ const person = {
   telephone: "+971568323258",
   jobTitle:  "Lead Frontend Engineer & Application Developer",
   description:
-    "Umar Suhail is a Lead Frontend Engineer and Software Developer from India, currently based in Dubai, UAE. With 7+ years of experience building high-performance React and Next.js applications, he works at Emirates Face Recognition (EFR) and specialises in UI/UX design, TypeScript, design systems, and performance optimisation.",
+    "Umar Suhail is a Lead Frontend Engineer and Software Developer from India, currently based in Abu Dhabi, UAE. With 7+ years of experience building high-performance React and Next.js applications, he works at Emirates Face Recognition (EFR) and specialises in UI/UX design, TypeScript, design systems, and performance optimisation.",
   image: {
     "@type":  "ImageObject",
     url:      `${BASE_URL}/images/me-s.jpeg`,
@@ -123,7 +124,7 @@ const person = {
   // Both current (UAE) and origin (India) locations
   address: {
     "@type":         "PostalAddress",
-    addressLocality: "Dubai",
+    addressLocality: "Abu Dhabi",
     addressCountry:  "AE",
   },
   homeLocation: {
@@ -136,10 +137,10 @@ const person = {
   },
   workLocation: {
     "@type":   "Place",
-    name:      "Dubai, United Arab Emirates",
+    name:      "Abu Dhabi, United Arab Emirates",
     address: {
       "@type":         "PostalAddress",
-      addressLocality: "Dubai",
+      addressLocality: "Abu Dhabi",
       addressCountry:  "AE",
     },
   },
@@ -152,7 +153,7 @@ const person = {
     name:    "Emirates Face Recognition (EFR)",
     address: {
       "@type":         "PostalAddress",
-      addressLocality: "Dubai",
+      addressLocality: "Abu Dhabi",
       addressCountry:  "AE",
     },
   },
@@ -177,7 +178,7 @@ const person = {
       "React.js, Next.js, TypeScript, JavaScript, Redux Toolkit, Tailwind CSS, Figma, UI/UX Design, Performance Optimisation, Accessibility",
     occupationLocation: {
       "@type": "City",
-      name: "Dubai, United Arab Emirates",
+      name: "Abu Dhabi, United Arab Emirates",
     },
   },
   knowsAbout: [
@@ -197,7 +198,7 @@ const profilePageSchema = {
   url:        BASE_URL,
   name:       "Umar Suhail – Lead Frontend Engineer Portfolio",
   description:
-    "Official portfolio of Umar Suhail, Lead Frontend Engineer and Software Developer from India, based in Dubai UAE.",
+    "Official portfolio of Umar Suhail, Lead Frontend Engineer and Software Developer from India, based in Abu Dhabi UAE.",
   dateCreated:  "2024-01-01",
   dateModified: new Date().toISOString().split("T")[0],
   inLanguage:   "en",
@@ -211,7 +212,7 @@ const websiteSchema = {
   "@id":       `${BASE_URL}/#website`,
   url:         BASE_URL,
   name:        "Umar Suhail",
-  description: "Portfolio of Umar Suhail — Lead Frontend Engineer from India, based in Dubai UAE.",
+  description: "Portfolio of Umar Suhail — Lead Frontend Engineer from India, based in Abu Dhabi UAE.",
   inLanguage:  "en",
   publisher:   { "@id": `${BASE_URL}/#person` },
 };
@@ -226,7 +227,7 @@ export default function RootLayout({
       <head>
         {/* Geo targeting — India origin, UAE current */}
         <meta name="geo.region"    content="AE-DU" />
-        <meta name="geo.placename" content="Dubai, United Arab Emirates" />
+        <meta name="geo.placename" content="Abu Dhabi, United Arab Emirates" />
         <meta name="geo.position"  content="25.2048;55.2708" />
         <meta name="ICBM"          content="25.2048, 55.2708" />
 
@@ -244,8 +245,9 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${quicksand.variable} font-sans antialiased bg-[#030014] text-white min-h-screen`}
+        className={`${quicksand.variable} font-sans antialiased bg-[#030014] text-white min-h-screen cursor-none`}
       >
+        <CustomCursor />
         <BackgroundEffects />
         <Nav />
         <SmoothScroll>
