@@ -41,12 +41,10 @@ export default function DownloadCVMenu({ variant = "light", fullWidth = false }:
 
   const isLight = variant === "light";
 
-  const triggerStyle: React.CSSProperties = isLight
+  const triggerStyle: React.CSSProperties | undefined = isLight
     ? {
         display: "inline-flex",
         alignItems: "center",
-        justifyContent: fullWidth ? "center" : undefined,
-        width: fullWidth ? "100%" : undefined,
         gap: "8px",
         padding: "8px 16px",
         borderRadius: "12px",
@@ -58,6 +56,7 @@ export default function DownloadCVMenu({ variant = "light", fullWidth = false }:
         boxShadow: "0 1px 3px rgba(15,23,42,0.07)",
         cursor: "pointer",
         textDecoration: "none",
+        ...(fullWidth ? { justifyContent: "center", width: "100%" } : {}),
       }
     : undefined;
 
@@ -66,7 +65,7 @@ export default function DownloadCVMenu({ variant = "light", fullWidth = false }:
       <button
         onClick={() => setOpen((o) => !o)}
         className={isLight ? "" : "btn-secondary text-sm px-4 py-2"}
-        style={isLight ? triggerStyle : { width: fullWidth ? "100%" : undefined }}
+        style={isLight ? triggerStyle : fullWidth ? { width: "100%" } : undefined}
       >
         <Icon
           icon="solar:file-download-bold-duotone"
@@ -85,8 +84,7 @@ export default function DownloadCVMenu({ variant = "light", fullWidth = false }:
         <div
           className="absolute z-50 mt-2 rounded-xl overflow-hidden"
           style={{
-            right: fullWidth ? undefined : 0,
-            left: fullWidth ? 0 : undefined,
+            ...(fullWidth ? { left: 0 } : { right: 0 }),
             minWidth: "180px",
             background: "#ffffff",
             border: "1px solid rgba(15,23,42,0.10)",

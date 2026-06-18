@@ -243,7 +243,7 @@ export default function SkillsUniverse() {
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.8 }}
                 transition={{ duration: shouldReduceMotion ? 0.2 : 0.3, delay: shouldReduceMotion ? 0 : index * 0.05 }}
-                whileHover={shouldReduceMotion ? undefined : { scale: 1.05, y: -5 }}
+                {...(shouldReduceMotion ? {} : { whileHover: { scale: 1.05, y: -5 } })}
                 whileTap={{ scale: 0.95 }}
                 onClick={(e) => handleGraffiti(e, skill.name)}
                 className="relative group cursor-pointer overflow-visible"

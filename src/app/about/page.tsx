@@ -94,8 +94,7 @@ export default function AboutPage() {
                 </a>
                 <a
                   href={resumeHref}
-                  target={isResumeConfigured ? "_blank" : undefined}
-                  rel={isResumeConfigured ? "noopener noreferrer" : undefined}
+                  {...(isResumeConfigured ? { target: "_blank", rel: "noopener noreferrer" } : {})}
                   className="btn-secondary"
                 >
                   <Icon icon="solar:document-bold" />

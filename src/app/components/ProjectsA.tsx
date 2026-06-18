@@ -238,7 +238,7 @@ export default function ProjectsA() {
                 exit={{ opacity: 0, scale: 0.9 }}
                 transition={{ duration: shouldReduceMotion ? 0.2 : 0.4, delay: shouldReduceMotion ? 0 : index * 0.1 }}
                 className="group h-full"
-                whileHover={shouldReduceMotion ? undefined : { y: -8 }}
+                {...(shouldReduceMotion ? {} : { whileHover: { y: -8 } })}
               >
                 <div className="relative h-full flex flex-col rounded-2xl bg-white overflow-hidden border border-slate-900/[0.07] shadow-[0_1px_3px_rgba(15,23,42,0.06),0_10px_30px_rgba(15,23,42,0.05)] transition-all duration-300 group-hover:-translate-y-0.5 group-hover:shadow-[0_24px_50px_rgba(15,23,42,0.13)] group-hover:border-[#C8A84B]/45">
                   {/* gold top accent */}
