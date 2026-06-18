@@ -199,8 +199,8 @@ const profilePageSchema = {
   name:       "Umar Suhail – Lead Frontend Engineer Portfolio",
   description:
     "Official portfolio of Umar Suhail, Lead Frontend Engineer and Software Developer from India, based in Abu Dhabi UAE.",
-  dateCreated:  "2024-01-01",
-  dateModified: new Date().toISOString().split("T")[0],
+  dateCreated:  "2024-01-01T00:00:00+00:00",
+  dateModified: new Date().toISOString(),
   inLanguage:   "en",
   mainEntity:   person,
 };
