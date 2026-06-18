@@ -10,12 +10,37 @@ type ChatMessage = {
   timestamp: Date;
 };
 
+// Offline FAQ — shown when the AI is unavailable (error / quota). Answered locally, no API call.
+const FAQS: { q: string; a: string }[] = [
+  {
+    q: "What does Umar do?",
+    a: "Umar Suhail is a Lead Frontend Engineer & Application Developer with 7+ years of experience building high-performance React and Next.js applications. He currently works at Emirates Face Recognition (EFR) in Dubai, UAE.",
+  },
+  {
+    q: "What's his tech stack?",
+    a: "React, Next.js, TypeScript, JavaScript, Node.js, Redux, and Tailwind CSS — with a focus on scalable architecture, UI/UX, and accessibility.",
+  },
+  {
+    q: "Notable projects?",
+    a: "Emirates multi-tenant biometric dashboards (50+ tenants), a Telecom Onboarding Dashboard, an Enterprise Revenue & Billing Analytics Platform, a Loyalty Rewards Platform, GetLife Insurance Portal, and SkySearch.AI.",
+  },
+  {
+    q: "Is he available for work?",
+    a: "Yes — Umar is open to senior frontend engineering roles and select freelance projects (UAE, India, or remote).",
+  },
+  {
+    q: "How can I contact Umar?",
+    a: "Email umarsuhail112@gmail.com or connect on LinkedIn at linkedin.com/in/umar-suhail.",
+  },
+];
+
 export default function ChatBot() {
   const [isChatOpened, setOpened] = useState(false);
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [loading, setLoading] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
+  const [showFaq, setShowFaq] = useState(false);
 
   const inputRef = useRef<HTMLInputElement>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
@@ -46,6 +71,7 @@ export default function ChatBot() {
     ]);
     setInputValue("");
     setIsTyping(true);
+    setShowFaq(false);
 
     try {
       const response = await fetch("/api/chat", {
@@ -62,20 +88,32 @@ export default function ChatBot() {
           { type: "received", message: data.message, timestamp: new Date() },
         ]);
       }
+      // AI unavailable (error / quota) — offer offline FAQ shortcuts.
+      if (data.fallback) setShowFaq(true);
     } catch (error) {
       console.error("Error fetching AI response:", error);
       setChatMessages((prev) => [
         ...prev,
         {
           type: "received",
-          message: "Sorry, I'm having trouble connecting. Please try again later.",
+          message: "Sorry, I'm having trouble connecting. Meanwhile, here are some quick answers:",
           timestamp: new Date(),
         },
       ]);
+      setShowFaq(true);
     } finally {
       setLoading(false);
       setIsTyping(false);
     }
+  };
+
+  // Answer an FAQ locally — no API call.
+  const handleFaq = (faq: { q: string; a: string }) => {
+    setChatMessages((prev) => [
+      ...prev,
+      { type: "send", message: faq.q, timestamp: new Date() },
+      { type: "received", message: faq.a, timestamp: new Date() },
+    ]);
   };
 
   useEffect(() => {
@@ -195,6 +233,25 @@ export default function ChatBot() {
                       <span className="w-2 h-2 bg-vintage-cream/50 rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
                     </div>
                   </div>
+                </motion.div>
+              )}
+
+              {showFaq && !isTyping && (
+                <motion.div
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="flex flex-col gap-2"
+                >
+                  {FAQS.map((faq) => (
+                    <button
+                      key={faq.q}
+                      type="button"
+                      onClick={() => handleFaq(faq)}
+                      className="text-left text-sm px-3 py-2 rounded-lg border border-vintage-burgundy/40 bg-vintage-burgundy/10 text-vintage-cream/90 hover:bg-vintage-burgundy/20 hover:border-vintage-burgundy/60 transition-colors"
+                    >
+                      {faq.q}
+                    </button>
+                  ))}
                 </motion.div>
               )}
             </div>

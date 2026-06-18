@@ -5104,8 +5104,8 @@ export default function ResumeBuilderPage() {
               <div
                 style={{
                   width: `${Math.round(794 * previewScale)}px`,
-                  height: scaledHeight > 0 ? `${scaledHeight}px` : undefined,
                   overflow: "hidden",
+                  ...(scaledHeight > 0 ? { height: `${scaledHeight}px` } : {}),
                 }}
               >
                 <div

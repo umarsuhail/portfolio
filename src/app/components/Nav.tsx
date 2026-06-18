@@ -341,8 +341,6 @@ function LightNavBtn({
   const style: React.CSSProperties = {
     display:        "inline-flex",
     alignItems:     "center",
-    justifyContent: fullWidth ? "center" : undefined,
-    width:          fullWidth ? "100%" : undefined,
     gap:            "8px",
     padding:        "8px 16px",
     borderRadius:   "12px",
@@ -355,6 +353,7 @@ function LightNavBtn({
     transition:     "all 0.18s",
     textDecoration: "none",
     cursor:         "pointer",
+    ...(fullWidth ? { justifyContent: "center", width: "100%" } : {}),
   };
 
   const inner = (

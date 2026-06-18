@@ -4,6 +4,7 @@ import { generateText } from "ai";
 
 type ResponseData = {
   message: string;
+  fallback?: boolean; // true when the AI is unavailable (no key, error, quota) — client shows FAQ
 };
 
 const GEMINI_MODEL = process.env.GEMINI_MODEL?.trim() || "gemini-3.5-flash";
@@ -112,7 +113,8 @@ export default async function chat(
   if (!apiKey) {
     console.error("GEMINI_API_KEY is not configured.");
     res.status(200).json({
-      message: "I'm temporarily unavailable. Please try again in a moment.",
+      message: "I'm temporarily unavailable. Meanwhile, here are some quick answers:",
+      fallback: true,
     });
     return;
   }
@@ -129,13 +131,19 @@ export default async function chat(
     });
 
     const reply = text.trim();
-    res.status(200).json({
-      message: reply || "I'm temporarily unavailable. Please try again in a moment.",
-    });
+    if (reply) {
+      res.status(200).json({ message: reply });
+    } else {
+      res.status(200).json({
+        message: "I'm temporarily unavailable. Meanwhile, here are some quick answers:",
+        fallback: true,
+      });
+    }
   } catch (error) {
     console.error("Gemini error:", error instanceof Error ? error.message : error);
     res.status(200).json({
-      message: "I'm temporarily unavailable. Please try again in a moment.",
+      message: "I'm temporarily unavailable. Meanwhile, here are some quick answers:",
+      fallback: true,
     });
   }
 }
