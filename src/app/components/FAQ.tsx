@@ -7,7 +7,7 @@ import { Icon } from "@iconify/react";
 const faqs = [
   {
     q: "Who is Umar Suhail?",
-    a: "Umar Suhail is a Lead Frontend Engineer and software developer from India, currently based in Dubai, UAE. With 7+ years of experience, he builds high-performance web applications using React and Next.js, and currently works at Emirates Face Recognition (EFR) in Dubai.",
+    a: "Umar Suhail is a Lead Frontend Engineer and software developer from India, currently based in Abu Dhabi, UAE. With 7+ years of experience, he builds high-performance web applications using React and Next.js, and currently works at Emirates Face Recognition (EFR) in Abu Dhabi.",
   },
   {
     q: "What does Umar Suhail specialise in?",
@@ -15,7 +15,7 @@ const faqs = [
   },
   {
     q: "Where does Umar Suhail work?",
-    a: "Umar Suhail works at Emirates Face Recognition (EFR) in Dubai, UAE, as an Application Developer. Previously he was Development Team Lead at Epixel Solutions, Software Engineer at Aspire Systems, and UI Developer at Uvionics Tech — all in India.",
+    a: "Umar Suhail works at Emirates Face Recognition (EFR) in Abu Dhabi, UAE, as an Application Developer. Previously he was Development Team Lead at Epixel Solutions, Software Engineer at Aspire Systems, and UI Developer at Uvionics Tech — all in India.",
   },
   {
     q: "Is Umar Suhail available for freelance or new roles?",
@@ -65,7 +65,7 @@ export default function FAQ() {
           </h2>
           <p className="text-base max-w-xl mx-auto" style={{ color: "#64748B" }}>
             Common questions about Umar Suhail — software developer from India,
-            based in Dubai UAE.
+            based in Abu Dhabi UAE.
           </p>
         </div>
 

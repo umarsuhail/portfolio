@@ -5,6 +5,7 @@ import { Icon } from "@iconify/react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import DownloadCVMenu from "./DownloadCVMenu";
 
 const navLinks = [
   { href: "/about",    label: "About",    icon: "solar:user-bold-duotone" },
@@ -122,11 +123,12 @@ export default function Nav() {
           {/* ── Desktop nav links ─────────────────────────────────── */}
           <nav className="hidden md:flex items-center gap-1">
             {navLinks.map((link) => {
+              const resolvedHref = !isLight && link.href.startsWith("#") ? `/${link.href}` : link.href;
               const isActive = activeSection === link.href;
               return (
                 <Link
                   key={link.href}
-                  href={link.href}
+                  href={resolvedHref}
                   className={`relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 group ${
                     isLight
                       ? ""
@@ -170,9 +172,7 @@ export default function Nav() {
                 <LightNavBtn href="/resume-builder" icon="solar:document-text-bold-duotone" isLink>
                   Resume Builder
                 </LightNavBtn>
-                <LightNavBtn href="/umar-suhail-resume-2026.pdf" download="Umar-Suhail-Resume.pdf" icon="solar:file-download-bold-duotone">
-                  Download CV
-                </LightNavBtn>
+                <DownloadCVMenu variant="light" />
                 <a
                   href="https://wa.me/971568323258"
                   target="_blank"
@@ -194,10 +194,7 @@ export default function Nav() {
                   <Icon icon="solar:document-text-bold-duotone" className="text-lg" />
                   <span>Resume Builder</span>
                 </Link>
-                <a href="/umar-suhail-resume-2026.pdf" download="Umar-Suhail-Resume.pdf" className="btn-secondary text-sm px-4 py-2">
-                  <Icon icon="solar:file-download-bold-duotone" className="text-lg" />
-                  <span>Download CV</span>
-                </a>
+                <DownloadCVMenu variant="dark" />
                 <a href="https://wa.me/971568323258" target="_blank" rel="noopener noreferrer" className="btn-primary text-sm px-4 py-2">
                   <span>Let&apos;s Talk</span>
                   <Icon icon="solar:arrow-right-linear" />
@@ -267,7 +264,7 @@ export default function Nav() {
                     </Link>
                   ) : (
                     <Link
-                      href={link.href}
+                      href={link.href.startsWith("#") ? `/${link.href}` : link.href}
                       onClick={() => setIsOpen(false)}
                       className="flex items-center gap-3 px-4 py-3 text-vintage-cream/80 hover:text-vintage-cream hover:bg-vintage-slate/30 rounded-lg transition-all"
                     >
@@ -283,9 +280,7 @@ export default function Nav() {
                     <LightNavBtn href="/resume-builder" icon="solar:document-text-bold-duotone" isLink fullWidth>
                       Resume Builder
                     </LightNavBtn>
-                    <LightNavBtn href="/umar-suhail-resume-2026.pdf" download="Umar-Suhail-Resume.pdf" icon="solar:file-download-bold-duotone" fullWidth>
-                      Download CV
-                    </LightNavBtn>
+                    <DownloadCVMenu variant="light" fullWidth />
                     <a
                       href="https://wa.me/971568323258"
                       target="_blank"
@@ -307,10 +302,7 @@ export default function Nav() {
                       <Icon icon="solar:document-text-bold-duotone" />
                       Resume Builder
                     </Link>
-                    <a href="/umar-suhail-resume-2026.pdf" download="Umar-Suhail-Resume.pdf" className="btn-secondary justify-center">
-                      <Icon icon="solar:file-download-bold-duotone" />
-                      Download CV
-                    </a>
+                    <DownloadCVMenu variant="dark" fullWidth />
                     <a href="https://wa.me/971568323258" target="_blank" rel="noopener noreferrer" className="btn-primary justify-center">
                       Let&apos;s Talk <Icon icon="solar:arrow-right-linear" />
                     </a>

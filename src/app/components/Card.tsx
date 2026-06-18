@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { Icon } from "@iconify/react";
 import profile from "../../../public/images/me-s.jpeg";
 import { texts } from "@/utils/constants";
+import DownloadCVMenu from "./DownloadCVMenu";
 
 const stats = [
   { value: "7+",  label: "Years Experience" },
@@ -16,9 +17,9 @@ const stats = [
 const socialLinks = [
   { icon: "mdi:linkedin", href: "https://www.linkedin.com/in/umar-suhail/", label: "LinkedIn" },
   { icon: "mdi:github",   href: "https://github.com/umarsuhail",            label: "GitHub" },
-  { icon: "mdi:twitter",  href: "https://twitter.com/umarsuhail",           label: "Twitter" },
-];
-
+  { icon: "mdi:facebook",  href: "https://facebook.com/umar.suhail1",           label: "facebook" },
+  { icon: "mdi:instagram",  href: "https://www.instagram.com/umar_suhail_/",           label: "Instagram" },
+]
 // Gold + steel premium palette
 const GOLD_RICH  = "#C8A84B";
 const GOLD_DEEP  = "#8A6A1A";
@@ -171,28 +172,7 @@ export default function Card() {
                 View Projects
               </motion.a>
 
-              <motion.a
-                href="/umar-suhail-resume-2026.pdf"
-                download="Umar-Suhail-Resume.pdf"
-                data-hover-sound
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm landing-btn-secondary"
-                style={{
-                  color: NAVY,
-                  background: "#FFFFFF",
-                  border: `1px solid rgba(15,23,42,0.14)`,
-                  boxShadow: "0 1px 3px rgba(0,0,0,0.07), 0 4px 12px rgba(0,0,0,0.04)",
-                }}
-                whileHover={{
-                  scale: 1.04,
-                  y: -3,
-                  boxShadow: "0 8px 24px rgba(15,23,42,0.11), 0 2px 6px rgba(15,23,42,0.06)",
-                  transition: { duration: 0.16, ease: "easeOut" },
-                }}
-                whileTap={{ scale: 0.97, transition: { duration: 0.1 } }}
-              >
-                <Icon icon="solar:file-download-bold" className="text-base" />
-                Download CV
-              </motion.a>
+              <DownloadCVMenu variant="light" />
             </motion.div>
 
             {/* Social links */}
@@ -286,11 +266,6 @@ export default function Card() {
                 initial={{ opacity: 0, scale: 0.85 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.7 }}
-                whileHover={{
-                  y: -8,
-                  scale: 1.07,
-                  transition: { duration: 0.2, ease: "easeOut" },
-                }}
                 className="absolute -bottom-4 -right-4 bg-white rounded-2xl px-4 py-3 flex items-center gap-3 landing-badge"
                 style={{
                   boxShadow: "0 4px 24px rgba(15,23,42,0.12), 0 1px 4px rgba(15,23,42,0.06), 0 0 0 1px rgba(15,23,42,0.04)",
@@ -313,11 +288,6 @@ export default function Card() {
                 initial={{ opacity: 0, scale: 0.85 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.85 }}
-                whileHover={{
-                  y: -8,
-                  scale: 1.07,
-                  transition: { duration: 0.2, ease: "easeOut" },
-                }}
                 className="absolute -top-4 -left-4 bg-white rounded-2xl px-4 py-3 flex items-center gap-3 landing-badge"
                 style={{
                   boxShadow: "0 4px 24px rgba(15,23,42,0.12), 0 1px 4px rgba(15,23,42,0.06), 0 0 0 1px rgba(15,23,42,0.04)",
