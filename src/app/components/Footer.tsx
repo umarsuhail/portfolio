@@ -116,7 +116,7 @@ export default function Footer() {
                 >
                   <Icon icon="solar:heart-bold" className="text-vintage-burgundy" />
                 </motion.span>
-                using Next.js
+                to Spidy
               </p>
             </div>
           </div>

@@ -62,10 +62,10 @@ export default function Nav() {
           : ""
       }`}
       style={isLight ? {
-        background:           scrolled ? "rgba(255,255,255,0.97)" : "rgba(255,255,255,0.84)",
-        backdropFilter:       "blur(18px) saturate(180%)",
-        WebkitBackdropFilter: "blur(18px) saturate(180%)",
-        borderBottom:         "1px solid rgba(15,23,42,0.09)",
+        background:           scrolled ? "rgba(11,16,38,0.92)" : "rgba(11,16,38,0.55)",
+        backdropFilter:       "blur(18px) saturate(160%)",
+        WebkitBackdropFilter: "blur(18px) saturate(160%)",
+        borderBottom:         scrolled ? "1px solid rgba(43,108,232,0.28)" : "1px solid rgba(43,108,232,0.12)",
       } : {}}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -77,12 +77,12 @@ export default function Nav() {
               {isLight ? (
                 <>
                   <div
-                    className="absolute inset-0 rounded-lg blur-md opacity-40 group-hover:opacity-65 transition-opacity"
-                    style={{ background: "linear-gradient(135deg, rgba(138,106,26,0.5), rgba(71,85,105,0.4))" }}
+                    className="absolute inset-0 rounded-lg blur-md opacity-50 group-hover:opacity-75 transition-opacity"
+                    style={{ background: "linear-gradient(135deg, rgba(43,108,232,0.6), rgba(230,36,41,0.45))" }}
                   />
                   <div
                     className="relative w-10 h-10 rounded-lg flex items-center justify-center font-bold text-lg"
-                    style={{ background: "linear-gradient(135deg, #8A6A1A 0%, #475569 100%)", color: "#fff" }}
+                    style={{ background: "linear-gradient(135deg, #2B6CE8 0%, #0B1026 100%)", color: "#F4E9E8" }}
                   >
                     U
                   </div>
@@ -101,11 +101,11 @@ export default function Nav() {
                 <>
                   <span
                     className="font-semibold text-lg block"
-                    style={{ color: "#0F172A" }}
+                    style={{ color: "#F4E9E8" }}
                   >
                     Umar Suhail
                   </span>
-                  <span className="block text-xs" style={{ color: "#64748B" }}>
+                  <span className="block text-xs" style={{ color: "rgba(244,233,232,0.55)" }}>
                     Lead Frontend Engineer
                   </span>
                 </>
@@ -136,15 +136,15 @@ export default function Nav() {
                         ? "text-vintage-cream"
                         : "text-vintage-cream/60 hover:text-vintage-cream"
                   }`}
-                  style={isLight ? { color: isActive ? "#0F172A" : "#475569" } : {}}
+                  style={isLight ? { color: isActive ? "#F4E9E8" : "rgba(244,233,232,0.6)" } : {}}
                 >
                   {isActive && (
                     <motion.div
                       layoutId="activeNav"
                       className="absolute inset-0 rounded-lg"
                       style={isLight ? {
-                        background: "rgba(200,168,75,0.08)",
-                        border:     "1px solid rgba(200,168,75,0.28)",
+                        background: "rgba(43,108,232,0.14)",
+                        border:     "1px solid rgba(43,108,232,0.35)",
                       } : {
                         background: "rgba(71,85,105,0.5)",
                         border:     "1px solid rgba(255,255,255,0.1)",
@@ -156,7 +156,7 @@ export default function Nav() {
                     <Icon
                       icon={link.icon}
                       className="text-lg"
-                      style={isLight ? { color: isActive ? "#8A6A1A" : "#64748B" } : {}}
+                      style={isLight ? { color: isActive ? "#2B6CE8" : "rgba(244,233,232,0.5)" } : {}}
                     />
                     {link.label}
                   </span>
@@ -172,16 +172,16 @@ export default function Nav() {
                 <LightNavBtn href="/resume-builder" icon="solar:document-text-bold-duotone" isLink>
                   Resume Builder
                 </LightNavBtn>
-                <DownloadCVMenu variant="light" />
+                <DownloadCVMenu variant="dark" />
                 <a
                   href="https://wa.me/971568323258"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200 active:scale-95"
                   style={{
-                    background: "linear-gradient(135deg, #8A6A1A 0%, #5F4A10 100%)",
-                    color:      "#ffffff",
-                    boxShadow:  "0 4px 14px rgba(138,106,26,0.30)",
+                    background: "linear-gradient(135deg, #E62429 0%, #B11313 100%)",
+                    color:      "#F4E9E8",
+                    boxShadow:  "0 4px 14px rgba(230,36,41,0.35)",
                   }}
                 >
                   Let&apos;s Talk
@@ -212,15 +212,15 @@ export default function Nav() {
             <div className="relative w-6 h-5 flex flex-col justify-between">
               <motion.span
                 animate={{ rotate: isOpen ? 45 : 0, y: isOpen ? 8 : 0 }}
-                className={`block h-0.5 rounded-full origin-center ${isLight ? "bg-[#334155]" : "bg-vintage-cream"}`}
+                className={`block h-0.5 rounded-full origin-center ${isLight ? "bg-[#F4E9E8]" : "bg-vintage-cream"}`}
               />
               <motion.span
                 animate={{ opacity: isOpen ? 0 : 1, scaleX: isOpen ? 0 : 1 }}
-                className={`block h-0.5 rounded-full ${isLight ? "bg-[#334155]" : "bg-vintage-cream"}`}
+                className={`block h-0.5 rounded-full ${isLight ? "bg-[#F4E9E8]" : "bg-vintage-cream"}`}
               />
               <motion.span
                 animate={{ rotate: isOpen ? -45 : 0, y: isOpen ? -8 : 0 }}
-                className={`block h-0.5 rounded-full origin-center ${isLight ? "bg-[#334155]" : "bg-vintage-cream"}`}
+                className={`block h-0.5 rounded-full origin-center ${isLight ? "bg-[#F4E9E8]" : "bg-vintage-cream"}`}
               />
             </div>
           </button>
@@ -238,10 +238,10 @@ export default function Nav() {
               isLight ? "" : "bg-vintage-navy/95 backdrop-blur-xl border-t border-vintage-cream/10"
             }`}
             style={isLight ? {
-              background:           "rgba(255,255,255,0.98)",
+              background:           "rgba(11,16,38,0.97)",
               backdropFilter:       "blur(20px)",
               WebkitBackdropFilter: "blur(20px)",
-              borderTop:            "1px solid rgba(15,23,42,0.09)",
+              borderTop:            "1px solid rgba(43,108,232,0.2)",
             } : {}}
           >
             <div className="px-4 py-6 space-y-1">
@@ -257,9 +257,9 @@ export default function Nav() {
                       href={link.href}
                       onClick={() => setIsOpen(false)}
                       className="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 font-medium text-sm"
-                      style={{ color: "#334155" }}
+                      style={{ color: "#F4E9E8" }}
                     >
-                      <Icon icon={link.icon} className="text-xl" style={{ color: "#8A6A1A" }} />
+                      <Icon icon={link.icon} className="text-xl" style={{ color: "#2B6CE8" }} />
                       {link.label}
                     </Link>
                   ) : (
@@ -280,7 +280,7 @@ export default function Nav() {
                     <LightNavBtn href="/resume-builder" icon="solar:document-text-bold-duotone" isLink fullWidth>
                       Resume Builder
                     </LightNavBtn>
-                    <DownloadCVMenu variant="light" fullWidth />
+                    <DownloadCVMenu variant="dark" fullWidth />
                     <a
                       href="https://wa.me/971568323258"
                       target="_blank"
@@ -340,10 +340,10 @@ function LightNavBtn({
     borderRadius:   "12px",
     fontSize:       "14px",
     fontWeight:     600,
-    color:          "#334155",
-    background:     hovered ? "#EEF0F6" : "#FFFFFF",
-    border:         hovered ? "1px solid rgba(15,23,42,0.22)" : "1px solid rgba(15,23,42,0.13)",
-    boxShadow:      "0 1px 3px rgba(15,23,42,0.07)",
+    color:          "#F4E9E8",
+    background:     hovered ? "rgba(43,108,232,0.18)" : "rgba(11,16,38,0.6)",
+    border:         hovered ? "1px solid rgba(43,108,232,0.55)" : "1px solid rgba(43,108,232,0.25)",
+    boxShadow:      "0 1px 3px rgba(0,0,0,0.4)",
     transition:     "all 0.18s",
     textDecoration: "none",
     cursor:         "pointer",
@@ -351,7 +351,7 @@ function LightNavBtn({
 
   const inner = (
     <>
-      <Icon icon={icon} style={{ fontSize: "17px", color: "#64748B", flexShrink: 0 }} />
+      <Icon icon={icon} style={{ fontSize: "17px", color: "#2B6CE8", flexShrink: 0 }} />
       <span>{children}</span>
     </>
   );

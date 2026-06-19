@@ -1,37 +1,33 @@
 /*
- * Premium steel & gold theme — scoped to [data-landing].
- * Only applied to the home page ( / ).
+ * Spider-Man theme — scoped to [data-landing].
+ * Only applied to the home page ( / ). The grunge background image
+ * (sp-bg.jpg) and web overlay are rendered as fixed divs in page.tsx.
  *
  * Palette:
- *   Background  : cool pearl → light steel → warm gold shimmer
- *   Text-1      : #0F172A  (deep slate, max contrast)
- *   Text-2      : #334155  (slate-700)
- *   Text-3      : #64748B  (slate-500)
- *   Gold rich   : #C8A84B  (decorative, gradients)
- *   Gold deep   : #8A6A1A  (functional, WCAG AA)
- *   Gold dark   : #5F4A10  (button darken)
- *   Steel       : #475569  (slate-600)
- *   Navy        : #0F172A  (gradient end)
- *   Surface     : #FFFFFF  (cards)
- *   Alt surface : #EFF2F8  (alternate sections)
- *   Footer      : #E5E8F0
+ *   Silk (text-1)  : #F4E9E8  (max contrast on dark)
+ *   Silk-2         : rgba(244,233,232,0.75)
+ *   Silk-3         : rgba(244,233,232,0.55)
+ *   Spidey red     : #E62429  (primary accent)
+ *   Crimson        : #B11313  (button darken)
+ *   Spidey blue    : #2B6CE8  (secondary accent)
+ *   Surface card   : dark crimson/navy glass
+ *   Web silk lines : rgba(244,233,232,0.05)
  */
 
 /* ── Canvas ──────────────────────────────────────────────────────────────── */
 [data-landing] {
-  color: #0F172A;
+  color: #F4E9E8;
 }
 
-/* Gradient background — replaces flat BackgroundEffects */
+/* Subtle red/blue glow vignette layered over the sp-bg image div */
 [data-landing]::before {
   content: "";
   position: fixed;
   inset: 0;
   background:
-    radial-gradient(ellipse 80% 60% at 10% 30%, rgba(200,168,75,0.09)  0%, transparent 60%),
-    radial-gradient(ellipse 60% 50% at 90% 70%, rgba(71,85,105,0.07)   0%, transparent 55%),
-    radial-gradient(ellipse 50% 40% at 50% 95%, rgba(200,168,75,0.05)  0%, transparent 50%),
-    linear-gradient(160deg, #F8F9FB 0%, #F3F5F9 45%, #F6F4EF 75%, #EFF2F8 100%);
+    radial-gradient(ellipse 80% 60% at 10% 25%, rgba(230,36,41,0.16) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 90% 70%, rgba(43,108,232,0.14) 0%, transparent 55%),
+    radial-gradient(ellipse 50% 40% at 50% 100%, rgba(230,36,41,0.10) 0%, transparent 55%);
   z-index: -1;
   pointer-events: none;
 }
@@ -41,7 +37,7 @@
   position: relative;
 }
 
-/* Remove dark absolute overlay divs */
+/* Remove dark absolute overlay divs that fight the new background */
 [data-landing] section > div.absolute.inset-0,
 [data-landing] section > div[class*="absolute"][class*="inset-0"][class*="bg-gradient"],
 [data-landing] section > div[class*="absolute"][class*="inset-0"][class*="bg-vintage"] {
@@ -53,169 +49,163 @@
 [data-landing] section > div[class*="absolute"][class*="blur"][class*="bg-vintage-burgundy"],
 [data-landing] section > div[class*="absolute"][class*="blur"][class*="bg-vintage-cream"],
 [data-landing] section > div[class*="absolute"][class*="blur"][class*="bg-vintage-slate"] {
-  opacity: 0.04 !important;
+  opacity: 0.06 !important;
 }
 
 /* ── Text overrides ──────────────────────────────────────────────────────── */
-/* Only override cream/white on NON-icon text; icons inside dark containers keep white via inline style */
+/* Keep cream/white text bright on the dark grunge bg; icons keep inline color */
 [data-landing] .text-vintage-cream,
 [data-landing] [class*="text-vintage-cream"],
 [data-landing] .section-title {
-  color: #0F172A !important;
+  color: #F4E9E8 !important;
 }
-/* .text-white class override: skip direct icon elements (they use inline color now) */
 [data-landing] :not(svg):not([class*="iconify"]).text-white {
-  color: #0F172A !important;
+  color: #F4E9E8 !important;
 }
 
 [data-landing] .section-subtitle,
 [data-landing] [class*="text-white\/70"],
 [data-landing] [class*="text-vintage-cream\/70"] {
-  color: #334155 !important;
+  color: rgba(244,233,232,0.75) !important;
 }
 
 [data-landing] [class*="text-white\/60"],
 [data-landing] [class*="text-vintage-cream\/60"],
 [data-landing] [class*="text-white\/50"],
 [data-landing] [class*="text-vintage-cream\/50"] {
-  color: #64748B !important;
+  color: rgba(244,233,232,0.55) !important;
 }
 
-/* Gold accents — replace burgundy */
+/* Red accents — replace burgundy */
 [data-landing] .text-vintage-burgundy,
 [data-landing] [class*="text-vintage-burgundy"] {
-  color: #8A6A1A !important;
+  color: #E62429 !important;
 }
 
 /* ── Cards & surfaces ────────────────────────────────────────────────────── */
-[data-landing] .vintage-card {
-  background: #ffffff !important;
-  border-color: rgba(15,23,42,0.07) !important;
-  box-shadow: 0 1px 3px rgba(15,23,42,0.06), 0 4px 20px rgba(15,23,42,0.04) !important;
-}
-
+[data-landing] .vintage-card,
 [data-landing] .glass,
 [data-landing] .glass-dark,
 [data-landing] [class*="bg-white\/5"],
 [data-landing] [class*="bg-white\/\[0.02\]"] {
-  background: #ffffff !important;
-  border-color: rgba(15,23,42,0.07) !important;
-  box-shadow: 0 1px 3px rgba(15,23,42,0.06), 0 8px 24px rgba(15,23,42,0.05) !important;
-  backdrop-filter: none !important;
+  background: linear-gradient(150deg, rgba(20,14,22,0.82) 0%, rgba(11,16,38,0.88) 100%) !important;
+  border-color: rgba(230,36,41,0.28) !important;
+  box-shadow: 0 10px 30px -12px rgba(0,0,0,0.7), inset 0 1px 0 rgba(244,233,232,0.06) !important;
+  backdrop-filter: blur(8px) !important;
 }
 
 /* Experience timeline cards */
 [data-landing] [class*="border-white\/10"] {
-  border-color: rgba(15,23,42,0.08) !important;
-  background: #ffffff !important;
-  box-shadow: 0 1px 3px rgba(15,23,42,0.06), 0 8px 30px rgba(15,23,42,0.05) !important;
+  border-color: rgba(230,36,41,0.22) !important;
+  background: linear-gradient(150deg, rgba(20,14,22,0.82) 0%, rgba(11,16,38,0.88) 100%) !important;
+  box-shadow: 0 10px 30px -12px rgba(0,0,0,0.7), inset 0 1px 0 rgba(244,233,232,0.06) !important;
 }
 
 [data-landing] [class*="hover\:border-white\/20"]:hover {
-  border-color: rgba(15,23,42,0.15) !important;
+  border-color: rgba(230,36,41,0.6) !important;
 }
 
 /* Skill / tag chips */
 [data-landing] [class*="bg-white\/10"] {
-  background: rgba(71,85,105,0.08) !important;
-  color: #334155 !important;
+  background: rgba(244,233,232,0.08) !important;
+  color: rgba(244,233,232,0.85) !important;
 }
 [data-landing] [class*="bg-vintage-slate\/"] {
-  background: rgba(71,85,105,0.06) !important;
+  background: rgba(11,16,38,0.55) !important;
 }
 
 /* ── Badges ──────────────────────────────────────────────────────────────── */
 [data-landing] .badge {
-  background: rgba(71,85,105,0.07) !important;
-  color: #334155 !important;
-  border-color: rgba(71,85,105,0.14) !important;
+  background: rgba(43,108,232,0.12) !important;
+  color: rgba(244,233,232,0.85) !important;
+  border-color: rgba(244,233,232,0.15) !important;
 }
 [data-landing] .badge-primary {
-  background: rgba(200,168,75,0.09) !important;
-  color: #8A6A1A !important;
-  border-color: rgba(200,168,75,0.3) !important;
+  background: rgba(230,36,41,0.15) !important;
+  color: #F4E9E8 !important;
+  border-color: rgba(230,36,41,0.4) !important;
 }
 
 /* ── Section backgrounds ─────────────────────────────────────────────────── */
 [data-landing] [class*="bg-white\/\[0.02\]"],
 [data-landing] section.bg-white\/\[0\.02\] {
-  background: #EFF2F8 !important;
+  background: rgba(0,0,0,0.3) !important;
 }
 
 /* Gradient section tints */
 [data-landing] [class*="from-violet-600\/20"],
 [data-landing] [class*="bg-gradient-to-r"][class*="from-violet"] {
-  background: linear-gradient(to right, rgba(200,168,75,0.07), rgba(71,85,105,0.06)) !important;
+  background: linear-gradient(to right, rgba(230,36,41,0.14), rgba(43,108,232,0.12)) !important;
 }
 
 /* ── Timeline line ───────────────────────────────────────────────────────── */
 [data-landing] [class*="bg-gradient-to-b"][class*="from-vintage-burgundy"] {
   background: linear-gradient(
     to bottom,
-    rgba(200,168,75,0.5),
-    rgba(71,85,105,0.25),
+    rgba(230,36,41,0.7),
+    rgba(43,108,232,0.4),
     transparent
   ) !important;
 }
 
 /* Timeline nodes */
 [data-landing] [class*="border-vintage-burgundy"] {
-  border-color: #C8A84B !important;
+  border-color: #E62429 !important;
 }
 
 /* ── Buttons ─────────────────────────────────────────────────────────────── */
 [data-landing] .btn-primary {
-  background: linear-gradient(135deg, #8A6A1A 0%, #5F4A10 100%) !important;
-  color: #ffffff !important;
+  background: linear-gradient(135deg, #E62429 0%, #B11313 100%) !important;
+  color: #F4E9E8 !important;
   border-color: transparent !important;
-  box-shadow: 0 4px 14px rgba(138,106,26,0.32) !important;
+  box-shadow: 0 4px 14px rgba(230,36,41,0.35) !important;
 }
 [data-landing] .btn-primary:hover {
-  box-shadow: 0 6px 20px rgba(138,106,26,0.42) !important;
+  box-shadow: 0 6px 22px rgba(230,36,41,0.5) !important;
 }
 
 [data-landing] .btn-secondary {
-  background: #ffffff !important;
-  color: #0F172A !important;
-  border-color: rgba(15,23,42,0.13) !important;
-  box-shadow: 0 1px 3px rgba(15,23,42,0.07) !important;
+  background: rgba(11,16,38,0.6) !important;
+  color: #F4E9E8 !important;
+  border-color: rgba(43,108,232,0.4) !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.4) !important;
 }
 [data-landing] .btn-secondary:hover {
-  background: #EEF0F6 !important;
-  border-color: rgba(15,23,42,0.25) !important;
+  background: rgba(43,108,232,0.18) !important;
+  border-color: rgba(43,108,232,0.7) !important;
 }
 
 /* ── Form / inputs ───────────────────────────────────────────────────────── */
 [data-landing] .input-field,
 [data-landing] input,
 [data-landing] textarea {
-  background: #ffffff !important;
-  border-color: rgba(15,23,42,0.12) !important;
-  color: #0F172A !important;
+  background: rgba(11,16,38,0.6) !important;
+  border-color: rgba(244,233,232,0.15) !important;
+  color: #F4E9E8 !important;
 }
 [data-landing] input::placeholder,
 [data-landing] textarea::placeholder {
-  color: #94A3B8 !important;
+  color: rgba(244,233,232,0.4) !important;
 }
 [data-landing] input:focus,
 [data-landing] textarea:focus {
-  border-color: #C8A84B !important;
-  box-shadow: 0 0 0 3px rgba(200,168,75,0.15) !important;
+  border-color: #E62429 !important;
+  box-shadow: 0 0 0 3px rgba(230,36,41,0.2) !important;
 }
 
 /* ── Social icon buttons ─────────────────────────────────────────────────── */
 [data-landing] [class*="bg-vintage-slate\/50"] {
-  background: #ffffff !important;
-  border-color: rgba(15,23,42,0.10) !important;
+  background: rgba(11,16,38,0.6) !important;
+  border-color: rgba(244,233,232,0.12) !important;
 }
 [data-landing] [class*="hover\:bg-vintage-burgundy\/20"]:hover {
-  background: rgba(200,168,75,0.08) !important;
-  border-color: rgba(200,168,75,0.3) !important;
+  background: rgba(230,36,41,0.18) !important;
+  border-color: rgba(230,36,41,0.5) !important;
 }
 
 /* ── Gradient text ───────────────────────────────────────────────────────── */
 [data-landing] .gradient-text {
-  background: linear-gradient(135deg, #C8A84B 0%, #0F172A 100%) !important;
+  background: linear-gradient(135deg, #E62429 0%, #FF5A5F 45%, #2B6CE8 100%) !important;
   -webkit-background-clip: text !important;
   background-clip: text !important;
   -webkit-text-fill-color: transparent !important;
@@ -223,34 +213,34 @@
 
 /* ── Footer ──────────────────────────────────────────────────────────────── */
 [data-landing] footer {
-  background: #E5E8F0 !important;
-  border-top-color: rgba(15,23,42,0.08) !important;
+  background: rgba(7,6,12,0.85) !important;
+  border-top-color: rgba(230,36,41,0.2) !important;
 }
 [data-landing] footer [class*="border-vintage-cream\/"] {
-  border-color: rgba(15,23,42,0.08) !important;
+  border-color: rgba(244,233,232,0.1) !important;
 }
 [data-landing] footer a {
-  color: #475569;
+  color: rgba(244,233,232,0.7);
 }
 [data-landing] footer a:hover {
-  color: #8A6A1A;
+  color: #E62429;
 }
 
 /* ── Section dividers ────────────────────────────────────────────────────── */
 [data-landing] [class*="border-vintage-cream\/10"],
 [data-landing] [class*="border-vintage-cream\/20"] {
-  border-color: rgba(15,23,42,0.07) !important;
+  border-color: rgba(244,233,232,0.1) !important;
 }
 
 /* ── Alternate section bg ────────────────────────────────────────────────── */
 [data-landing] #experience,
 [data-landing] #skills {
-  background: #EFF2F8;
+  background: rgba(0,0,0,0.3);
 }
 
 /* ── Card hover lift ─────────────────────────────────────────────────────── */
 [data-landing] .card-hover:hover {
-  box-shadow: 0 12px 40px rgba(15,23,42,0.11), 0 2px 8px rgba(15,23,42,0.06) !important;
+  box-shadow: 0 24px 48px -16px rgba(230,36,41,0.4), 0 0 28px rgba(230,36,41,0.18) !important;
 }
 
 /* ══════════════════════════════════════════════════════════════════════════
@@ -288,7 +278,7 @@
   animation: btn-shimmer 0.52s ease forwards;
 }
 
-/* Secondary button — gold shimmer streak + bg/border change */
+/* Secondary button — blue shimmer streak + bg/border change */
 .landing-btn-secondary {
   position: relative !important;
   overflow: hidden !important;
@@ -303,7 +293,7 @@
   background: linear-gradient(
     to right,
     transparent,
-    rgba(200,168,75,0.22),
+    rgba(43,108,232,0.32),
     transparent
   );
   transform: skewX(-18deg);
@@ -315,8 +305,8 @@
 
 /* Secondary button hover: bg and border (CSS so it works alongside Framer Motion) */
 [data-landing] .landing-btn-secondary:hover {
-  background: #EEF0F6 !important;
-  border-color: rgba(15,23,42,0.26) !important;
+  background: rgba(43,108,232,0.18) !important;
+  border-color: rgba(43,108,232,0.6) !important;
 }
 
 /* ── Badge rotating border beam ─────────────────────────────────────────── */
@@ -332,7 +322,7 @@
 
 /* NOTE: .landing-badge must NOT set position — badges are already position:absolute via Tailwind */
 
-/* The animated conic-gradient sits behind the white badge bg */
+/* The animated conic-gradient sits behind the badge bg */
 .landing-badge::before {
   content: "";
   position: absolute;
@@ -342,9 +332,9 @@
     from var(--beam-angle),
     transparent 0%,
     transparent 68%,
-    rgba(200,168,75,0.6) 80%,
-    rgba(255,220,60,1.0) 88%,
-    rgba(200,168,75,0.6) 96%,
+    rgba(230,36,41,0.6) 80%,
+    rgba(255,90,95,1.0) 88%,
+    rgba(43,108,232,0.6) 96%,
     transparent 100%
   );
   z-index: -1;

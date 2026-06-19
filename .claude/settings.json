@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx tsc *)",
+      "Bash(command -v identify)",
+      "Bash(identify -format \"%T \" public/images/turn.gif)",
+      "Bash(identify public/images/turn.gif)",
+      "Bash(node -e *)"
+    ]
+  }
+}

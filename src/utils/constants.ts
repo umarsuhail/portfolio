@@ -1,5 +1,5 @@
 ﻿import bot from "../../public/images/bot.jpg";
-import web from "../../public/images/web.jpg";
+import web from "../../public/images/work.png";
 import business_2 from "../../public/images/business-2.png";
 import confidential from "../../public/images/confidential.png";
 

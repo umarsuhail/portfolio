@@ -3,22 +3,31 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, useMotionValue, useSpring } from "framer-motion";
 
+// spider.svg is the resting pointer; turn.gif is the hover/click effect.
+// turn.gif is 25 frames ≈ 1500ms for a single play-through.
+const GIF_DURATION = 1500;
+
+// Both assets share a ~0.56 (w/h) tall aspect ratio.
+const POINTER_H = 40;
+const POINTER_W = Math.round((POINTER_H * 468.27) / 839); // ≈ 22
+const GIF_H = 58;
+const GIF_W = Math.round((GIF_H * 474) / 846); // ≈ 33
+
 export default function CustomCursor() {
   const rawX = useMotionValue(-100);
   const rawY = useMotionValue(-100);
 
-  // Dot snaps fast
-  const dotX = useSpring(rawX, { stiffness: 900, damping: 50, mass: 0.3 });
-  const dotY = useSpring(rawY, { stiffness: 900, damping: 50, mass: 0.3 });
+  const x = useSpring(rawX, { stiffness: 1000, damping: 50, mass: 0.25 });
+  const y = useSpring(rawY, { stiffness: 1000, damping: 50, mass: 0.25 });
 
-  // Ring lags behind
-  const ringX = useSpring(rawX, { stiffness: 180, damping: 28, mass: 0.6 });
-  const ringY = useSpring(rawY, { stiffness: 180, damping: 28, mass: 0.6 });
+  const [visible, setVisible] = useState(false);
+  const [playGif, setPlayGif] = useState(false);
+  // Bumped on every trigger so the <img> remounts and the gif replays from frame 0.
+  const [gifKey, setGifKey] = useState(0);
 
-  const [hovered, setHovered]   = useState(false);
-  const [clicking, setClicking] = useState(false);
-  const [visible, setVisible]   = useState(false);
   const isTouch = useRef(false);
+  const hoverRef = useRef(false);
+  const timeoutRef = useRef<number | null>(null);
 
   useEffect(() => {
     if (window.matchMedia("(pointer: coarse)").matches) {
@@ -26,88 +35,83 @@ export default function CustomCursor() {
       return;
     }
 
+    // Play the gif exactly one pass, then fall back to the static spider.
+    const trigger = () => {
+      setGifKey((k) => k + 1);
+      setPlayGif(true);
+      if (timeoutRef.current) window.clearTimeout(timeoutRef.current);
+      timeoutRef.current = window.setTimeout(
+        () => setPlayGif(false),
+        GIF_DURATION
+      );
+    };
+
     const onMove = (e: MouseEvent) => {
       rawX.set(e.clientX);
       rawY.set(e.clientY);
       if (!visible) setVisible(true);
 
       const el = document.elementFromPoint(e.clientX, e.clientY);
-      const clickable = el?.closest(
+      const clickable = !!el?.closest(
         'a, button, [role="button"], input, textarea, select, label'
       );
-      setHovered(!!clickable);
+
+      // Fire once on the rising edge of entering a clickable element.
+      if (clickable && !hoverRef.current) {
+        hoverRef.current = true;
+        trigger();
+      } else if (!clickable) {
+        hoverRef.current = false;
+      }
     };
 
-    const onDown  = () => setClicking(true);
-    const onUp    = () => setClicking(false);
+    const onDown = () => trigger(); // play once on click
     const onLeave = () => setVisible(false);
     const onEnter = () => setVisible(true);
 
-    document.addEventListener("mousemove",  onMove);
-    document.addEventListener("mousedown",  onDown);
-    document.addEventListener("mouseup",    onUp);
+    document.addEventListener("mousemove", onMove);
+    document.addEventListener("mousedown", onDown);
     document.addEventListener("mouseleave", onLeave);
     document.addEventListener("mouseenter", onEnter);
 
     return () => {
-      document.removeEventListener("mousemove",  onMove);
-      document.removeEventListener("mousedown",  onDown);
-      document.removeEventListener("mouseup",    onUp);
+      document.removeEventListener("mousemove", onMove);
+      document.removeEventListener("mousedown", onDown);
       document.removeEventListener("mouseleave", onLeave);
       document.removeEventListener("mouseenter", onEnter);
+      if (timeoutRef.current) window.clearTimeout(timeoutRef.current);
     };
   }, [rawX, rawY, visible]);
 
   if (isTouch.current) return null;
 
-  const dotSize  = clicking ? 5 : 7;
-  const ringSize = 32;
-
   return (
-    <>
-      {/* Dot */}
-      <motion.div
-        style={{ x: dotX, y: dotY }}
-        className="pointer-events-none fixed left-0 top-0 z-[9999] -translate-x-1/2 -translate-y-1/2"
-      >
-        <motion.div
-          animate={{
-            width:      dotSize,
-            height:     dotSize,
-            background: hovered ? "#D4AF37" : "#9ca3af",
-            boxShadow:  hovered
-              ? "0 0 8px 2px rgba(212,175,55,0.6)"
-              : "0 0 4px 1px rgba(156,163,175,0.3)",
-            opacity: visible ? 1 : 0,
-          }}
-          transition={{ duration: 0.15 }}
-          className="rounded-full"
+    <motion.div
+      style={{ x, y, opacity: visible ? 1 : 0 }}
+      className="pointer-events-none fixed left-0 top-0 z-[9999] -translate-x-1/2 -translate-y-1/2"
+    >
+      {playGif ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          key={gifKey}
+          src={`/images/turn.gif?t=${gifKey}`}
+          alt=""
+          width={GIF_W}
+          height={GIF_H}
+          style={{ width: GIF_W, height: GIF_H, display: "block" }}
+          draggable={false}
         />
-      </motion.div>
-
-      {/* Ring */}
-      <motion.div
-        style={{ x: ringX, y: ringY }}
-        className="pointer-events-none fixed left-0 top-0 z-[9998] -translate-x-1/2 -translate-y-1/2"
-      >
-        <motion.div
-          animate={{
-            width:     ringSize,
-            height:    ringSize,
-            borderColor: hovered
-              ? "rgba(212,175,55,0.85)"
-              : "rgba(156,163,175,0.4)",
-            boxShadow: hovered
-              ? "0 0 14px 2px rgba(212,175,55,0.22)"
-              : "none",
-            scale:   clicking ? 0.88 : 1,
-            opacity: visible ? 1 : 0,
-          }}
-          transition={{ duration: 0.2 }}
-          className="rounded-full border border-solid"
-          style={{ background: "transparent" }}
+      ) : (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src="/images/spider.svg"
+          alt=""
+          width={POINTER_W}
+          height={POINTER_H}
+          style={{ width: POINTER_W, height: POINTER_H, display: "block" }}
+          draggable={false}
         />
-      </motion.div>
-    </>
+      )}
+    </motion.div>
   );
 }

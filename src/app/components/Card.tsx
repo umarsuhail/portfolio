@@ -20,15 +20,20 @@ const socialLinks = [
   { icon: "mdi:facebook",  href: "https://facebook.com/umar.suhail1",           label: "facebook" },
   { icon: "mdi:instagram",  href: "https://www.instagram.com/umar_suhail_/",           label: "Instagram" },
 ]
-// Gold + steel premium palette
-const GOLD_RICH  = "#C8A84B";
-const GOLD_DEEP  = "#8A6A1A";
-const GOLD_DARK  = "#5F4A10";
-const NAVY       = "#0F172A";
-const STEEL      = "#475569";
-const TEXT_1     = "#0F172A";
-const TEXT_2     = "#334155";
-const TEXT_3     = "#64748B";
+// Spider-Man palette
+const GOLD_RICH  = "#E62429"; // spidey red (decorative / gradients)
+const GOLD_DEEP  = "#E62429"; // spidey red (functional accent)
+const GOLD_DARK  = "#B11313"; // crimson (button darken)
+const NAVY       = "#2B6CE8"; // spidey blue (gradient end — visible on dark)
+const STEEL      = "#2B6CE8"; // spidey blue
+const TEXT_1     = "#F4E9E8"; // silk (max contrast on dark)
+const TEXT_2     = "rgba(244,233,232,0.78)";
+const TEXT_3     = "rgba(244,233,232,0.55)";
+
+// Dark glass surface used for cards/badges on the grunge background
+const CARD_BG     = "linear-gradient(150deg, rgba(20,14,22,0.9) 0%, rgba(11,16,38,0.92) 100%)";
+const CARD_BORDER = "rgba(230,36,41,0.3)";
+const CARD_SHADOW = "0 10px 30px -12px rgba(0,0,0,0.7), inset 0 1px 0 rgba(244,233,232,0.06)";
 
 export default function Card() {
   return (
@@ -63,8 +68,8 @@ export default function Card() {
               transition={{ delay: 0.15 }}
               className="inline-flex items-center gap-2.5 self-start px-4 py-2 rounded-full"
               style={{
-                border: `1px solid rgba(200,168,75,0.35)`,
-                background: `rgba(200,168,75,0.08)`,
+                border: `1px solid rgba(230,36,41,0.4)`,
+                background: `rgba(230,36,41,0.12)`,
               }}
             >
               <span className="relative flex h-2 w-2">
@@ -92,7 +97,7 @@ export default function Card() {
                 className="text-sm font-semibold tracking-[0.18em] uppercase mb-3"
                 style={{ color: GOLD_DEEP }}
               >
-                Lead Frontend Engineer
+                Lead Frontend Engineer &amp; Application Developer
               </p>
               <h1
                 className="text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.05] tracking-tight"
@@ -108,6 +113,12 @@ export default function Card() {
                   Umar Suhail
                 </span>
               </h1>
+              <p
+                className="mt-2 text-sm font-medium italic"
+                style={{ color: TEXT_3 }}
+              >
+                🕷️ Your Friendly Neighbourhood Developer
+              </p>
             </motion.div>
 
             {/* Description */}
@@ -155,15 +166,15 @@ export default function Card() {
                 data-hover-sound
                 className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm landing-btn-secondary"
                 style={{
-                  color: NAVY,
-                  background: "#FFFFFF",
-                  border: `1px solid rgba(15,23,42,0.14)`,
-                  boxShadow: "0 1px 3px rgba(0,0,0,0.07), 0 4px 12px rgba(0,0,0,0.04)",
+                  color: TEXT_1,
+                  background: CARD_BG,
+                  border: `1px solid rgba(43,108,232,0.45)`,
+                  boxShadow: "0 1px 3px rgba(0,0,0,0.4)",
                 }}
                 whileHover={{
                   scale: 1.04,
                   y: -3,
-                  boxShadow: "0 8px 24px rgba(15,23,42,0.11), 0 2px 6px rgba(15,23,42,0.06)",
+                  boxShadow: "0 8px 24px rgba(43,108,232,0.3), 0 2px 6px rgba(43,108,232,0.18)",
                   transition: { duration: 0.16, ease: "easeOut" },
                 }}
                 whileTap={{ scale: 0.97, transition: { duration: 0.1 } }}
@@ -172,7 +183,7 @@ export default function Card() {
                 View Projects
               </motion.a>
 
-              <DownloadCVMenu variant="light" />
+              <DownloadCVMenu variant="dark" />
             </motion.div>
 
             {/* Social links */}
@@ -188,7 +199,7 @@ export default function Card() {
               >
                 Connect
               </span>
-              <div className="h-px w-8" style={{ background: "#CBD2E0" }} />
+              <div className="h-px w-8" style={{ background: "rgba(244,233,232,0.2)" }} />
               <div className="flex items-center gap-2">
                 {socialLinks.map((social) => (
                   <a
@@ -199,20 +210,20 @@ export default function Card() {
                     aria-label={social.label}
                     className="w-9 h-9 rounded-lg flex items-center justify-center transition-all duration-200"
                     style={{
-                      background: "#FFFFFF",
-                      border: "1px solid #E2E6EF",
-                      color: STEEL,
-                      boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+                      background: "rgba(11,16,38,0.6)",
+                      border: "1px solid rgba(244,233,232,0.14)",
+                      color: TEXT_2,
+                      boxShadow: "0 1px 3px rgba(0,0,0,0.4)",
                     }}
                     onMouseEnter={(e) => {
                       (e.currentTarget as HTMLElement).style.color = GOLD_DEEP;
-                      (e.currentTarget as HTMLElement).style.borderColor = `rgba(200,168,75,0.4)`;
-                      (e.currentTarget as HTMLElement).style.background = `rgba(200,168,75,0.06)`;
+                      (e.currentTarget as HTMLElement).style.borderColor = `rgba(230,36,41,0.5)`;
+                      (e.currentTarget as HTMLElement).style.background = `rgba(230,36,41,0.12)`;
                     }}
                     onMouseLeave={(e) => {
-                      (e.currentTarget as HTMLElement).style.color = STEEL;
-                      (e.currentTarget as HTMLElement).style.borderColor = "#E2E6EF";
-                      (e.currentTarget as HTMLElement).style.background = "#FFFFFF";
+                      (e.currentTarget as HTMLElement).style.color = TEXT_2;
+                      (e.currentTarget as HTMLElement).style.borderColor = "rgba(244,233,232,0.14)";
+                      (e.currentTarget as HTMLElement).style.background = "rgba(11,16,38,0.6)";
                     }}
                   >
                     <Icon icon={social.icon} className="text-base" />
@@ -245,10 +256,10 @@ export default function Card() {
 
               {/* Portrait */}
               <div
-                className="relative w-64 h-64 md:w-80 md:h-80 rounded-full overflow-hidden bg-white"
+                className="relative w-64 h-64 md:w-80 md:h-80 rounded-full overflow-hidden bg-spidey-navy"
                 style={{
                   boxShadow:
-                    "0 0 0 4px #fff, 0 0 0 6px #E2E6EF, 0 20px 60px rgba(15,23,42,0.14), 0 4px 12px rgba(15,23,42,0.07)",
+                    "0 0 0 4px rgba(11,16,38,0.9), 0 0 0 6px rgba(230,36,41,0.45), 0 20px 60px rgba(0,0,0,0.55), 0 0 40px rgba(230,36,41,0.25)",
                 }}
               >
                 <Image
@@ -266,9 +277,11 @@ export default function Card() {
                 initial={{ opacity: 0, scale: 0.85 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.7 }}
-                className="absolute -bottom-4 -right-4 bg-white rounded-2xl px-4 py-3 flex items-center gap-3 landing-badge"
+                className="absolute -bottom-4 -right-4 rounded-2xl px-4 py-3 flex items-center gap-3 landing-badge"
                 style={{
-                  boxShadow: "0 4px 24px rgba(15,23,42,0.12), 0 1px 4px rgba(15,23,42,0.06), 0 0 0 1px rgba(15,23,42,0.04)",
+                  background: CARD_BG,
+                  border: `1px solid ${CARD_BORDER}`,
+                  boxShadow: CARD_SHADOW,
                 }}
               >
                 <div
@@ -288,14 +301,16 @@ export default function Card() {
                 initial={{ opacity: 0, scale: 0.85 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.85 }}
-                className="absolute -top-4 -left-4 bg-white rounded-2xl px-4 py-3 flex items-center gap-3 landing-badge"
+                className="absolute -top-4 -left-4 rounded-2xl px-4 py-3 flex items-center gap-3 landing-badge"
                 style={{
-                  boxShadow: "0 4px 24px rgba(15,23,42,0.12), 0 1px 4px rgba(15,23,42,0.06), 0 0 0 1px rgba(15,23,42,0.04)",
+                  background: CARD_BG,
+                  border: `1px solid rgba(43,108,232,0.3)`,
+                  boxShadow: CARD_SHADOW,
                 }}
               >
                 <div
                   className="w-10 h-10 rounded-xl flex items-center justify-center"
-                  style={{ background: `linear-gradient(135deg, ${STEEL} 0%, ${NAVY} 100%)` }}
+                  style={{ background: `linear-gradient(135deg, ${STEEL} 0%, #1A3F9C 100%)` }}
                 >
                   <Icon icon="solar:star-bold" className="text-xl" style={{ color: "#ffffff" }} />
                 </div>
@@ -322,10 +337,11 @@ export default function Card() {
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.75 + index * 0.08 }}
-              className="bg-white rounded-2xl px-6 py-5 text-center group hover:-translate-y-1 transition-transform duration-300"
+              className="rounded-2xl px-6 py-5 text-center group hover:-translate-y-1 transition-transform duration-300"
               style={{
-                boxShadow: "0 1px 3px rgba(15,23,42,0.07), 0 4px 16px rgba(15,23,42,0.05)",
-                border: "1px solid rgba(15,23,42,0.06)",
+                background: CARD_BG,
+                boxShadow: CARD_SHADOW,
+                border: `1px solid ${CARD_BORDER}`,
               }}
             >
               <p
