@@ -41,7 +41,7 @@ export default function DownloadCVMenu({ variant = "light", fullWidth = false }:
 
   const isLight = variant === "light";
 
-  const triggerStyle: React.CSSProperties = isLight
+  const triggerStyle: React.CSSProperties | undefined = isLight
     ? {
         display: "inline-flex",
         alignItems: "center",
