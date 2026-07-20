@@ -1,28 +1,26 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, Variants } from "framer-motion";
 import { Icon } from "@iconify/react";
 import Link from "next/link";
 import { about_me, resumeUrl } from "../../utils/constants";
+import ScrollProgress from "../components/ScrollProgress";
 
 const hobbies = [
   {
     name: "Cricket",
     icon: "noto-v1:cricket-game",
     description: "Enjoying occasional matches for fun and team bonding",
-    color: "from-green-500 to-emerald-500",
   },
   {
     name: "Music",
     icon: "noto-v1:musical-score",
     description: "Exploring various genres to fuel creativity and focus",
-    color: "from-violet-500 to-purple-500",
   },
   {
     name: "Photography",
     icon: "noto-v1:camera-with-flash",
     description: "Capturing moments and planning to pursue it professionally",
-    color: "from-blue-500 to-cyan-500",
   },
 ];
 
@@ -49,6 +47,101 @@ const values = [
   },
 ];
 
+const personalDetails = [
+  { icon: "solar:user-bold-duotone", label: "Full Name", value: "Umar Suhail" },
+  {
+    icon: "solar:case-round-bold-duotone",
+    label: "Role",
+    value: "Lead Frontend Engineer",
+  },
+  {
+    icon: "solar:flag-bold-duotone",
+    label: "Nationality",
+    value: "Indian",
+  },
+  {
+    icon: "solar:chat-square-like-bold-duotone",
+    label: "Languages",
+    value: "English, Hindi, Urdu",
+  },
+  {
+    icon: "solar:calendar-mark-bold-duotone",
+    label: "Experience",
+    value: "7+ Years",
+  },
+  {
+    icon: "solar:square-academic-cap-bold-duotone",
+    label: "Education",
+    value: "KMP College of Engineering",
+  },
+  {
+    icon: "solar:letter-bold-duotone",
+    label: "Email",
+    value: "umarsuhail112@gmail.com",
+    href: "mailto:umarsuhail112@gmail.com",
+  },
+  {
+    icon: "solar:phone-calling-rounded-bold-duotone",
+    label: "Phone",
+    value: "+971 56 832 3258",
+    href: "tel:+971568323258",
+  },
+];
+
+const addresses = [
+  {
+    icon: "solar:buildings-3-bold-duotone",
+    tag: "Current",
+    title: "Abu Dhabi, UAE",
+    lines: ["Lead Frontend Engineer @ Emirates Face Recognition (EFR)", "Abu Dhabi, United Arab Emirates"],
+    accent: "from-spidey-red to-spidey-crimson",
+  },
+  {
+    icon: "solar:home-smile-bold-duotone",
+    tag: "Hometown",
+    title: "India",
+    lines: ["Software developer, originally from India", "Open to remote & relocation opportunities"],
+    accent: "from-spidey-blue to-indigo-600",
+  },
+];
+
+const fadeUp: Variants = {
+  hidden: { opacity: 0, y: 40 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] },
+  },
+};
+
+const stagger: Variants = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.1 } },
+};
+
+function SectionHeading({
+  badge,
+  children,
+}: {
+  badge: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <motion.div
+      variants={fadeUp}
+      initial="hidden"
+      whileInView="show"
+      viewport={{ once: true, amount: 0.5 }}
+      className="text-center mb-16"
+    >
+      <span className="badge badge-primary mb-4 border-spidey-red/40 bg-spidey-red/15 text-spidey-silk">
+        {badge}
+      </span>
+      <h2 className="section-title text-spidey-silk">{children}</h2>
+    </motion.div>
+  );
+}
+
 export default function AboutPage() {
   const resumeHref =
     resumeUrl ||
@@ -56,8 +149,21 @@ export default function AboutPage() {
   const isResumeConfigured = Boolean(resumeUrl);
 
   return (
-    <main className="relative pt-20">
-      <section className="section-padding">
+    <main className="relative pt-20 overflow-hidden text-spidey-silk">
+      {/* Spider-Man grunge background + web overlay */}
+      <div className="spidey-bg" aria-hidden />
+      <div className="spidey-web fixed inset-0 -z-[2] opacity-60" aria-hidden />
+
+      {/* Scroll progress bar */}
+      <ScrollProgress />
+
+      {/* ───────────────── Hero ───────────────── */}
+      <section className="section-padding relative">
+        {/* decorative hanging spider */}
+        <div
+          className="spidey-strand pointer-events-none absolute top-0 right-8 w-[60px] h-[220px] hidden md:block"
+          aria-hidden
+        />
         <div className="section-container">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -66,7 +172,7 @@ export default function AboutPage() {
           >
             <Link
               href="/"
-              className="inline-flex items-center gap-2 text-white/60 hover:text-violet-400 transition-colors"
+              className="inline-flex items-center gap-2 text-spidey-silk/60 hover:text-spidey-red transition-colors"
             >
               <Icon icon="solar:arrow-left-linear" />
               Back to Home
@@ -79,23 +185,26 @@ export default function AboutPage() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6 }}
             >
-              <span className="badge badge-primary mb-4">About Me</span>
-              <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">
-                Get to Know <span className="gradient-text">Me Better</span>
+              <span className="badge mb-4 border-spidey-red/40 bg-spidey-red/15 text-spidey-silk">
+                About Me
+              </span>
+              <h1 className="text-4xl md:text-5xl font-bold mb-6 spidey-glow text-spidey-silk">
+                Get to Know <span className="spidey-text">Me Better</span>
               </h1>
-              <p className="text-white/70 leading-relaxed text-lg mb-8">
+              <p className="text-spidey-silk/75 leading-relaxed text-lg mb-8">
                 {about_me}
               </p>
 
               <div className="flex flex-wrap gap-4">
-                <a href="#contact" className="btn-primary">
+                <a href="#contact" className="btn-primary !from-spidey-red !to-spidey-crimson !shadow-spidey-red/30">
                   <Icon icon="solar:chat-round-dots-bold" />
                   Let&apos;s Connect
                 </a>
                 <a
                   href={resumeHref}
-                  {...(isResumeConfigured ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-                  className="btn-secondary"
+                  target={isResumeConfigured ? "_blank" : undefined}
+                  rel={isResumeConfigured ? "noopener noreferrer" : undefined}
+                  className="btn-secondary !border-spidey-blue/40"
                 >
                   <Icon icon="solar:document-bold" />
                   {isResumeConfigured ? "Download CV" : "Request CV"}
@@ -119,7 +228,7 @@ export default function AboutPage() {
                 className="badge-base LI-profile-badge"
                 data-locale="en_US"
                 data-size="large"
-                data-theme="light"
+                data-theme="dark"
                 data-type="VERTICAL"
                 data-vanity="umar-suhail"
                 data-version="v1"
@@ -136,104 +245,208 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section className="section-padding bg-white/[0.02]">
+      {/* ───────────────── Personal Details ───────────────── */}
+      <section className="section-padding bg-black/20 backdrop-blur-sm border-y border-spidey-red/15">
         <div className="section-container">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <span className="badge badge-primary mb-4">Core Values</span>
-            <h2 className="section-title text-white">
-              What <span className="gradient-text">Drives Me</span>
-            </h2>
-          </motion.div>
+          <SectionHeading badge="Who I Am">
+            Personal <span className="spidey-text">Details</span>
+          </SectionHeading>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {values.map((value, index) => (
-              <motion.div
-                key={value.title}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                className="glass rounded-2xl p-6 text-center card-hover"
-              >
-                <div className="w-14 h-14 mx-auto mb-4 rounded-xl bg-gradient-to-r from-violet-600 to-purple-600 flex items-center justify-center">
-                  <Icon icon={value.icon} className="text-2xl text-white" />
+          <motion.div
+            variants={stagger}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, amount: 0.2 }}
+            className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5"
+          >
+            {personalDetails.map((detail) => {
+              const Inner = (
+                <div className="spidey-card rounded-2xl p-5 h-full flex items-start gap-4">
+                  <div className="shrink-0 w-11 h-11 rounded-xl bg-gradient-to-br from-spidey-red to-spidey-crimson flex items-center justify-center">
+                    <Icon icon={detail.icon} className="text-xl text-spidey-silk" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-xs uppercase tracking-wider text-spidey-silk/50 mb-1">
+                      {detail.label}
+                    </p>
+                    <p className="text-spidey-silk font-medium break-words">
+                      {detail.value}
+                    </p>
+                  </div>
                 </div>
-                <h3 className="text-lg font-semibold text-white mb-2">
-                  {value.title}
-                </h3>
-                <p className="text-white/60 text-sm">{value.description}</p>
-              </motion.div>
-            ))}
-          </div>
+              );
+
+              return (
+                <motion.div key={detail.label} variants={fadeUp}>
+                  {detail.href ? (
+                    <a href={detail.href} className="block h-full">
+                      {Inner}
+                    </a>
+                  ) : (
+                    Inner
+                  )}
+                </motion.div>
+              );
+            })}
+          </motion.div>
         </div>
       </section>
 
+      {/* ───────────────── Address / Location ───────────────── */}
       <section className="section-padding">
         <div className="section-container">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <span className="badge badge-primary mb-4">Beyond Work</span>
-            <h2 className="section-title text-white">
-              Hobbies & <span className="gradient-text">Interests</span>
-            </h2>
-          </motion.div>
+          <SectionHeading badge="Where I Am">
+            Address & <span className="spidey-text">Location</span>
+          </SectionHeading>
 
-          <div className="grid md:grid-cols-3 gap-6">
-            {hobbies.map((hobby, index) => (
+          <motion.div
+            variants={stagger}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, amount: 0.2 }}
+            className="grid md:grid-cols-2 gap-6"
+          >
+            {addresses.map((addr) => (
               <motion.div
-                key={hobby.name}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                className="glass rounded-2xl overflow-hidden card-hover"
+                key={addr.title}
+                variants={fadeUp}
+                className="spidey-card rounded-2xl p-7 relative overflow-hidden"
               >
-                <div
-                  className={`h-32 bg-gradient-to-r ${hobby.color} flex items-center justify-center`}
-                >
-                  <Icon icon={hobby.icon} className="text-6xl" />
-                </div>
-                <div className="p-6">
-                  <h3 className="text-xl font-semibold text-white mb-2">
-                    {hobby.name}
-                  </h3>
-                  <p className="text-white/60 text-sm">{hobby.description}</p>
+                <div className="spidey-web absolute inset-0 opacity-30" aria-hidden />
+                <div className="relative">
+                  <div className="flex items-center gap-4 mb-5">
+                    <div
+                      className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${addr.accent} flex items-center justify-center`}
+                    >
+                      <Icon icon={addr.icon} className="text-2xl text-white" />
+                    </div>
+                    <div>
+                      <span className="text-xs uppercase tracking-wider text-spidey-silk/50">
+                        {addr.tag}
+                      </span>
+                      <h3 className="text-2xl font-bold text-spidey-silk">
+                        {addr.title}
+                      </h3>
+                    </div>
+                  </div>
+                  <ul className="space-y-2">
+                    {addr.lines.map((line) => (
+                      <li
+                        key={line}
+                        className="flex items-start gap-2 text-spidey-silk/70 text-sm"
+                      >
+                        <Icon
+                          icon="solar:map-point-bold"
+                          className="text-spidey-red mt-0.5 shrink-0"
+                        />
+                        {line}
+                      </li>
+                    ))}
+                  </ul>
                 </div>
               </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </section>
 
-      <section className="section-padding bg-gradient-to-r from-violet-600/20 to-purple-600/20">
-        <div className="section-container text-center">
+      {/* ───────────────── Core Values ───────────────── */}
+      <section className="section-padding bg-black/20 backdrop-blur-sm border-y border-spidey-blue/15">
+        <div className="section-container">
+          <SectionHeading badge="Core Values">
+            What <span className="spidey-text">Drives Me</span>
+          </SectionHeading>
+
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            variants={stagger}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, amount: 0.2 }}
+            className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6"
           >
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
+            {values.map((value) => (
+              <motion.div
+                key={value.title}
+                variants={fadeUp}
+                className="spidey-card rounded-2xl p-6 text-center"
+              >
+                <div className="w-14 h-14 mx-auto mb-4 rounded-xl bg-gradient-to-br from-spidey-blue to-indigo-700 flex items-center justify-center">
+                  <Icon icon={value.icon} className="text-2xl text-white" />
+                </div>
+                <h3 className="text-lg font-semibold text-spidey-silk mb-2">
+                  {value.title}
+                </h3>
+                <p className="text-spidey-silk/60 text-sm">{value.description}</p>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ───────────────── Hobbies ───────────────── */}
+      <section className="section-padding">
+        <div className="section-container">
+          <SectionHeading badge="Beyond Work">
+            Hobbies & <span className="spidey-text">Interests</span>
+          </SectionHeading>
+
+          <motion.div
+            variants={stagger}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, amount: 0.2 }}
+            className="grid md:grid-cols-3 gap-6"
+          >
+            {hobbies.map((hobby) => (
+              <motion.div
+                key={hobby.name}
+                variants={fadeUp}
+                className="spidey-card rounded-2xl overflow-hidden"
+              >
+                <div className="h-32 bg-gradient-to-br from-spidey-red/30 to-spidey-blue/30 flex items-center justify-center relative">
+                  <div className="spidey-web absolute inset-0 opacity-40" aria-hidden />
+                  <Icon icon={hobby.icon} className="text-6xl relative" />
+                </div>
+                <div className="p-6">
+                  <h3 className="text-xl font-semibold text-spidey-silk mb-2">
+                    {hobby.name}
+                  </h3>
+                  <p className="text-spidey-silk/60 text-sm">
+                    {hobby.description}
+                  </p>
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ───────────────── CTA ───────────────── */}
+      <section className="section-padding relative bg-gradient-to-r from-spidey-red/20 via-black/30 to-spidey-blue/20 border-t border-spidey-red/20">
+        <div className="spidey-web absolute inset-0 opacity-40" aria-hidden />
+        <div className="section-container text-center relative">
+          <motion.div
+            variants={fadeUp}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, amount: 0.4 }}
+          >
+            <h2 className="text-3xl md:text-4xl font-bold text-spidey-silk mb-6 spidey-glow">
               Ready to Build Something Amazing?
             </h2>
-            <p className="text-white/70 text-lg mb-8 max-w-2xl mx-auto">
+            <p className="text-spidey-silk/70 text-lg mb-8 max-w-2xl mx-auto">
               I&apos;m always excited to work on new projects and collaborate
               with innovative teams.
             </p>
             <div className="flex flex-wrap justify-center gap-4">
-              <Link href="/#contact" className="btn-primary">
+              <Link
+                href="/#contact"
+                className="btn-primary !from-spidey-red !to-spidey-crimson !shadow-spidey-red/30"
+              >
                 <Icon icon="solar:chat-round-dots-bold" />
                 Start a Conversation
               </Link>
-              <Link href="/#projects" className="btn-secondary">
+              <Link href="/#projects" className="btn-secondary !border-spidey-blue/40">
                 <Icon icon="solar:eye-bold" />
                 View My Work
               </Link>

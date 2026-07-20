@@ -9,6 +9,7 @@ import PageTransition from "./components/PageTransition";
 import ScrollController from "./components/ScrollController";
 import UISound from "./components/UISound";
 import CustomCursor from "./components/CustomCursor";
+import SpiderWebClick from "./components/SpiderWebClick";
 
 const BASE_URL = "https://www.umar.website";
 
@@ -248,6 +249,7 @@ export default function RootLayout({
         className={`${quicksand.variable} font-sans antialiased bg-[#030014] text-white min-h-screen cursor-none`}
       >
         <CustomCursor />
+        <SpiderWebClick />
         <BackgroundEffects />
         <Nav />
         <SmoothScroll>

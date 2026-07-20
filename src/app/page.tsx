@@ -1,6 +1,8 @@
 import { lazy, Suspense } from "react";
 import type { Metadata } from "next";
 import Card from "./components/Card";
+import ScrollProgress from "./components/ScrollProgress";
+import SpideyFeature from "./components/SpideyFeature";
 import "./css/landing.css";
 
 export const metadata: Metadata = {
@@ -65,10 +67,10 @@ function SectionSkeleton({ height = "py-20" }: { height?: string }) {
   return (
     <div className={`flex items-center justify-center ${height}`}>
       <div className="flex flex-col items-center gap-4">
-        <div className="w-10 h-10 rounded-full border-2 border-[#BF092F]/25 border-t-[#BF092F] animate-spin" />
+        <div className="w-10 h-10 rounded-full border-2 border-[#E62429]/25 border-t-[#E62429] animate-spin" />
         <div className="flex flex-col items-center gap-2">
-          <div className="h-2 w-32 rounded bg-[#1C1917]/6 animate-pulse" />
-          <div className="h-2 w-24 rounded bg-[#1C1917]/6 animate-pulse" />
+          <div className="h-2 w-32 rounded bg-white/10 animate-pulse" />
+          <div className="h-2 w-24 rounded bg-white/10 animate-pulse" />
         </div>
       </div>
     </div>
@@ -82,7 +84,15 @@ export default function Home() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
-      <main data-landing className="relative min-h-screen" style={{ background: "#F8F9FB" }}>
+      <main
+        data-landing
+        className="relative min-h-screen overflow-hidden text-spidey-silk"
+      >
+        {/* Spider-Man grunge background + web overlay */}
+        <div className="spidey-bg" aria-hidden />
+        <div className="spidey-web fixed inset-0 -z-[2] opacity-50" aria-hidden />
+        <ScrollProgress />
+
         <Card />
 
         <Suspense fallback={<SectionSkeleton height="py-24" />}>
@@ -96,6 +106,8 @@ export default function Home() {
         <Suspense fallback={<SectionSkeleton height="py-24" />}>
           <ProjectsA />
         </Suspense>
+
+        <SpideyFeature />
 
         <Suspense fallback={<SectionSkeleton height="py-20" />}>
           <FAQ />

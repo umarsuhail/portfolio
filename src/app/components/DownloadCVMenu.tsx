@@ -86,9 +86,10 @@ export default function DownloadCVMenu({ variant = "light", fullWidth = false }:
           style={{
             ...(fullWidth ? { left: 0 } : { right: 0 }),
             minWidth: "180px",
-            background: "#ffffff",
-            border: "1px solid rgba(15,23,42,0.10)",
-            boxShadow: "0 8px 28px rgba(15,23,42,0.12), 0 2px 8px rgba(15,23,42,0.07)",
+            background: "linear-gradient(150deg, rgba(20,14,22,0.96) 0%, rgba(11,16,38,0.98) 100%)",
+            border: "1px solid rgba(230,36,41,0.3)",
+            boxShadow: "0 8px 28px rgba(0,0,0,0.6), 0 2px 8px rgba(0,0,0,0.4)",
+            backdropFilter: "blur(8px)",
           }}
         >
           {OPTIONS.map((opt) => (
@@ -98,18 +99,18 @@ export default function DownloadCVMenu({ variant = "light", fullWidth = false }:
               download={opt.download}
               onClick={() => setOpen(false)}
               className="flex items-center gap-3 px-4 py-3 transition-colors duration-150"
-              style={{ textDecoration: "none", color: "#334155" }}
+              style={{ textDecoration: "none", color: "rgba(244,233,232,0.85)" }}
               onMouseEnter={(e) => {
-                (e.currentTarget as HTMLElement).style.background = "rgba(200,168,75,0.07)";
+                (e.currentTarget as HTMLElement).style.background = "rgba(230,36,41,0.15)";
               }}
               onMouseLeave={(e) => {
                 (e.currentTarget as HTMLElement).style.background = "transparent";
               }}
             >
-              <Icon icon={opt.icon} style={{ fontSize: "18px", color: "#8A6A1A", flexShrink: 0 }} />
+              <Icon icon={opt.icon} style={{ fontSize: "18px", color: "#E62429", flexShrink: 0 }} />
               <div>
                 <p style={{ fontSize: "13px", fontWeight: 600, lineHeight: 1.3 }}>{opt.label}</p>
-                <p style={{ fontSize: "11px", color: "#94a3b8", lineHeight: 1.3 }}>{opt.desc}</p>
+                <p style={{ fontSize: "11px", color: "rgba(244,233,232,0.5)", lineHeight: 1.3 }}>{opt.desc}</p>
               </div>
             </a>
           ))}

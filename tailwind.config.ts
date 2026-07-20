@@ -54,6 +54,15 @@ const config: Config = {
           cream: "#D2C1B6",
           gray: "#7A7A73",
         },
+        spidey: {
+          red: "#E62429",
+          crimson: "#B11313",
+          blood: "#7A0E12",
+          blue: "#2B6CE8",
+          navy: "#0B1026",
+          web: "#0A0A12",
+          silk: "#F4E9E8",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
