@@ -10,7 +10,7 @@ import ScrollController from "./components/ScrollController";
 import UISound from "./components/UISound";
 import CustomCursor from "./components/CustomCursor";
 import SpiderWebClick from "./components/SpiderWebClick";
-
+import { Analytics } from "@vercel/analytics/next";
 const BASE_URL = "https://www.umar.website";
 
 const quicksand = Quicksand({
@@ -28,7 +28,8 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
   title: {
-    default: "Umar Suhail | Lead Frontend Engineer – React & Next.js Developer, UAE & India",
+    default:
+      "Umar Suhail | Lead Frontend Engineer – React & Next.js Developer, UAE & India",
     template: "%s | Umar Suhail",
   },
   description:
@@ -59,47 +60,48 @@ export const metadata: Metadata = {
     languages: {
       "en-AE": "/",
       "en-IN": "/",
-      "en":    "/",
+      en: "/",
     },
   },
   openGraph: {
-    type:        "profile",
-    locale:      "en_AE",
+    type: "profile",
+    locale: "en_AE",
     alternateLocale: ["en_IN", "en_US"],
-    url:         BASE_URL,
-    title:       "Umar Suhail | Lead Frontend Engineer – UAE & India",
+    url: BASE_URL,
+    title: "Umar Suhail | Lead Frontend Engineer – UAE & India",
     description:
       "Umar Suhail, Lead Frontend Engineer from India based in Abu Dhabi, UAE. 7+ years of React, Next.js & TypeScript expertise at Emirates Face Recognition.",
     siteName: "Umar Suhail",
     images: [
       {
-        url:    "/images/me-s.jpeg",
-        width:  1200,
+        url: "/images/me-s.jpeg",
+        width: 1200,
         height: 630,
-        alt:    "Umar Suhail – Lead Frontend Engineer, Abu Dhabi UAE",
+        alt: "Umar Suhail – Lead Frontend Engineer, Abu Dhabi UAE",
       },
     ],
   },
   other: {
     "profile:first_name": "Umar",
-    "profile:last_name":  "Suhail",
-    "profile:username":   "umarsuhail",
+    "profile:last_name": "Suhail",
+    "profile:username": "umarsuhail",
   },
   twitter: {
-    card:        "summary_large_image",
-    title:       "Umar Suhail | Lead Frontend Engineer – UAE & India",
-    description: "Software developer from India, based in Abu Dhabi UAE. 7+ years React & Next.js.",
-    images:      ["/images/me-s.jpeg"],
+    card: "summary_large_image",
+    title: "Umar Suhail | Lead Frontend Engineer – UAE & India",
+    description:
+      "Software developer from India, based in Abu Dhabi UAE. 7+ years React & Next.js.",
+    images: ["/images/me-s.jpeg"],
   },
   robots: {
-    index:  true,
+    index: true,
     follow: true,
     googleBot: {
-      index:               true,
-      follow:              true,
+      index: true,
+      follow: true,
       "max-video-preview": -1,
       "max-image-preview": "large",
-      "max-snippet":       -1,
+      "max-snippet": -1,
     },
   },
 };
@@ -108,62 +110,62 @@ export const metadata: Metadata = {
 
 const person = {
   "@type": "Person",
-  "@id":   `${BASE_URL}/#person`,
-  name:    "Umar Suhail",
-  url:     BASE_URL,
-  email:   "umarsuhail112@gmail.com",
+  "@id": `${BASE_URL}/#person`,
+  name: "Umar Suhail",
+  url: BASE_URL,
+  email: "umarsuhail112@gmail.com",
   telephone: "+971568323258",
-  jobTitle:  "Lead Frontend Engineer & Application Developer",
+  jobTitle: "Lead Frontend Engineer & Application Developer",
   description:
     "Umar Suhail is a Lead Frontend Engineer and Software Developer from India, currently based in Abu Dhabi, UAE. With 7+ years of experience building high-performance React and Next.js applications, he works at Emirates Face Recognition (EFR) and specialises in UI/UX design, TypeScript, design systems, and performance optimisation.",
   image: {
-    "@type":  "ImageObject",
-    url:      `${BASE_URL}/images/me-s.jpeg`,
-    width:    400,
-    height:   400,
+    "@type": "ImageObject",
+    url: `${BASE_URL}/images/me-s.jpeg`,
+    width: 400,
+    height: 400,
   },
   // Both current (UAE) and origin (India) locations
   address: {
-    "@type":         "PostalAddress",
+    "@type": "PostalAddress",
     addressLocality: "Abu Dhabi",
-    addressCountry:  "AE",
+    addressCountry: "AE",
   },
   homeLocation: {
-    "@type":         "Place",
-    name:            "India",
+    "@type": "Place",
+    name: "India",
     address: {
-      "@type":         "PostalAddress",
-      addressCountry:  "IN",
+      "@type": "PostalAddress",
+      addressCountry: "IN",
     },
   },
   workLocation: {
-    "@type":   "Place",
-    name:      "Abu Dhabi, United Arab Emirates",
+    "@type": "Place",
+    name: "Abu Dhabi, United Arab Emirates",
     address: {
-      "@type":         "PostalAddress",
+      "@type": "PostalAddress",
       addressLocality: "Abu Dhabi",
-      addressCountry:  "AE",
+      addressCountry: "AE",
     },
   },
   nationality: {
     "@type": "Country",
-    name:    "India",
+    name: "India",
   },
   worksFor: {
     "@type": "Organization",
-    name:    "Emirates Face Recognition (EFR)",
+    name: "Emirates Face Recognition (EFR)",
     address: {
-      "@type":         "PostalAddress",
+      "@type": "PostalAddress",
       addressLocality: "Abu Dhabi",
-      addressCountry:  "AE",
+      addressCountry: "AE",
     },
   },
   alumniOf: {
     "@type": "EducationalOrganization",
-    name:    "KMP College of Engineering",
+    name: "KMP College of Engineering",
     address: {
-      "@type":         "PostalAddress",
-      addressCountry:  "IN",
+      "@type": "PostalAddress",
+      addressCountry: "IN",
     },
   },
   sameAs: [
@@ -183,10 +185,19 @@ const person = {
     },
   },
   knowsAbout: [
-    "React.js", "Next.js", "TypeScript", "JavaScript", "Node.js",
-    "UI/UX Design", "Frontend Architecture", "Design Systems",
-    "Redux Toolkit", "Tailwind CSS", "Performance Optimisation",
-    "Web Development", "Software Engineering",
+    "React.js",
+    "Next.js",
+    "TypeScript",
+    "JavaScript",
+    "Node.js",
+    "UI/UX Design",
+    "Frontend Architecture",
+    "Design Systems",
+    "Redux Toolkit",
+    "Tailwind CSS",
+    "Performance Optimisation",
+    "Web Development",
+    "Software Engineering",
   ],
   knowsLanguage: "English",
 };
@@ -194,28 +205,29 @@ const person = {
 // ProfilePage — Google's recommended schema for personal portfolio pages
 const profilePageSchema = {
   "@context": "https://schema.org",
-  "@type":    "ProfilePage",
-  "@id":      `${BASE_URL}/#profilepage`,
-  url:        BASE_URL,
-  name:       "Umar Suhail – Lead Frontend Engineer Portfolio",
+  "@type": "ProfilePage",
+  "@id": `${BASE_URL}/#profilepage`,
+  url: BASE_URL,
+  name: "Umar Suhail – Lead Frontend Engineer Portfolio",
   description:
     "Official portfolio of Umar Suhail, Lead Frontend Engineer and Software Developer from India, based in Abu Dhabi UAE.",
-  dateCreated:  "2024-01-01T00:00:00+00:00",
+  dateCreated: "2024-01-01T00:00:00+00:00",
   dateModified: new Date().toISOString(),
-  inLanguage:   "en",
-  mainEntity:   person,
+  inLanguage: "en",
+  mainEntity: person,
 };
 
 // WebSite — makes the site name bold in Google results
 const websiteSchema = {
-  "@context":  "https://schema.org",
-  "@type":     "WebSite",
-  "@id":       `${BASE_URL}/#website`,
-  url:         BASE_URL,
-  name:        "Umar Suhail",
-  description: "Portfolio of Umar Suhail — Lead Frontend Engineer from India, based in Abu Dhabi UAE.",
-  inLanguage:  "en",
-  publisher:   { "@id": `${BASE_URL}/#person` },
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "@id": `${BASE_URL}/#website`,
+  url: BASE_URL,
+  name: "Umar Suhail",
+  description:
+    "Portfolio of Umar Suhail — Lead Frontend Engineer from India, based in Abu Dhabi UAE.",
+  inLanguage: "en",
+  publisher: { "@id": `${BASE_URL}/#person` },
 };
 
 export default function RootLayout({
@@ -227,15 +239,15 @@ export default function RootLayout({
     <html lang="en" className="dark">
       <head>
         {/* Geo targeting — India origin, UAE current */}
-        <meta name="geo.region"    content="AE-DU" />
+        <meta name="geo.region" content="AE-DU" />
         <meta name="geo.placename" content="Abu Dhabi, United Arab Emirates" />
-        <meta name="geo.position"  content="25.2048;55.2708" />
-        <meta name="ICBM"          content="25.2048, 55.2708" />
-
+        <meta name="geo.position" content="25.2048;55.2708" />
+        <meta name="ICBM" content="25.2048, 55.2708" />
+        <Analytics />
         {/* hreflang — same content, targeting both markets */}
         <link rel="alternate" hrefLang="en-ae" href={BASE_URL} />
         <link rel="alternate" hrefLang="en-in" href={BASE_URL} />
-        <link rel="alternate" hrefLang="en"    href={BASE_URL} />
+        <link rel="alternate" hrefLang="en" href={BASE_URL} />
         <link rel="alternate" hrefLang="x-default" href={BASE_URL} />
 
         <script
