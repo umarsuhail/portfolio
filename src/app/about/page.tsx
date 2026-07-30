@@ -51,6 +51,11 @@ const values = [
 const personalDetails = [
   { icon: "solar:user-bold-duotone", label: "Full Name", value: "Umar Suhail" },
   {
+    icon: "solar:magnifer-bold-duotone",
+    label: "Also Searched As",
+    value: "Umer Suhail, Omer Suhail, Umar Sohail",
+  },
+  {
     icon: "solar:case-round-bold-duotone",
     label: "Role",
     value: "Lead Frontend Engineer",
