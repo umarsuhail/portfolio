@@ -146,7 +146,6 @@ export default function SkillsUniverse() {
     skills.map((s) => ({ ...s, splatters: [] }))
   );
   const [filter, setFilter] = useState<string>("All");
-  const [globalSplatters, setGlobalSplatters] = useState<Splatter[]>([]);
 
   const categories = useMemo(() => {
     const levels = ["All", ...new Set(skills.map((s) => s.level))];

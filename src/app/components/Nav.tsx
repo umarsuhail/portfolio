@@ -5,6 +5,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import CriticalIcon, { type CriticalIconName } from "./CriticalIcon";
 import DownloadCVMenu from "./DownloadCVMenu";
+import ContactModal from "./ContactModal";
+import LoginModal from "./LoginModal";
 
 const navLinks = [
   { href: "/about", label: "About", icon: "user" },
@@ -17,6 +19,9 @@ export default function Nav() {
   const [isOpen, setIsOpen]               = useState(false);
   const [scrolled, setScrolled]           = useState(false);
   const [activeSection, setActiveSection] = useState("");
+  const [isContactOpen, setContactOpen]   = useState(false);
+  const [isLoginOpen, setLoginOpen]       = useState(false);
+  const [session, setSession]             = useState<{ email: string } | null>(null);
 
   const pathname = usePathname();
   const isLight  = pathname === "/";
@@ -46,6 +51,40 @@ export default function Nav() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  useEffect(() => {
+    if (!isContactOpen) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setContactOpen(false);
+    };
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [isContactOpen]);
+
+  useEffect(() => {
+    const loadSession = async () => {
+      try {
+        const response = await fetch("/api/me", { cache: "no-store" });
+        if (!response.ok) {
+          setSession(null);
+          return;
+        }
+
+        const data = await response.json();
+        setSession(data.user ?? null);
+      } catch (error) {
+        setSession(null);
+      }
+    };
+
+    loadSession();
+  }, []);
+
+  const handleLogout = async () => {
+    await fetch("/api/logout", { method: "POST" });
+    setSession(null);
+  };
+
 
   return (
     <header
@@ -167,20 +206,35 @@ export default function Nav() {
                   Resume Builder
                 </LightNavBtn>
                 <DownloadCVMenu variant="dark" />
-                <a
-                  href="https://wa.me/971551912074"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200 active:scale-95"
-                  style={{
-                    background: "linear-gradient(135deg, #E62429 0%, #B11313 100%)",
-                    color:      "#F4E9E8",
-                    boxShadow:  "0 4px 14px rgba(230,36,41,0.35)",
-                  }}
-                >
-                  Let&apos;s Talk
-                  <CriticalIcon name="arrow-right" className="h-4 w-4" />
-                </a>
+                {session ? (
+                  <button
+                    type="button"
+                    onClick={handleLogout}
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200 active:scale-95"
+                    style={{
+                      background: "rgba(110, 231, 183, 0.12)",
+                      color: "#E0F2FE",
+                      border: "1px solid rgba(56, 189, 248, 0.35)",
+                    }}
+                  >
+                    Logout
+                    <CriticalIcon name="logout" className="h-4 w-4" />
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => setLoginOpen(true)}
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200 active:scale-95"
+                    style={{
+                      background: "linear-gradient(135deg, #E62429 0%, #B11313 100%)",
+                      color:      "#F4E9E8",
+                      boxShadow:  "0 4px 14px rgba(230,36,41,0.35)",
+                    }}
+                  >
+                    Login
+                    <CriticalIcon name="arrow-right" className="h-4 w-4" />
+                  </button>
+                )}
               </>
             ) : (
               <>
@@ -189,10 +243,10 @@ export default function Nav() {
                   <span>Resume Builder</span>
                 </Link>
                 <DownloadCVMenu variant="dark" />
-                <a href="https://wa.me/971551912074" target="_blank" rel="noopener noreferrer" className="btn-primary text-sm px-4 py-2">
+                <button type="button" onClick={() => setContactOpen(true)} className="btn-primary text-sm px-4 py-2 inline-flex items-center gap-2">
                   <span>Let&apos;s Talk</span>
                   <CriticalIcon name="arrow-right" className="h-4 w-4" />
-                </a>
+                </button>
               </>
             )}
           </div>
@@ -275,10 +329,9 @@ export default function Nav() {
                       Resume Builder
                     </LightNavBtn>
                     <DownloadCVMenu variant="dark" fullWidth />
-                    <a
-                      href="https://wa.me/971551912074"
-                      target="_blank"
-                      rel="noopener noreferrer"
+                    <button
+                      type="button"
+                      onClick={() => setContactOpen(true)}
                       className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold"
                       style={{
                         background: "linear-gradient(135deg, #E62429 0%, #B11313 100%)",
@@ -288,7 +341,7 @@ export default function Nav() {
                     >
                       Let&apos;s Talk
                       <CriticalIcon name="arrow-right" className="h-4 w-4" />
-                    </a>
+                    </button>
                   </>
                 ) : (
                   <>
@@ -297,14 +350,23 @@ export default function Nav() {
                       Resume Builder
                     </Link>
                     <DownloadCVMenu variant="dark" fullWidth />
-                    <a href="https://wa.me/971551912074" target="_blank" rel="noopener noreferrer" className="btn-primary justify-center">
-                      Let&apos;s Talk <CriticalIcon name="arrow-right" className="h-4 w-4" />
-                    </a>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsOpen(false);
+                        setLoginOpen(true);
+                      }}
+                      className="btn-primary justify-center"
+                    >
+                      Login <CriticalIcon name="arrow-right" className="h-4 w-4" />
+                    </button>
                   </>
                 )}
               </div>
             </div>
         </div>
+        <ContactModal open={isContactOpen} onClose={() => setContactOpen(false)} />
+        <LoginModal open={isLoginOpen} onClose={() => setLoginOpen(false)} onSuccess={() => setLoginOpen(false)} />
       </div>
     </header>
   );

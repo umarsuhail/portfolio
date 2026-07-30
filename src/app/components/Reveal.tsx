@@ -27,6 +27,8 @@ export default function Reveal({
   style,
   ...rest
 }: Props) {
+  void [_y, _x, _scale, _delay, _duration, _inView, _amount];
+
   return (
     <div style={style} {...rest}>
       {children}

@@ -16,14 +16,8 @@ export default function DeferredClientFeatures() {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    if (ready) return;
-
     const load = () => {
       setReady(true);
-      cleanup();
-    };
-
-    const cleanup = () => {
       window.removeEventListener("pointerdown", load);
       window.removeEventListener("pointermove", load);
       window.removeEventListener("scroll", load);
@@ -35,7 +29,12 @@ export default function DeferredClientFeatures() {
     window.addEventListener("scroll", load, { passive: true });
     window.addEventListener("keydown", load);
 
-    return cleanup;
+    return () => {
+      window.removeEventListener("pointerdown", load);
+      window.removeEventListener("pointermove", load);
+      window.removeEventListener("scroll", load);
+      window.removeEventListener("keydown", load);
+    };
   }, []);
 
   if (!ready) return null;

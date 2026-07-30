@@ -10,9 +10,9 @@ const projects = [
     title: "Emirates Face Recognition Dashboards",
     role: "Application Developer",
     overview:
-      "Multi-tenant biometric dashboard platform serving 50+ tenants from a single application — each tenant monitors its own deployment with isolated data, while a secure layer authorizes and segregates every tenant's users independently.",
+      "A single configurable biometric dashboard platform for 50+ banks and financial institutions. The core app stays the same while each entity uses tailored configuration flags, branding, and tenant isolation to run as its own secure deployment.",
     contributions: [
-      "Architected a multi-tenant model serving 50+ tenants from one codebase, eliminating per-tenant app duplication",
+      "Architected a shared application model for 50+ banks and financial institutions, using configuration sets to enable or disable capabilities per tenant",
       "Built a secure isolation layer that scopes data and authorizes each tenant's users separately, preventing cross-tenant access",
       "Designed transaction monitoring, architecture topology, and analytics views with real-time status, alerts, and SLA health",
     ],

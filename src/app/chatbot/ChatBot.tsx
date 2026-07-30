@@ -21,7 +21,7 @@ const FAQS: { q: string; a: string }[] = [
   },
   {
     q: "Notable projects?",
-    a: "Emirates multi-tenant biometric dashboards (50+ tenants), a Telecom Onboarding Dashboard, an Enterprise Revenue & Billing Analytics Platform, a Loyalty Rewards Platform, GetLife Insurance Portal, and SkySearch.AI.",
+    a: "Emirates multi-tenant biometric dashboards for 50+ banks and financial institutions, a Telecom Onboarding Dashboard, an Enterprise Revenue & Billing Analytics Platform, a Loyalty Rewards Platform, GetLife Insurance Portal, and SkySearch.AI.",
   },
   {
     q: "Is he available for work?",
@@ -66,7 +66,7 @@ export default function ChatBot() {
       setChatMessages([
         {
           type: "received",
-          message: "Hello! 👋 I'm Umar's AI assistant. Ask me about Umar's experience, skills, projects, and career journey.",
+          message: "Hi there! I'm Umar's AI assistant. Ask me about Umar's experience, skills, projects, or how to get in touch.",
           timestamp: new Date(),
         },
       ]);
@@ -81,7 +81,7 @@ export default function ChatBot() {
         setChatMessages([
           {
             type: "received",
-            message: "Hello! 👋 I'm Umar's AI assistant. Ask me about Umar's experience, skills, projects, and career journey.",
+            message: "Hi there! I'm Umar's AI assistant. Ask me about Umar's experience, skills, projects, or how to get in touch.",
             timestamp: new Date(),
           },
         ]);
@@ -240,7 +240,7 @@ export default function ChatBot() {
             </div>
             <div className="flex items-center gap-2">
               <a
-                href="https://wa.me/971568323258"
+                href="https://wa.me/971551912074"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Contact on WhatsApp"
@@ -321,6 +321,9 @@ export default function ChatBot() {
           </div>
 
           <form onSubmit={handleSend} className="p-4 border-t border-vintage-cream/10">
+            <p id="chat-input-desc" className="sr-only">
+              Type your message and press Enter or click send to chat with the assistant.
+            </p>
             <div className="flex items-center gap-2">
               <input
                 ref={inputRef}
@@ -328,7 +331,7 @@ export default function ChatBot() {
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 placeholder="Type your message..."
-                aria-describedby="help-desc"
+                aria-describedby="chat-input-desc"
                 disabled={loading}
                 className="flex-1 bg-vintage-slate/30 border border-vintage-cream/10 rounded-lg px-4 py-2.5 text-sm text-vintage-cream placeholder:text-vintage-cream/40 focus:outline-none focus:ring-2 focus:ring-vintage-burgundy/50 focus:border-vintage-burgundy disabled:opacity-50 transition-all"
               />

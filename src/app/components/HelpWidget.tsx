@@ -150,7 +150,7 @@ export default function HelpWidget() {
                 <button
                   type="button"
                   onClick={() => {
-                    const faq = { q: "Notable projects?", a: "Emirates multi-tenant biometric dashboards (50+ tenants), a Telecom Onboarding Dashboard, an Enterprise Revenue & Billing Analytics Platform, a Loyalty Rewards Platform, GetLife Insurance Portal, and SkySearch.AI." };
+                    const faq = { q: "Notable projects?", a: "Emirates multi-tenant biometric dashboards for 50+ banks and financial institutions, a Telecom Onboarding Dashboard, an Enterprise Revenue & Billing Analytics Platform, a Loyalty Rewards Platform, GetLife Insurance Portal, and SkySearch.AI." };
                     window.dispatchEvent(new CustomEvent('open-portfolio-chat'));
                     window.dispatchEvent(new CustomEvent('submit-faq', { detail: faq }));
                     setOpen(false);
@@ -180,10 +180,10 @@ export default function HelpWidget() {
                 Email: <a href="mailto:umarsuhail112@gmail.com" className="underline">umarsuhail112@gmail.com</a>
               </p>
               <p className="mt-1">
-                Phone: <a href="tel:+971568323258" className="underline">+971 568 323 258 ,+971 551912074</a> / <a href="tel:+919497656243" className="underline">+91 9497656243</a>
+                Phone: <a href="tel:+971551912074" className="underline">+971 551912074</a> / <a href="tel:+919497656243" className="underline">+91 9497656243</a>
               </p>
               <p className="mt-1">
-                WhatsApp: <a href="https://wa.me/971568323258" target="_blank" rel="noopener noreferrer" className="underline">+971 568 323 258</a>
+                WhatsApp: <a href="https://wa.me/971551912074" target="_blank" rel="noopener noreferrer" className="underline">+971 551912074</a>
               </p>
             </div>
           </div>
