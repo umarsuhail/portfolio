@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Icon } from "@iconify/react";
+import Reveal from "./Reveal";
 
 const faqs = [
   {
@@ -37,7 +38,7 @@ export default function FAQ() {
     >
       <div className="section-container">
         {/* Header */}
-        <div className="text-center mb-14">
+        <Reveal inView y={30} duration={0.7} className="text-center mb-14">
           <span
             className="inline-flex items-center px-3 py-1 rounded-md text-xs font-semibold tracking-widest uppercase mb-4"
             style={{
@@ -66,15 +67,19 @@ export default function FAQ() {
             Common questions about Umar Suhail — software developer from India,
             based in Abu Dhabi UAE.
           </p>
-        </div>
+        </Reveal>
 
         {/* Accordion */}
         <div className="max-w-2xl mx-auto flex flex-col gap-3">
           {faqs.map((faq, i) => {
             const isOpen = open === i;
             return (
-              <div
+              <Reveal
                 key={i}
+                inView
+                y={20}
+                delay={i * 0.08}
+                duration={0.65}
                 className="rounded-2xl overflow-hidden transition-shadow duration-300"
                 style={{
                   background: "#ffffff",

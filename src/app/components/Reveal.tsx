@@ -1,3 +1,7 @@
+'use client';
+
+import { useEffect, useRef, useState } from "react";
+
 type Props = React.HTMLAttributes<HTMLDivElement> & {
   /** initial Y offset (px) */
   y?: number;
@@ -5,7 +9,7 @@ type Props = React.HTMLAttributes<HTMLDivElement> & {
   x?: number;
   /** initial scale */
   scale?: number;
-  /** delay before the tween (seconds) — ignored for inView */
+  /** delay before the tween (seconds) */
   delay?: number;
   /** tween duration (seconds) */
   duration?: number;
@@ -17,20 +21,57 @@ type Props = React.HTMLAttributes<HTMLDivElement> & {
 
 export default function Reveal({
   children,
-  y: _y = 24,
-  x: _x = 0,
-  scale: _scale,
-  delay: _delay = 0,
-  duration: _duration = 0.7,
-  inView: _inView = false,
-  amount: _amount = 0.3,
+  y = 24,
+  x = 0,
+  scale = 1,
+  delay = 0,
+  duration = 0.7,
+  inView = true,
+  amount = 0.3,
   style,
   ...rest
 }: Props) {
-  void [_y, _x, _scale, _delay, _duration, _inView, _amount];
+  const [isVisible, setIsVisible] = useState(!inView);
+  const ref = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (!inView || isVisible) {
+      return;
+    }
+
+    const element = ref.current;
+    if (!element) {
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: amount }
+    );
+
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [inView, amount, isVisible]);
 
   return (
-    <div style={style} {...rest}>
+    <div
+      ref={ref}
+      style={{
+        opacity: isVisible ? 1 : 0,
+        transform: isVisible
+          ? "translate3d(0, 0, 0) scale(1)"
+          : `translate3d(${x}px, ${y}px, 0) scale(${scale})`,
+        transition: `opacity ${duration}s ease-out ${delay}s, transform ${duration}s ease-out ${delay}s`,
+        willChange: "opacity, transform",
+        ...style,
+      }}
+      {...rest}
+    >
       {children}
     </div>
   );

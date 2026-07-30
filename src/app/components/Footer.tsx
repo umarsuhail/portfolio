@@ -2,6 +2,7 @@
 
 import { Icon } from "@iconify/react";
 import Link from "next/link";
+import Reveal from "./Reveal";
 
 const footerLinks = {
   navigation: [
@@ -23,7 +24,7 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="relative border-t border-vintage-cream/10 bg-vintage-navy/50 backdrop-blur-sm">
+    <Reveal inView y={30} duration={0.7} className="relative border-t border-vintage-cream/10 bg-vintage-navy/50 backdrop-blur-sm">
       <div className="section-container py-12">
         <div className="grid md:grid-cols-4 gap-8 mb-12">
           <div className="md:col-span-2">
