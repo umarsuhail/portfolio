@@ -193,7 +193,7 @@ const person = {
     "Web Development",
     "Software Engineering",
   ],
-  knowsLanguage: "English",
+  knowsLanguage: "English, Hindi, Urdu, Malayalam, Tamil",
 };
 
 // ProfilePage — Google's recommended schema for personal portfolio pages

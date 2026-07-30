@@ -10,6 +10,7 @@ const ScrollController = dynamic(() => import("./ScrollController"), { ssr: fals
 const ScrollProgress = dynamic(() => import("./ScrollProgress"), { ssr: false });
 const SpiderWebClick = dynamic(() => import("./SpiderWebClick"), { ssr: false });
 const UISound = dynamic(() => import("./UISound"), { ssr: false });
+const InteractiveToast = dynamic(() => import("./InteractiveToast"), { ssr: false });
 
 export default function DeferredClientFeatures() {
   const [ready, setReady] = useState(false);
@@ -47,6 +48,7 @@ export default function DeferredClientFeatures() {
       <ScrollProgress />
       <ScrollController />
       <UISound />
+      <InteractiveToast />
       <ChatBot />
     </>
   );

@@ -62,7 +62,7 @@ const personalDetails = [
   {
     icon: "solar:chat-square-like-bold-duotone",
     label: "Languages",
-    value: "English, Hindi, Urdu",
+    value: "English, Hindi, Urdu, Malayalam, Tamil",
   },
   {
     icon: "solar:calendar-mark-bold-duotone",

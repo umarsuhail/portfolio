@@ -3,6 +3,7 @@ import profile from "../../../public/images/me-s.jpeg";
 import { texts } from "@/utils/constants";
 import DownloadCVMenu from "./DownloadCVMenu";
 import CriticalIcon from "./CriticalIcon";
+import HeroTextScroller from "./HeroTextScroller";
 import Reveal from "./Reveal";
 
 const stats = [
@@ -53,132 +54,134 @@ export default function Card() {
         <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 items-center">
 
           {/* Left — content */}
-          <Reveal y={32} duration={0.7} className="order-2 lg:order-1 flex flex-col gap-8">
-            {/* Status pill */}
-            <Reveal
-              y={12}
-              delay={0.15}
-              className="inline-flex items-center gap-2.5 self-start px-4 py-2 rounded-full"
-              style={{
-                border: `1px solid rgba(230,36,41,0.4)`,
-                background: `rgba(230,36,41,0.12)`,
-              }}
-            >
-              <span className="relative flex h-2 w-2">
-                <span
-                  className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-60"
-                  style={{ background: GOLD_DEEP }}
-                />
-                <span
-                  className="relative inline-flex rounded-full h-2 w-2"
-                  style={{ background: GOLD_DEEP }}
-                />
-              </span>
-              <span className="text-sm font-medium" style={{ color: GOLD_DEEP }}>
-                Available for opportunities
-              </span>
-            </Reveal>
-
-            {/* Heading */}
-            <Reveal y={16} delay={0.25}>
-              <p
-                className="text-sm font-semibold tracking-[0.18em] uppercase mb-3"
-                style={{ color: GOLD_DEEP }}
+          <HeroTextScroller>
+            <Reveal y={32} duration={0.7} className="order-2 lg:order-1 flex flex-col gap-8">
+              {/* Status pill */}
+              <Reveal
+                y={12}
+                delay={0.15}
+                className="inline-flex items-center gap-2.5 self-start px-4 py-2 rounded-full"
+                style={{
+                  border: `1px solid rgba(230,36,41,0.4)`,
+                  background: `rgba(230,36,41,0.12)`,
+                }}
               >
-                Lead Frontend Engineer &amp; Application Developer
-              </p>
-              <h1
-                className="text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.05] tracking-tight"
-                style={{ color: TEXT_1 }}
-              >
-                Hi, I&apos;m{" "}
-                <span
-                  className="bg-clip-text text-transparent"
-                  style={{
-                    backgroundImage: `linear-gradient(135deg, ${GOLD_RICH} 0%, ${NAVY} 100%)`,
-                  }}
-                >
-                  Umar Suhail
+                <span className="relative flex h-2 w-2">
+                  <span
+                    className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-60"
+                    style={{ background: GOLD_DEEP }}
+                  />
+                  <span
+                    className="relative inline-flex rounded-full h-2 w-2"
+                    style={{ background: GOLD_DEEP }}
+                  />
                 </span>
-              </h1>
-            </Reveal>
+                <span className="text-sm font-medium" style={{ color: GOLD_DEEP }}>
+                  Available for opportunities
+                </span>
+              </Reveal>
 
-            {/* Description */}
-            <Reveal
-              y={16}
-              delay={0.35}
-              className="text-lg leading-[1.8] max-w-lg"
-              style={{ color: TEXT_2 }}
-            >
-              {texts.about}
-            </Reveal>
-
-            {/* CTA buttons */}
-            <Reveal y={16} delay={0.45} className="flex flex-wrap gap-3 items-center">
-              {/* Primary — gold gradient + shimmer */}
-              <a
-                href="#contact"
-                data-hover-sound
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm text-white landing-btn-primary transition-transform duration-150 hover:-translate-y-[3px] hover:scale-[1.04] active:scale-[0.97]"
-                style={{
-                  background: `linear-gradient(135deg, ${GOLD_DEEP} 0%, ${GOLD_DARK} 100%)`,
-                  boxShadow: `0 4px 14px rgba(138,106,26,0.35), 0 1px 3px rgba(138,106,26,0.2)`,
-                }}
-              >
-                <CriticalIcon name="chat" className="h-4 w-4" />
-                Get In Touch
-              </a>
-
-              {/* Secondary — white + steel border + shimmer */}
-              <a
-                href="#projects"
-                data-hover-sound
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm landing-btn-secondary transition-transform duration-150 hover:-translate-y-[3px] hover:scale-[1.04] active:scale-[0.97]"
-                style={{
-                  color: TEXT_1,
-                  background: CARD_BG,
-                  border: `1px solid rgba(43,108,232,0.45)`,
-                  boxShadow: "0 1px 3px rgba(0,0,0,0.4)",
-                }}
-              >
-                <CriticalIcon name="eye" className="h-4 w-4" />
-                View Projects
-              </a>
-
-              <DownloadCVMenu variant="dark" />
-            </Reveal>
-
-            {/* Social links */}
-            <Reveal y={12} delay={0.55} className="flex items-center gap-4 pt-1">
-              <span
-                className="text-xs font-medium tracking-widest uppercase"
-                style={{ color: TEXT_3 }}
-              >
-                Connect
-              </span>
-              <div className="h-px w-8" style={{ background: "rgba(244,233,232,0.2)" }} />
-              <div className="flex items-center gap-2">
-                {socialLinks.map((social) => (
-                  <a
-                    key={social.label}
-                    href={social.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={social.label}
-                    className="w-9 h-9 rounded-lg flex items-center justify-center transition-all duration-200"
+              {/* Heading */}
+              <Reveal y={16} delay={0.25}>
+                <p
+                  className="text-sm font-semibold tracking-[0.18em] uppercase mb-3"
+                  style={{ color: GOLD_DEEP }}
+                >
+                  Lead Frontend Engineer &amp; Application Developer
+                </p>
+                <h1
+                  className="text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.05] tracking-tight"
+                  style={{ color: TEXT_1 }}
+                >
+                  Hi, I&apos;m{" "}
+                  <span
+                    className="bg-clip-text text-transparent"
                     style={{
-                      background: "rgba(11,16,38,0.6)",
-                      border: "1px solid rgba(244,233,232,0.14)",
-                      color: TEXT_2,
-                      boxShadow: "0 1px 3px rgba(0,0,0,0.4)",
+                      backgroundImage: `linear-gradient(135deg, ${GOLD_RICH} 0%, ${NAVY} 100%)`,
                     }}
                   >
-                    <CriticalIcon name={social.icon} className="h-4 w-4" />
-                  </a>
-                ))}
-              </div>
+                    Umar Suhail
+                  </span>
+                </h1>
+              </Reveal>
+
+              {/* Description */}
+              <Reveal
+                y={16}
+                delay={0.35}
+                className="text-lg leading-[1.8] max-w-lg"
+                style={{ color: TEXT_2 }}
+              >
+                {texts.about}
+              </Reveal>
+
+              {/* CTA buttons */}
+              <Reveal y={16} delay={0.45} className="flex flex-wrap gap-3 items-center">
+                {/* Primary — gold gradient + shimmer */}
+                <a
+                  href="#contact"
+                  data-hover-sound
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm text-white landing-btn-primary transition-transform duration-150 hover:-translate-y-[3px] hover:scale-[1.04] active:scale-[0.97]"
+                  style={{
+                    background: `linear-gradient(135deg, ${GOLD_DEEP} 0%, ${GOLD_DARK} 100%)`,
+                    boxShadow: `0 4px 14px rgba(138,106,26,0.35), 0 1px 3px rgba(138,106,26,0.2)`,
+                  }}
+                >
+                  <CriticalIcon name="chat" className="h-4 w-4" />
+                  Get In Touch
+                </a>
+
+                {/* Secondary — white + steel border + shimmer */}
+                <a
+                  href="#projects"
+                  data-hover-sound
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm landing-btn-secondary transition-transform duration-150 hover:-translate-y-[3px] hover:scale-[1.04] active:scale-[0.97]"
+                  style={{
+                    color: TEXT_1,
+                    background: CARD_BG,
+                    border: `1px solid rgba(43,108,232,0.45)`,
+                    boxShadow: "0 1px 3px rgba(0,0,0,0.4)",
+                  }}
+                >
+                  <CriticalIcon name="eye" className="h-4 w-4" />
+                  View Projects
+                </a>
+
+                <DownloadCVMenu variant="dark" />
+              </Reveal>
+
+              {/* Social links */}
+              <Reveal y={12} delay={0.55} className="flex items-center gap-4 pt-1">
+                <span
+                  className="text-xs font-medium tracking-widest uppercase"
+                  style={{ color: TEXT_3 }}
+                >
+                  Connect
+                </span>
+                <div className="h-px w-8" style={{ background: "rgba(244,233,232,0.2)" }} />
+                <div className="flex items-center gap-2">
+                  {socialLinks.map((social) => (
+                    <a
+                      key={social.label}
+                      href={social.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={social.label}
+                      className="w-9 h-9 rounded-lg flex items-center justify-center transition-all duration-200"
+                      style={{
+                        background: "rgba(11,16,38,0.6)",
+                        border: "1px solid rgba(244,233,232,0.14)",
+                        color: TEXT_2,
+                        boxShadow: "0 1px 3px rgba(0,0,0,0.4)",
+                      }}
+                    >
+                      <CriticalIcon name={social.icon} className="h-4 w-4" />
+                    </a>
+                  ))}
+                </div>
+              </Reveal>
             </Reveal>
-          </Reveal>
+          </HeroTextScroller>
 
           {/* Right — portrait */}
           <Reveal y={32} delay={0.1} duration={0.7} className="order-1 lg:order-2 flex justify-center">
