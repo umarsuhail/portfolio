@@ -1,6 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { generateText } from "ai";
+import { about_me, projects, skills, texts } from "@/utils/constants";
+import { experiences } from "@/utils/experienceData";
 
 type ResponseData = {
   message: string;
@@ -66,6 +68,21 @@ function screenMessage(msg: string, history: ChatHistoryItem[] = []): "ok" | "re
   return "ok"; // ambiguous → defer to the model
 }
 
+const projectSummaries = projects
+  .map(
+    (project) => `- ${project.name}: ${project.about} Tech: ${project.stacks.join(", ")}`
+  )
+  .join("\n");
+
+const experienceSummaries = experiences
+  .map(
+    (experience) =>
+      `- ${experience.title} at ${experience.company} (${experience.period}): ${experience.description}`
+  )
+  .join("\n");
+
+const skillsSummary = skills.map((skill) => skill.name).join(", ");
+
 const PROFILE_CONTEXT = `
 Name: Umar Suhail
 Role: Lead Frontend Engineer & Application Developer
@@ -75,7 +92,8 @@ Strengths: scalable system design, high-performance frontend architecture, UI/UX
 Current Position: Application Developer at Emirates Face Recognition (EFR), Abu Dhabi, UAE
 Previous Roles: Development Team Lead at Epixel Solutions, Software Engineer at Aspire Systems, UI Developer at Uvionics Tech
 Education: B.Tech in Computer Engineering (2014-2018), KMP College of Engineering
-Highlighted Projects: Emirates Face Recognition multi-tenant dashboards (50+ tenants), Telecom Onboarding Dashboard, Enterprise Revenue & Billing Analytics Platform, Loyalty Rewards Platform, GetLife Insurance Portal, SkySearch.AI
+Highlighted Projects:
+${projectSummaries}
 Languages: English, Hindi, Urdu, Malayalam, Tamil
 Contact: email umarsuhail112@gmail.com, LinkedIn linkedin.com/in/umar-suhail
 Partner: Umar's partner is Shahana V. N — an Airport Management Professional from Thrissur, Kerala. She is an IATA-certified airport management graduate (Diploma in Airport Management, Vision School of Aviation; focus on Aviation Security/AVSEC and Air Cargo Operations) and is completing a BBA in Human Resource Management at the University of Calicut. Skilled in Amadeus & Sabre GDS, passenger service, and customer communication. Languages: English and Malayalam.

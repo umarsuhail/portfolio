@@ -4,6 +4,7 @@ import { Analytics } from "@vercel/analytics/react";
 import "./globals.css";
 import Nav from "./components/Nav";
 import DeferredClientFeatures from "./components/DeferredClientFeatures";
+import HelpWidget from "./components/HelpWidget";
 
 const BASE_URL = "https://www.umar.website";
 
@@ -108,7 +109,7 @@ const person = {
   name: "Umar Suhail",
   url: BASE_URL,
   email: "umarsuhail112@gmail.com",
-  telephone: "+971568323258",
+  telephone: "+971 551912074 / +91 9497656243",
   jobTitle: "Lead Frontend Engineer & Application Developer",
   description:
     "Umar Suhail is a Lead Frontend Engineer and Software Developer from India, currently based in Abu Dhabi, UAE. With 7+ years of experience building high-performance React and Next.js applications, he works at Emirates Face Recognition (EFR) and specialises in UI/UX design, TypeScript, design systems, and performance optimisation.",
@@ -257,6 +258,7 @@ export default function RootLayout({
         <Nav />
         {children}
         <DeferredClientFeatures />
+        <HelpWidget />
       </body>
     </html>
   );

@@ -83,8 +83,8 @@ const personalDetails = [
   {
     icon: "solar:phone-calling-rounded-bold-duotone",
     label: "Phone",
-    value: "+971 56 832 3258",
-    href: "tel:+971568323258",
+    value: "+971 551912074 / +91 9497656243",
+    href: "tel:+971551912074",
   },
 ];
 

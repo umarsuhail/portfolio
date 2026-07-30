@@ -168,7 +168,7 @@ export default function Nav() {
                 </LightNavBtn>
                 <DownloadCVMenu variant="dark" />
                 <a
-                  href="https://wa.me/971568323258"
+                  href="https://wa.me/971551912074"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200 active:scale-95"
@@ -189,7 +189,7 @@ export default function Nav() {
                   <span>Resume Builder</span>
                 </Link>
                 <DownloadCVMenu variant="dark" />
-                <a href="https://wa.me/971568323258" target="_blank" rel="noopener noreferrer" className="btn-primary text-sm px-4 py-2">
+                <a href="https://wa.me/971551912074" target="_blank" rel="noopener noreferrer" className="btn-primary text-sm px-4 py-2">
                   <span>Let&apos;s Talk</span>
                   <CriticalIcon name="arrow-right" className="h-4 w-4" />
                 </a>
@@ -276,7 +276,7 @@ export default function Nav() {
                     </LightNavBtn>
                     <DownloadCVMenu variant="dark" fullWidth />
                     <a
-                      href="https://wa.me/971568323258"
+                      href="https://wa.me/971551912074"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold"
@@ -297,7 +297,7 @@ export default function Nav() {
                       Resume Builder
                     </Link>
                     <DownloadCVMenu variant="dark" fullWidth />
-                    <a href="https://wa.me/971568323258" target="_blank" rel="noopener noreferrer" className="btn-primary justify-center">
+                    <a href="https://wa.me/971551912074" target="_blank" rel="noopener noreferrer" className="btn-primary justify-center">
                       Let&apos;s Talk <CriticalIcon name="arrow-right" className="h-4 w-4" />
                     </a>
                   </>

@@ -88,6 +88,13 @@ export default function InteractiveToast() {
               </button>
               <button
                 type="button"
+                onClick={() => window.dispatchEvent(new CustomEvent("open-help"))}
+                className="rounded-2xl border border-white/15 bg-white/10 px-4 py-3 text-sm font-semibold text-white transition hover:border-white/25 hover:bg-white/15"
+              >
+                Help
+              </button>
+              <button
+                type="button"
                 onClick={() => {
                   window.dispatchEvent(new CustomEvent("open-portfolio-chat"));
                   setShow(false);
@@ -124,12 +131,6 @@ export default function InteractiveToast() {
                     </p>
                   </div>
                 </div>
-              </div>
-              <div className="rounded-3xl border border-white/10 bg-slate-950/90 p-4 text-sm text-white/70">
-                <p className="font-semibold text-white">Tip</p>
-                <p className="mt-2 leading-6">
-                  If you don’t move for 10 seconds, this overlay will appear and guide you to the main actions on the homepage.
-                </p>
               </div>
             </div>
           </div>

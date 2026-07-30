@@ -48,7 +48,7 @@ const faqSchema = {
       name: "How can I contact Umar Suhail?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "You can contact Umar Suhail by email at umarsuhail112@gmail.com, on LinkedIn at linkedin.com/in/umar-suhail, or on WhatsApp at +971 568 323 258. His portfolio is at umar.website.",
+        text: "You can contact Umar Suhail by email at umarsuhail112@gmail.com, on LinkedIn at linkedin.com/in/umar-suhail, or on WhatsApp at +971 551912074 (UAE), +971 568 323 258 (UAE- whatsapp) or +91 9497656243 (India). His portfolio is at umar.website.",
       },
     },
   ],

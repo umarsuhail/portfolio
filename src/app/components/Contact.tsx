@@ -14,8 +14,8 @@ const contactInfo = [
   {
     icon: "solar:phone-bold-duotone",
     label: "Phone",
-    value: "+971 568 323 258",
-    href: "tel:+971568323258",
+    value: "+971 551912074 / +91 9497656243",
+    href: "tel:+971551912074",
   },
   {
     icon: "solar:map-point-bold-duotone",
@@ -28,7 +28,7 @@ const contactInfo = [
 const socialLinks = [
   { icon: "mdi:linkedin", href: "https://www.linkedin.com/in/umar-suhail/", label: "LinkedIn", color: "hover:bg-blue-500/20 hover:border-blue-500/30" },
   { icon: "mdi:github", href: "https://github.com/umarsuhail", label: "GitHub", color: "hover:bg-gray-500/20 hover:border-gray-500/30" },
-  { icon: "mdi:whatsapp", href: "https://wa.me/971568323258", label: "WhatsApp", color: "hover:bg-green-500/20 hover:border-green-500/30" },
+  { icon: "mdi:whatsapp", href: "https://wa.me/971551912074", label: "WhatsApp", color: "hover:bg-green-500/20 hover:border-green-500/30" },
   { icon: "mdi:instagram", href: "https://instagram.com/umarsuhail", label: "Instagram", color: "hover:bg-pink-500/20 hover:border-pink-500/30" },
 ];
 
@@ -162,25 +162,27 @@ export default function Contact() {
                 <form onSubmit={handleSubmit} className="space-y-5">
                   <div className="grid sm:grid-cols-2 gap-5">
                     <div>
-                      <label className="block text-sm font-medium text-vintage-cream/70 mb-2">
-                        Your Name
-                      </label>
-                      <input
+                      <label htmlFor="contact-name" className="block text-sm font-medium text-vintage-cream/70 mb-2">
+                          Your Name
+                        </label>
+                        <input
                         type="text"
                         required
-                        value={formData.name}
-                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                        className="input-field"
-                        placeholder="John Doe"
+                          id="contact-name"
+                          value={formData.name}
+                          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                          className="input-field"
+                          placeholder="John Doe"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-vintage-cream/70 mb-2">
+                      <label htmlFor="contact-email" className="block text-sm font-medium text-vintage-cream/70 mb-2">
                         Email Address
                       </label>
                       <input
                         type="email"
                         required
+                        id="contact-email"
                         value={formData.email}
                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                         className="input-field"
@@ -190,12 +192,13 @@ export default function Contact() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-vintage-cream/70 mb-2">
+                    <label htmlFor="contact-subject" className="block text-sm font-medium text-vintage-cream/70 mb-2">
                       Subject
                     </label>
                     <input
                       type="text"
                       required
+                      id="contact-subject"
                       value={formData.subject}
                       onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
                       className="input-field"
@@ -204,12 +207,13 @@ export default function Contact() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-vintage-cream/70 mb-2">
+                    <label htmlFor="contact-message" className="block text-sm font-medium text-vintage-cream/70 mb-2">
                       Message
                     </label>
                     <textarea
                       required
                       rows={5}
+                      id="contact-message"
                       value={formData.message}
                       onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                       className="input-field resize-none"

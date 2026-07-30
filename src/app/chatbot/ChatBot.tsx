@@ -129,8 +129,11 @@ export default function ChatBot() {
           { type: "received", message: data.message, timestamp: new Date() },
         ]);
       }
-      // AI unavailable (error / quota) — offer offline FAQ shortcuts.
-      if (data.fallback) setShowFaq(true);
+      // AI unavailable (error / quota) — open the consistent HelpWidget and show inline FAQ.
+      if (data.fallback) {
+        setShowFaq(true);
+        window.dispatchEvent(new CustomEvent("open-help"));
+      }
     } catch (error) {
       console.error("Error fetching AI response:", error);
       setChatMessages((prev) => [
@@ -141,7 +144,9 @@ export default function ChatBot() {
           timestamp: new Date(),
         },
       ]);
+      // Also open the HelpWidget and show inline FAQ to present consistent help when AI is down.
       setShowFaq(true);
+      window.dispatchEvent(new CustomEvent("open-help"));
     } finally {
       setLoading(false);
       setIsTyping(false);
@@ -156,6 +161,20 @@ export default function ChatBot() {
       { type: "received", message: faq.a, timestamp: new Date() },
     ]);
   };
+
+  // Listen for FAQ submissions dispatched from the HelpWidget (modal) so users
+  // can pick a quick answer from the help dialog and have it inserted into chat.
+  useEffect(() => {
+    const onSubmitFaq = (e: Event) => {
+      const detail = (e as CustomEvent)?.detail;
+      if (detail && detail.q && detail.a) {
+        handleFaq(detail);
+      }
+    };
+
+    window.addEventListener("submit-faq", onSubmitFaq as EventListener);
+    return () => window.removeEventListener("submit-faq", onSubmitFaq as EventListener);
+  }, [chatMessages]);
 
   useEffect(() => {
     if (chatContainerRef.current) {
@@ -218,6 +237,26 @@ export default function ChatBot() {
                 <span className="w-2 h-2 rounded-full bg-vintage-cream animate-pulse" />
                 Online
               </p>
+            </div>
+            <div className="flex items-center gap-2">
+              <a
+                href="https://wa.me/971568323258"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Contact on WhatsApp"
+                className="rounded-md bg-white/10 px-2 py-1 text-sm text-white/90 flex items-center gap-2"
+              >
+                <Icon icon="mdi:whatsapp" className="text-green-400 text-lg" />
+                WhatsApp
+              </a>
+              <button
+                type="button"
+                onClick={() => window.dispatchEvent(new CustomEvent("open-help"))}
+                className="rounded-md bg-white/10 px-2 py-1 text-sm text-white/90"
+                aria-label="Open help dialog"
+              >
+                Help
+              </button>
             </div>
             <button
               type="button"
@@ -289,6 +328,7 @@ export default function ChatBot() {
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 placeholder="Type your message..."
+                aria-describedby="help-desc"
                 disabled={loading}
                 className="flex-1 bg-vintage-slate/30 border border-vintage-cream/10 rounded-lg px-4 py-2.5 text-sm text-vintage-cream placeholder:text-vintage-cream/40 focus:outline-none focus:ring-2 focus:ring-vintage-burgundy/50 focus:border-vintage-burgundy disabled:opacity-50 transition-all"
               />

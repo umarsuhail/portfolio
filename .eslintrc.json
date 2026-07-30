@@ -1,3 +1,13 @@
 {
-  "extends": ["next/core-web-vitals", "next/typescript"]
+  "extends": ["next/core-web-vitals", "next/typescript"],
+  "plugins": ["jsx-a11y"],
+  "rules": {
+    "jsx-a11y/alt-text": "warn",
+    "jsx-a11y/anchor-has-content": "warn",
+    "jsx-a11y/no-noninteractive-tabindex": "warn",
+    "jsx-a11y/label-has-associated-control": ["warn", { "assert": "either" }]
+  }
 }
+
+// Ignore scripts and build artifacts from linting
+// This is a comment for humans; ESLint ignores this line in JSON files normally.
