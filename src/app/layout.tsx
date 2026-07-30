@@ -28,9 +28,14 @@ export const metadata: Metadata = {
     template: "%s | Umar Suhail",
   },
   description:
-    "Umar Suhail – Lead Frontend Engineer & Software Developer from Thrissur, Kerala, based in UAE. 7+ years building React & Next.js applications at Emirates Face Recognition (EFR), Abu Dhabi. Expert in TypeScript, UI/UX design, and frontend architecture.",
+    "Umar Suhail (also searched as Umer Suhail, Omer Suhail, and Umar Sohail) is a Lead Frontend Engineer and Software Developer from Thrissur, Kerala, based in UAE. 7+ years building React & Next.js applications at Emirates Face Recognition (EFR), Abu Dhabi.",
   keywords: [
     "Umar Suhail",
+    "Umer Suhail",
+    "Omer Suhail",
+    "Umar Sohail",
+    "Umer Sohail",
+    "Omer Sohail",
     "Umar Suhail developer",
     "Umar Suhail UAE",
     "Umar Suhail India",
@@ -107,6 +112,7 @@ const person = {
   "@type": "Person",
   "@id": `${BASE_URL}/#person`,
   name: "Umar Suhail",
+  alternateName: ["Umer Suhail", "Omer Suhail", "Umar Sohail", "Umer Sohail", "Omer Sohail"],
   url: BASE_URL,
   email: "umarsuhail112@gmail.com",
   telephone: "+971 551 912 074 / +971 568 323 258 / +91 949 765 6243",

@@ -13,6 +13,14 @@ const faqSchema = {
   mainEntity: [
     {
       "@type": "Question",
+      name: "Is Umar Suhail also known as Umer, Omer, or Sohail?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Yes. This is the official portfolio of Umar Suhail. The profile may also be searched as Umer Suhail, Omer Suhail, Umar Sohail, Umer Sohail, or Omer Sohail.",
+      },
+    },
+    {
+      "@type": "Question",
       name: "Who is Umar Suhail?",
       acceptedAnswer: {
         "@type": "Answer",
