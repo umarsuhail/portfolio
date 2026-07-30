@@ -16,10 +16,20 @@ export async function getMongoClient() {
     return cachedClient;
   }
 
-  const client = new MongoClient(mongoUri);
-  await client.connect();
-  cachedClient = client;
-  return client;
+  const client = new MongoClient(mongoUri, {
+    maxPoolSize: 10,
+    serverSelectionTimeoutMS: 8_000,
+    connectTimeoutMS: 8_000,
+  });
+
+  try {
+    await client.connect();
+    cachedClient = client;
+    return client;
+  } catch (error) {
+    await client.close();
+    throw error;
+  }
 }
 
 export async function getDatabase() {

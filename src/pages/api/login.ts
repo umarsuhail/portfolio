@@ -17,6 +17,14 @@ type ResponseData = {
   };
 };
 
+function isDatabaseConnectionError(error: unknown): error is Error {
+  if (!(error instanceof Error)) return false;
+
+  return ["MongoNetworkError", "MongoServerSelectionError", "MongoTopologyClosedError"].includes(
+    error.name
+  );
+}
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse<ResponseData>) {
   if (req.method !== "POST") {
     res.setHeader("Allow", ["POST"]);
@@ -77,7 +85,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       user: { email: account.email, userId: account._id.toString() },
     });
   } catch (error) {
-    console.error(error);
+    if (isDatabaseConnectionError(error)) {
+      console.error("Login database connection failed:", error.message);
+      res.status(503).json({
+        success: false,
+        error: "Login is temporarily unavailable. Please try again shortly.",
+      });
+      return;
+    }
+
+    console.error("Login failed:", error);
     res.status(500).json({ success: false, error: "Login failed." });
   }
 }
