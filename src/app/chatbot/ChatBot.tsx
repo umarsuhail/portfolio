@@ -46,6 +46,14 @@ export default function ChatBot() {
   const inputRef = useRef<HTMLInputElement>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
+  const closeChatBox = () => {
+    setOpened(false);
+    openCloseTimeoutRef.current = window.setTimeout(() => {
+      setChatMounted(false);
+      openCloseTimeoutRef.current = null;
+    }, 360);
+  };
+
   const openChatBox = () => {
     if (openCloseTimeoutRef.current) {
       window.clearTimeout(openCloseTimeoutRef.current);
@@ -53,10 +61,7 @@ export default function ChatBot() {
     }
 
     if (isChatOpened) {
-      setOpened(false);
-      openCloseTimeoutRef.current = window.setTimeout(() => {
-        setChatMounted(false);
-      }, 260);
+      closeChatBox();
       return;
     }
 
@@ -75,6 +80,10 @@ export default function ChatBot() {
 
   useEffect(() => {
     const handler = () => {
+      if (openCloseTimeoutRef.current) {
+        window.clearTimeout(openCloseTimeoutRef.current);
+        openCloseTimeoutRef.current = null;
+      }
       if (!isChatMounted) setChatMounted(true);
       setOpened(true);
       if (chatMessages.length === 0) {
@@ -221,56 +230,62 @@ export default function ChatBot() {
 
       {isChatMounted && (
         <div
-          className={`fixed z-40 bottom-24 right-6 w-[360px] max-w-[calc(100vw-3rem)] h-[500px] max-h-[calc(100vh-8rem)] vintage-card rounded-xl overflow-hidden flex flex-col transition-all duration-300 ease-out ${
+          role="dialog"
+          aria-label="Umar's portfolio AI assistant"
+          className={`fixed z-40 bottom-20 right-4 flex h-[min(680px,calc(100dvh-6.5rem))] w-[calc(100vw-2rem)] flex-col overflow-hidden rounded-xl border border-vintage-cream/20 bg-vintage-navy/95 shadow-2xl shadow-black/50 sm:bottom-24 sm:right-6 sm:h-[min(680px,calc(100dvh-8rem))] sm:w-[min(560px,calc(100vw-3rem))] ${
             isChatOpened
-              ? "opacity-100 translate-y-0 scale-100 pointer-events-auto"
-              : "opacity-0 translate-y-6 scale-95 pointer-events-none"
+              ? "chat-panel-enter pointer-events-auto"
+              : "chat-panel-exit pointer-events-none"
           }`}
         >
-          <div className="animate-chat-panel-enter p-4 bg-gradient-to-r from-vintage-burgundy to-vintage-burgundy/80 flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-vintage-cream/20 flex items-center justify-center">
-              <Icon icon="solar:user-speak-bold" className="text-xl text-vintage-cream" />
+          <div className="relative overflow-hidden border-b border-white/10 bg-gradient-to-r from-vintage-burgundy via-vintage-burgundy to-vintage-slate p-4 sm:p-5">
+            <div className="pointer-events-none absolute -right-10 -top-12 h-28 w-28 rounded-full bg-vintage-cream/15 blur-2xl" />
+            <div className="relative flex items-center gap-3">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-vintage-cream/20 bg-vintage-cream/15 shadow-lg shadow-black/20">
+                <Icon icon="solar:user-speak-bold" className="text-xl text-vintage-cream" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <h3 className="truncate text-base font-semibold text-vintage-cream">Umar&apos;s AI Assistant</h3>
+                <p className="flex items-center gap-1.5 text-xs text-vintage-cream/70">
+                  <span className="h-2 w-2 rounded-full bg-emerald-300 shadow-[0_0_10px_rgba(110,231,183,0.95)]" />
+                  Ready to help
+                </p>
+              </div>
+              <div className="flex shrink-0 items-center gap-1.5">
+                <a
+                  href="https://wa.me/971568323258"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Contact on WhatsApp"
+                  title="Contact on WhatsApp"
+                  className="flex h-9 w-9 items-center justify-center rounded-md bg-white/10 text-white/90 transition hover:bg-white/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                >
+                  <Icon icon="mdi:whatsapp" className="text-lg text-emerald-300" />
+                </a>
+                <button
+                  type="button"
+                  onClick={() => window.dispatchEvent(new CustomEvent("open-help"))}
+                  className="hidden rounded-md bg-white/10 px-2.5 py-2 text-xs font-medium text-white/90 transition hover:bg-white/20 sm:block"
+                  aria-label="Open help dialog"
+                >
+                  Help
+                </button>
+                <button
+                  type="button"
+                  onClick={closeChatBox}
+                  aria-label="Minimize chat"
+                  title="Minimize chat"
+                  className="flex h-9 w-9 items-center justify-center rounded-md bg-vintage-cream/10 text-vintage-cream transition hover:bg-vintage-cream/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                >
+                  <Icon icon="solar:minimize-bold" />
+                </button>
+              </div>
             </div>
-            <div className="flex-1">
-              <h3 className="text-vintage-cream font-semibold text-sm">AI Assistant</h3>
-              <p className="text-vintage-cream/70 text-xs flex items-center gap-1">
-                <span className="w-2 h-2 rounded-full bg-vintage-cream animate-pulse" />
-                Online
-              </p>
-            </div>
-            <div className="flex items-center gap-2">
-              <a
-                href="https://wa.me/971551912074"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Contact on WhatsApp"
-                className="rounded-md bg-white/10 px-2 py-1 text-sm text-white/90 flex items-center gap-2"
-              >
-                <Icon icon="mdi:whatsapp" className="text-green-400 text-lg" />
-                WhatsApp
-              </a>
-              <button
-                type="button"
-                onClick={() => window.dispatchEvent(new CustomEvent("open-help"))}
-                className="rounded-md bg-white/10 px-2 py-1 text-sm text-white/90"
-                aria-label="Open help dialog"
-              >
-                Help
-              </button>
-            </div>
-            <button
-              type="button"
-              onClick={() => setOpened(false)}
-              aria-label="Minimize chat"
-              className="w-8 h-8 rounded-lg bg-vintage-cream/10 flex items-center justify-center hover:bg-vintage-cream/20 transition-colors"
-            >
-              <Icon icon="solar:minimize-bold" className="text-vintage-cream" />
-            </button>
           </div>
 
           <div
             ref={chatContainerRef}
-            className="flex-1 overflow-y-auto p-4 space-y-3"
+            className="min-h-0 flex-1 space-y-4 overflow-y-auto bg-[radial-gradient(circle_at_top_right,rgba(191,9,47,0.14),transparent_36%),linear-gradient(180deg,rgba(19,36,64,0.9),rgba(10,20,37,0.98))] p-4 sm:p-5"
           >
             {chatMessages.map((msg, index) => (
               <div
@@ -278,7 +293,7 @@ export default function ChatBot() {
                 className={`flex ${msg.type === "send" ? "justify-end" : "justify-start"}`}
               >
                 <div
-                  className={`max-w-[80%] p-3 rounded-xl text-sm ${
+                  className={`max-w-[85%] rounded-xl p-3.5 text-sm leading-6 shadow-sm sm:max-w-[78%] ${
                     msg.type === "send"
                       ? "bg-gradient-to-r from-vintage-burgundy to-vintage-burgundy/80 text-vintage-cream rounded-br-md"
                       : "bg-vintage-slate/50 text-vintage-cream/90 rounded-bl-md"
@@ -294,11 +309,17 @@ export default function ChatBot() {
 
             {isTyping && (
               <div className="flex justify-start">
-                <div className="bg-vintage-slate/50 p-3 rounded-xl rounded-bl-md">
-                  <div className="flex gap-1">
-                    <span className="w-2 h-2 bg-vintage-cream/50 rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
-                    <span className="w-2 h-2 bg-vintage-cream/50 rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
-                    <span className="w-2 h-2 bg-vintage-cream/50 rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
+                <div className="flex items-center gap-3 rounded-xl rounded-bl-md border border-vintage-cream/10 bg-vintage-slate/50 px-3.5 py-3 shadow-sm">
+                  <span className="chat-loader-orbit flex h-7 w-7 items-center justify-center rounded-full border border-vintage-cream/15 bg-vintage-navy/70">
+                    <Icon icon="solar:stars-line-duotone" className="text-base text-vintage-cream" />
+                  </span>
+                  <div>
+                    <p className="text-xs font-medium text-vintage-cream/80">Assistant is thinking</p>
+                    <div className="mt-1.5 flex gap-1">
+                      <span className="chat-loader-dot" />
+                      <span className="chat-loader-dot" />
+                      <span className="chat-loader-dot" />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -320,11 +341,11 @@ export default function ChatBot() {
             )}
           </div>
 
-          <form onSubmit={handleSend} className="p-4 border-t border-vintage-cream/10">
+          <form onSubmit={handleSend} className="border-t border-vintage-cream/10 bg-vintage-navy/90 p-4 sm:p-5">
             <p id="chat-input-desc" className="sr-only">
               Type your message and press Enter or click send to chat with the assistant.
             </p>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 rounded-lg border border-vintage-cream/10 bg-black/15 p-1.5 focus-within:border-vintage-burgundy/70 focus-within:ring-2 focus-within:ring-vintage-burgundy/20">
               <input
                 ref={inputRef}
                 type="text"
@@ -333,17 +354,23 @@ export default function ChatBot() {
                 placeholder="Type your message..."
                 aria-describedby="chat-input-desc"
                 disabled={loading}
-                className="flex-1 bg-vintage-slate/30 border border-vintage-cream/10 rounded-lg px-4 py-2.5 text-sm text-vintage-cream placeholder:text-vintage-cream/40 focus:outline-none focus:ring-2 focus:ring-vintage-burgundy/50 focus:border-vintage-burgundy disabled:opacity-50 transition-all"
+                className="flex-1 bg-transparent px-3 py-2.5 text-sm text-vintage-cream placeholder:text-vintage-cream/40 focus:outline-none disabled:opacity-50"
               />
               <button
                 type="submit"
                 disabled={loading || !inputValue.trim()}
-                className="w-10 h-10 rounded-lg bg-gradient-to-r from-vintage-burgundy to-vintage-burgundy/80 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg hover:shadow-vintage-burgundy/25 transition-all duration-300"
+                className="flex h-10 shrink-0 items-center justify-center gap-1.5 rounded-md bg-gradient-to-r from-vintage-burgundy to-vintage-burgundy/80 px-3 text-sm font-semibold text-vintage-cream transition hover:shadow-lg hover:shadow-vintage-burgundy/25 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {loading ? (
-                  <Icon icon="svg-spinners:ring-resize" className="text-vintage-cream" />
+                  <>
+                    <Icon icon="svg-spinners:ring-resize" className="text-base" />
+                    <span className="hidden sm:inline">Sending</span>
+                  </>
                 ) : (
-                  <Icon icon="solar:send-bold" className="text-vintage-cream" />
+                  <>
+                    <span>Send</span>
+                    <Icon icon="solar:send-bold" className="text-base" />
+                  </>
                 )}
               </button>
             </div>

@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import type { PointerEvent } from "react";
 import { usePathname } from "next/navigation";
 import { Icon } from "@iconify/react";
 import useIsMobile from "./useIsMobile";
@@ -14,15 +13,9 @@ export default function ScrollController() {
   const isMobile = useIsMobile();
   const [progress, setProgress] = useState(0);
   const [visible, setVisible] = useState(false);
-  const [dragging, setDragging] = useState(false);
   const [showHint, setShowHint] = useState(true);
-  const dragRef = useRef<{
-    pointerId: number;
-    startX: number;
-    startY: number;
-    startScrollY: number;
-    didDrag: boolean;
-  } | null>(null);
+  const [scrollPulse, setScrollPulse] = useState(0);
+  const lastPulseRef = useRef(0);
   const isResumeBuilder = pathname?.startsWith("/resume-builder");
 
   useEffect(() => {
@@ -38,6 +31,14 @@ export default function ScrollController() {
         const p = total > 0 ? Math.min(1, scrolled / total) : 0;
         setProgress(p);
         setVisible(scrolled > (isMobile ? 120 : 80));
+        if (
+          scrolled > 0 &&
+          !window.matchMedia("(prefers-reduced-motion: reduce)").matches &&
+          performance.now() - lastPulseRef.current > 180
+        ) {
+          lastPulseRef.current = performance.now();
+          setScrollPulse((current) => current + 1);
+        }
         ticking = false;
       });
     };
@@ -54,61 +55,10 @@ export default function ScrollController() {
 
   const handleClick = () => {
     setShowHint(false);
-    if (dragRef.current?.didDrag) return;
     if (progress > 0.88) {
       window.scrollTo({ top: 0, behavior: "smooth" });
     } else {
       window.scrollBy({ top: window.innerHeight * 0.85, behavior: "smooth" });
-    }
-  };
-
-  const handlePointerDown = (event: PointerEvent<HTMLButtonElement>) => {
-    setShowHint(false);
-
-    dragRef.current = {
-      pointerId: event.pointerId,
-      startX: event.clientX,
-      startY: event.clientY,
-      startScrollY: window.scrollY,
-      didDrag: false,
-    };
-    setDragging(true);
-    event.currentTarget.setPointerCapture(event.pointerId);
-  };
-
-  const handlePointerMove = (event: PointerEvent<HTMLButtonElement>) => {
-    const drag = dragRef.current;
-    if (!drag || drag.pointerId !== event.pointerId) return;
-
-    const dx = event.clientX - drag.startX;
-    const dy = event.clientY - drag.startY;
-    const distance = Math.hypot(dx, dy);
-
-    if (distance < 5) return;
-
-    drag.didDrag = true;
-    const total = document.documentElement.scrollHeight - window.innerHeight;
-    const nextY = Math.max(0, Math.min(total, drag.startScrollY - dy * 3));
-    window.scrollTo({ top: nextY, behavior: "auto" });
-  };
-
-  const endDrag = (event: PointerEvent<HTMLButtonElement>) => {
-    const drag = dragRef.current;
-    if (!drag || drag.pointerId !== event.pointerId) return;
-
-    setDragging(false);
-    try {
-      event.currentTarget.releasePointerCapture(event.pointerId);
-    } catch {
-      /* ignore */
-    }
-
-    if (drag.didDrag) {
-      window.setTimeout(() => {
-        if (dragRef.current === drag) dragRef.current = null;
-      }, 0);
-    } else {
-      dragRef.current = null;
     }
   };
 
@@ -119,13 +69,9 @@ export default function ScrollController() {
     <button
       type="button"
       onClick={handleClick}
-      onPointerDown={handlePointerDown}
-      onPointerMove={handlePointerMove}
-      onPointerUp={endDrag}
-      onPointerCancel={endDrag}
       aria-label={atTop ? "Back to top" : "Scroll down"}
       className={[
-        "fixed left-1/2 -translate-x-1/2 z-50 touch-pan-y transition-all duration-500 ease-out",
+        "fixed left-1/2 -translate-x-1/2 z-50 transition-all duration-500 ease-out",
         isResumeBuilder
           ? "bottom-[calc(env(safe-area-inset-bottom)+5.75rem)] xl:bottom-6"
           : "bottom-6",
@@ -133,9 +79,10 @@ export default function ScrollController() {
       ].join(" ")}
     >
       <div
+        key={scrollPulse}
         className={[
-          `${isMobile ? "h-[68px] w-[68px]" : "h-[96px] w-[96px]"} relative group transition-transform duration-200`,
-          dragging ? "scale-105 cursor-grabbing" : "cursor-grab active:scale-105",
+          `${isMobile ? "h-[68px] w-[68px]" : "h-[96px] w-[96px]"} relative group transition-transform duration-200 motion-safe:animate-[scroll-controller-pulse_0.32s_ease-out]`,
+          "cursor-pointer active:scale-95",
         ].join(" ")}
       >
         {/* Outer glow ring */}
@@ -145,7 +92,7 @@ export default function ScrollController() {
         <div
           className={[
             "absolute inset-0 rounded-full bg-[#0B1026]/75 backdrop-blur-md border shadow-[0_8px_32px_rgba(0,0,0,0.6)] transition-colors",
-            dragging ? "border-[#E62429]/70" : "border-white/10",
+            "border-white/10 group-hover:border-[#E62429]/70",
           ].join(" ")}
         />
 
@@ -186,7 +133,7 @@ export default function ScrollController() {
             icon="game-icons:spider-alt"
             className={[
               "text-[#F4E9E8] drop-shadow-[0_0_8px_rgba(230,36,41,0.6)] transition-transform duration-200",
-              dragging ? "scale-110" : "group-hover:scale-110",
+                "group-hover:scale-110",
               isMobile ? "text-[26px]" : "text-[38px]",
             ].join(" ")}
             aria-hidden
@@ -221,10 +168,10 @@ export default function ScrollController() {
         </div>
       </div>
 
-      {/* First-time drag hint (mobile) */}
+      {/* First-time scroll hint (mobile) */}
       {isMobile && visible && showHint && !atTop && (
         <span className="pointer-events-none absolute left-1/2 top-full mt-2 -translate-x-1/2 whitespace-nowrap rounded-full border border-white/10 bg-[#030014]/80 px-2 py-1 text-[10px] font-medium tracking-wide text-white/65 backdrop-blur-sm">
-          Drag up/down to scroll
+          Tap to scroll
         </span>
       )}
 

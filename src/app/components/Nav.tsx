@@ -85,29 +85,57 @@ export default function Nav() {
     setSession(null);
   };
 
+  const handleSectionNavigation = (event: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    if (!href.startsWith("#") || pathname !== "/") return;
+
+    event.preventDefault();
+    const section = document.getElementById(href.slice(1));
+    if (!section) return;
+
+    const headerOffset = 104;
+    const targetTop = section.getBoundingClientRect().top + window.scrollY - headerOffset;
+    window.scrollTo({ top: Math.max(0, targetTop), behavior: "smooth" });
+    window.history.replaceState(null, "", href);
+    setIsOpen(false);
+  };
+
+  const handleHomeNavigation = (event: React.MouseEvent<HTMLAnchorElement>) => {
+    if (pathname !== "/") return;
+
+    event.preventDefault();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.history.replaceState(null, "", "/");
+    setActiveSection("");
+  };
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled ? "py-3" : "py-5"
+      className={`fixed top-0 left-0 right-0 z-50 px-3 transition-all duration-500 sm:px-5 ${
+        scrolled ? "py-2" : "py-4"
       } ${
         !isLight && scrolled
           ? "bg-vintage-navy/80 backdrop-blur-xl border-b border-vintage-cream/10"
           : ""
       }`}
       style={isLight ? {
-        background:           scrolled ? "rgba(11,16,38,0.92)" : "rgba(11,16,38,0.55)",
-        backdropFilter:       "blur(18px) saturate(160%)",
-        WebkitBackdropFilter: "blur(18px) saturate(160%)",
-        borderBottom:         scrolled ? "1px solid rgba(43,108,232,0.28)" : "1px solid rgba(43,108,232,0.12)",
+        background: "transparent",
       } : {}}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div
+        className="nav-3d-shell mx-auto max-w-7xl rounded-2xl border px-3 transition-all duration-500 sm:px-5"
+        style={isLight ? {
+          background: scrolled ? "rgba(11,16,38,0.9)" : "rgba(11,16,38,0.66)",
+          borderColor: scrolled ? "rgba(43,108,232,0.42)" : "rgba(244,233,232,0.13)",
+          backdropFilter: "blur(20px) saturate(160%)",
+          WebkitBackdropFilter: "blur(20px) saturate(160%)",
+          boxShadow: scrolled ? "0 14px 42px rgba(0,0,0,0.34), inset 0 1px 0 rgba(244,233,232,0.08)" : "inset 0 1px 0 rgba(244,233,232,0.06)",
+        } : {}}
+      >
         <div className="flex justify-between items-center">
 
           {/* ── Logo ──────────────────────────────────────────────── */}
-          <Link href="/" className="group flex items-center gap-3">
-            <div className="relative">
+          <Link href="/" onClick={handleHomeNavigation} className="group flex items-center gap-3 py-2">
+            <div className="nav-3d-mark relative">
               {isLight ? (
                 <>
                   <div
@@ -155,7 +183,7 @@ export default function Nav() {
           </Link>
 
           {/* ── Desktop nav links ─────────────────────────────────── */}
-          <nav className="hidden md:flex items-center gap-1">
+          <nav className="nav-3d-links hidden lg:flex items-center gap-1 rounded-xl border border-white/10 bg-black/15 p-1" aria-label="Primary navigation">
             {navLinks.map((link) => {
               const resolvedHref = !isLight && link.href.startsWith("#") ? `/${link.href}` : link.href;
               const isActive = activeSection === link.href;
@@ -163,7 +191,8 @@ export default function Nav() {
                 <Link
                   key={link.href}
                   href={resolvedHref}
-                  className={`relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 group ${
+                  onClick={(event) => handleSectionNavigation(event, link.href)}
+                  className={`nav-3d-link relative rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 group ${
                     isLight
                       ? ""
                       : isActive
@@ -175,7 +204,7 @@ export default function Nav() {
                   {isActive && (
                     <span
                       aria-hidden
-                      className="absolute inset-0 rounded-lg"
+                      className="absolute inset-0 rounded-lg shadow-[0_0_18px_rgba(43,108,232,0.18)]"
                       style={isLight ? {
                         background: "rgba(43,108,232,0.14)",
                         border:     "1px solid rgba(43,108,232,0.35)",
@@ -199,7 +228,7 @@ export default function Nav() {
           </nav>
 
           {/* ── Desktop action buttons ────────────────────────────── */}
-          <div className="hidden md:flex items-center gap-2">
+          <div className="hidden md:flex items-center gap-2 py-2">
             {isLight ? (
               <>
                 <LightNavBtn href="/resume-builder" icon="file" isLink>
@@ -255,7 +284,7 @@ export default function Nav() {
           <button
             type="button"
             onClick={() => setIsOpen(!isOpen)}
-            className="md:hidden relative w-10 h-10 flex items-center justify-center"
+            className="md:hidden relative flex h-10 w-10 items-center justify-center rounded-lg border border-white/10 bg-white/5 transition hover:bg-white/10"
             aria-label="Toggle menu"
             aria-expanded={isOpen}
           >
@@ -303,7 +332,7 @@ export default function Nav() {
                   {isLight ? (
                     <Link
                       href={link.href}
-                      onClick={() => setIsOpen(false)}
+                      onClick={(event) => handleSectionNavigation(event, link.href)}
                       className="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 font-medium text-sm"
                       style={{ color: "#F4E9E8" }}
                     >
