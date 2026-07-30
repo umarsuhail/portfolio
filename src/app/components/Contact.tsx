@@ -14,7 +14,7 @@ const contactInfo = [
   {
     icon: "solar:phone-bold-duotone",
     label: "Phone",
-    value: "+971 551912074 / +91 9497656243",
+    value: "+971 551 912 074 / +971 568 323 258 / +91 949 765 6243",
     href: "tel:+971551912074",
   },
   {
@@ -28,8 +28,17 @@ const contactInfo = [
 const socialLinks = [
   { icon: "mdi:linkedin", href: "https://www.linkedin.com/in/umar-suhail/", label: "LinkedIn", color: "hover:bg-blue-500/20 hover:border-blue-500/30" },
   { icon: "mdi:github", href: "https://github.com/umarsuhail", label: "GitHub", color: "hover:bg-gray-500/20 hover:border-gray-500/30" },
-  { icon: "mdi:whatsapp", href: "https://wa.me/971551912074", label: "WhatsApp", color: "hover:bg-green-500/20 hover:border-green-500/30" },
+  { icon: "mdi:whatsapp", href: "https://wa.me/971568323258", label: "WhatsApp", color: "hover:bg-green-500/20 hover:border-green-500/30" },
   { icon: "mdi:instagram", href: "https://instagram.com/umarsuhail", label: "Instagram", color: "hover:bg-pink-500/20 hover:border-pink-500/30" },
+];
+
+const directContactOptions = [
+  { icon: "solar:letter-bold-duotone", label: "Email", value: "umarsuhail112@gmail.com", href: "mailto:umarsuhail112@gmail.com" },
+  { icon: "mdi:whatsapp", label: "WhatsApp UAE 1", value: "+971 551 912 074", href: "https://wa.me/971551912074", external: true },
+  { icon: "mdi:whatsapp", label: "WhatsApp UAE 2", value: "+971 568 323 258", href: "https://wa.me/971568323258", external: true },
+  { icon: "mdi:linkedin", label: "LinkedIn", value: "Connect", href: "https://www.linkedin.com/in/umar-suhail/", external: true },
+  { icon: "mdi:github", label: "GitHub", value: "View work", href: "https://github.com/umarsuhail", external: true },
+  { icon: "mdi:instagram", label: "Instagram", value: "Follow", href: "https://instagram.com/umarsuhail", external: true },
 ];
 
 export default function Contact() {
@@ -67,6 +76,90 @@ export default function Contact() {
           <p className="section-subtitle">
             Have a project in mind? I&apos;d love to hear about it. Let&apos;s create something amazing together.
           </p>
+        </Reveal>
+
+        <Reveal inView y={24} duration={0.6} className="mb-12">
+          <div
+            className="relative overflow-hidden rounded-lg border border-cyan-300/40 px-5 py-6 sm:px-8"
+            style={{
+              background: "linear-gradient(120deg, rgba(6, 18, 38, 0.96), rgba(33, 15, 35, 0.92))",
+              boxShadow: "0 0 18px rgba(34, 211, 238, 0.24), 0 0 44px rgba(230, 36, 41, 0.16)",
+            }}
+          >
+            <div className="pointer-events-none absolute -right-16 top-1/2 h-40 w-40 -translate-y-1/2 rounded-full bg-cyan-300/15 blur-3xl" />
+            <div className="relative grid gap-7 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
+              <div>
+                <div className="mb-3 flex items-center gap-2 text-cyan-100">
+                  <span className="relative flex h-2.5 w-2.5">
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-cyan-300 opacity-75" />
+                    <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-cyan-300" />
+                  </span>
+                  <span className="text-xs font-bold uppercase tracking-[0.2em]">Direct line</span>
+                </div>
+                <h3 className="text-2xl font-bold text-vintage-cream sm:text-3xl">Reach me directly</h3>
+                <p className="mt-2 max-w-md text-sm leading-6 text-vintage-cream/65">
+                  Call, message, or connect through the channel that works best for you.
+                </p>
+              </div>
+
+              <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+                <a
+                  href="tel:+971551912074"
+                  className="group relative overflow-hidden rounded-lg border border-cyan-300/55 bg-cyan-300/[0.08] p-4 transition hover:-translate-y-0.5 hover:bg-cyan-300/[0.14] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-200"
+                  style={{ boxShadow: "inset 0 0 20px rgba(34, 211, 238, 0.08), 0 0 18px rgba(34, 211, 238, 0.18)" }}
+                >
+                  <span className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-cyan-100/80">
+                    <Icon icon="solar:phone-calling-bold-duotone" className="text-lg" /> UAE mobile
+                  </span>
+                  <span className="mt-2 block text-lg font-bold text-cyan-100 sm:text-xl" style={{ textShadow: "0 0 12px rgba(103, 232, 249, 0.82)" }}>
+                    +971 551 912 074
+                  </span>
+                </a>
+                <a
+                  href="tel:+971568323258"
+                  className="group relative overflow-hidden rounded-lg border border-emerald-300/55 bg-emerald-300/[0.08] p-4 transition hover:-translate-y-0.5 hover:bg-emerald-300/[0.14] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-200"
+                  style={{ boxShadow: "inset 0 0 20px rgba(52, 211, 153, 0.08), 0 0 18px rgba(52, 211, 153, 0.18)" }}
+                >
+                  <span className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-emerald-100/80">
+                    <Icon icon="solar:phone-calling-bold-duotone" className="text-lg" /> UAE mobile 2
+                  </span>
+                  <span className="mt-2 block text-lg font-bold text-emerald-100 sm:text-xl" style={{ textShadow: "0 0 12px rgba(110, 231, 183, 0.82)" }}>
+                    +971 568 323 258
+                  </span>
+                </a>
+                <a
+                  href="tel:+919497656243"
+                  className="group relative overflow-hidden rounded-lg border border-rose-300/55 bg-rose-300/[0.08] p-4 transition hover:-translate-y-0.5 hover:bg-rose-300/[0.14] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-200"
+                  style={{ boxShadow: "inset 0 0 20px rgba(251, 113, 133, 0.08), 0 0 18px rgba(251, 113, 133, 0.18)" }}
+                >
+                  <span className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-rose-100/80">
+                    <Icon icon="solar:phone-calling-bold-duotone" className="text-lg" /> India mobile
+                  </span>
+                  <span className="mt-2 block text-lg font-bold text-rose-100 sm:text-xl" style={{ textShadow: "0 0 12px rgba(253, 164, 175, 0.82)" }}>
+                    +91 949 765 6243
+                  </span>
+                </a>
+              </div>
+            </div>
+
+            <div className="relative mt-5 grid grid-cols-2 gap-2 border-t border-white/10 pt-5 sm:grid-cols-3 lg:grid-cols-6">
+              {directContactOptions.map((option) => (
+                <a
+                  key={option.label}
+                  href={option.href}
+                  target={option.external ? "_blank" : undefined}
+                  rel={option.external ? "noopener noreferrer" : undefined}
+                  className="group flex min-w-0 items-center gap-2 rounded-md border border-white/10 bg-white/[0.04] px-3 py-2.5 transition hover:border-white/30 hover:bg-white/[0.09]"
+                >
+                  <Icon icon={option.icon} className="shrink-0 text-lg text-vintage-burgundy group-hover:text-cyan-200" />
+                  <span className="min-w-0">
+                    <span className="block text-xs font-semibold text-vintage-cream">{option.label}</span>
+                    <span className="block truncate text-xs text-vintage-cream/55">{option.value}</span>
+                  </span>
+                </a>
+              ))}
+            </div>
+          </div>
         </Reveal>
 
         <div className="grid lg:grid-cols-2 gap-12 items-start">

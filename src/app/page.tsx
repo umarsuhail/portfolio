@@ -16,7 +16,7 @@ const faqSchema = {
       name: "Who is Umar Suhail?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Umar Suhail is a Lead Frontend Engineer and software developer from India, currently based in Abu Dhabi, UAE. With 7+ years of experience, he builds high-performance web applications using React and Next.js, and currently works at Emirates Face Recognition (EFR) in Abu Dhabi.",
+        text: "Umar Suhail is a Lead Frontend Engineer and software developer from Thrissur, Kerala, currently based in Abu Dhabi, UAE. With 7+ years of experience, he builds high-performance web applications using React and Next.js, and currently works at Emirates Face Recognition (EFR) in Abu Dhabi.",
       },
     },
     {
@@ -48,7 +48,7 @@ const faqSchema = {
       name: "How can I contact Umar Suhail?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "You can contact Umar Suhail by email at umarsuhail112@gmail.com, on LinkedIn at linkedin.com/in/umar-suhail, or on WhatsApp at +971 551912074 (UAE) or +91 9497656243 (India). His portfolio is at umar.website.",
+        text: "You can contact Umar Suhail by email at umarsuhail112@gmail.com, on LinkedIn at linkedin.com/in/umar-suhail, or on WhatsApp at +971 551 912 074 or +971 568 323 258 (UAE), or +91 949 765 6243 (India). His portfolio is at umar.website.",
       },
     },
   ],

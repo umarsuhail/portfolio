@@ -15,7 +15,7 @@ const footerLinks = {
   social: [
     { icon: "mdi:linkedin", href: "https://www.linkedin.com/in/umar-suhail/", label: "LinkedIn" },
     { icon: "mdi:github", href: "https://github.com/umarsuhail", label: "GitHub" },
-    { icon: "mdi:whatsapp", href: "https://wa.me/971551912074", label: "WhatsApp" },
+    { icon: "mdi:whatsapp", href: "https://wa.me/971568323258", label: "WhatsApp" },
     { icon: "mdi:instagram", href: "https://instagram.com/umarsuhail", label: "Instagram" },
   ],
 };
@@ -91,7 +91,7 @@ export default function Footer() {
                   className="flex items-center gap-2 text-vintage-cream/60 hover:text-vintage-burgundy text-sm transition-colors duration-300"
                 >
                   <Icon icon="solar:phone-linear" />
-                  +971 551912074 / +91 9497656243
+                  +971 551 912 074 / +971 568 323 258 / +91 949 765 6243
                 </a>
               </li>
               <li className="flex items-center gap-2 text-vintage-cream/60 text-sm">
@@ -121,6 +121,6 @@ export default function Footer() {
       </div>
 
       <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1/2 h-px bg-gradient-to-r from-transparent via-vintage-burgundy/50 to-transparent" />
-    </footer>
+    </Reveal>
   );
 }

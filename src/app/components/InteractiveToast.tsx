@@ -10,16 +10,43 @@ const ACTIVITY_EVENTS = [
   "keydown",
   "touchstart",
 ];
+const GET_STARTED_CLICK_LIMIT = 3;
+const GET_STARTED_CLICK_COUNT_KEY = "portfolio-get-started-click-count";
 
 export default function InteractiveToast() {
   const pathname = usePathname();
   const router = useRouter();
   const [show, setShow] = useState(false);
+  const [hasReachedClickLimit, setHasReachedClickLimit] = useState(true);
   const timerRef = useRef<number | null>(null);
   const hasShown = useRef(false);
 
   useEffect(() => {
-    if (pathname !== "/") return;
+    const savedClickCount = Number(window.localStorage.getItem(GET_STARTED_CLICK_COUNT_KEY) ?? 0);
+    setHasReachedClickLimit(savedClickCount > GET_STARTED_CLICK_LIMIT);
+
+    const countClick = () => {
+      const currentClickCount = Number(
+        window.localStorage.getItem(GET_STARTED_CLICK_COUNT_KEY) ?? 0
+      );
+      const nextClickCount = currentClickCount + 1;
+      window.localStorage.setItem(GET_STARTED_CLICK_COUNT_KEY, String(nextClickCount));
+
+      if (nextClickCount > GET_STARTED_CLICK_LIMIT) {
+        setHasReachedClickLimit(true);
+        setShow(false);
+        if (timerRef.current) {
+          window.clearTimeout(timerRef.current);
+        }
+      }
+    };
+
+    window.addEventListener("click", countClick, { passive: true });
+    return () => window.removeEventListener("click", countClick);
+  }, []);
+
+  useEffect(() => {
+    if (pathname !== "/" || hasReachedClickLimit) return;
     if (hasShown.current) return;
 
     const startTimer = () => {
@@ -51,9 +78,9 @@ export default function InteractiveToast() {
         window.removeEventListener(eventName, resetTimer);
       }
     };
-  }, [pathname]);
+  }, [hasReachedClickLimit, pathname]);
 
-  if (pathname !== "/" || !show) return null;
+  if (pathname !== "/" || hasReachedClickLimit || !show) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/40 backdrop-blur-xl px-4 py-6">

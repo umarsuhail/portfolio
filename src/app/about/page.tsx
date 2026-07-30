@@ -2,6 +2,7 @@
 
 import { Icon } from "@iconify/react";
 import Link from "next/link";
+import { useState } from "react";
 import { about_me, resumeUrl } from "../../utils/constants";
 import ScrollProgress from "../components/ScrollProgress";
 import Reveal from "../components/Reveal";
@@ -83,7 +84,7 @@ const personalDetails = [
   {
     icon: "solar:phone-calling-rounded-bold-duotone",
     label: "Phone",
-    value: "+971 551912074 / +91 9497656243",
+    value: "+971 551 912 074 / +971 568 323 258 / +91 949 765 6243",
     href: "tel:+971551912074",
   },
 ];
@@ -99,10 +100,18 @@ const addresses = [
   {
     icon: "solar:home-smile-bold-duotone",
     tag: "Hometown",
-    title: "India",
-    lines: ["Software developer, originally from India", "Open to remote & relocation opportunities"],
+    title: "Thrissur, Kerala",
+    lines: ["Software developer, originally from Thrissur, Kerala", "Open to remote & relocation opportunities"],
     accent: "from-spidey-blue to-indigo-600",
   },
+];
+
+const galleryImages = [
+  "/api/drive-image?id=14OGmc7nJnmWoquibXGaqGK3ptysOXZdS",
+  "/api/drive-image?id=1kylUcEamTmVpKMSYqQKfumE0ltw1aTaN",
+  "/api/drive-image?id=1XsGsobPvZ9XznP9vEg3smCt2dRZtGbMC",
+  "/api/drive-image?id=1HJYI3RVuh-Crl4hI2rgb8bmOJ6NxXYtv",
+  "/api/drive-image?id=1OpvPWtMmpjy1fEGWtwCfkD4sR1D6a_Dn",
 ];
 
 function SectionHeading({
@@ -123,10 +132,19 @@ function SectionHeading({
 }
 
 export default function AboutPage() {
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
   const resumeHref =
     resumeUrl ||
     "mailto:umarsuhail112@gmail.com?subject=Request%20for%20Resume";
   const isResumeConfigured = Boolean(resumeUrl);
+  const showPreviousImage = () => {
+    setActiveImageIndex((currentIndex) =>
+      currentIndex === 0 ? galleryImages.length - 1 : currentIndex - 1
+    );
+  };
+  const showNextImage = () => {
+    setActiveImageIndex((currentIndex) => (currentIndex + 1) % galleryImages.length);
+  };
 
   return (
     <main className="relative pt-20 overflow-hidden text-spidey-silk">
@@ -185,27 +203,33 @@ export default function AboutPage() {
             </Reveal>
 
             <Reveal x={30} y={0} delay={0.2} duration={0.6} className="flex justify-center">
-              <script
-                src="https://platform.linkedin.com/badges/js/profile.js"
-                async
-                defer
-                type="text/javascript"
-              ></script>
-              <div
-                className="badge-base LI-profile-badge"
-                data-locale="en_US"
-                data-size="large"
-                data-theme="dark"
-                data-type="VERTICAL"
-                data-vanity="umar-suhail"
-                data-version="v1"
-              >
-                <a
-                  className="badge-base__link LI-simple-link"
-                  href="https://ae.linkedin.com/in/umar-suhail?trk=profile-badge"
+              <div className="relative w-full max-w-sm overflow-hidden rounded-2xl border border-spidey-red/35 bg-black/30 shadow-2xl shadow-black/40">
+                <img
+                  src={galleryImages[activeImageIndex]}
+                  alt={`Umar Suhail photo ${activeImageIndex + 1}`}
+                  className="aspect-[4/5] w-full object-cover"
+                />
+                <button
+                  type="button"
+                  onClick={showPreviousImage}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full bg-black/65 p-2.5 text-white transition-colors hover:bg-spidey-red focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                  aria-label="Show previous photo"
+                  title="Previous photo"
                 >
-                  Umar Suhail
-                </a>
+                  <Icon icon="solar:alt-arrow-left-linear" className="h-5 w-5" />
+                </button>
+                <button
+                  type="button"
+                  onClick={showNextImage}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full bg-black/65 p-2.5 text-white transition-colors hover:bg-spidey-red focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                  aria-label="Show next photo"
+                  title="Next photo"
+                >
+                  <Icon icon="solar:alt-arrow-right-linear" className="h-5 w-5" />
+                </button>
+                <p className="absolute bottom-3 left-1/2 -translate-x-1/2 rounded-full bg-black/65 px-3 py-1 text-xs font-semibold text-white">
+                  {activeImageIndex + 1} / {galleryImages.length}
+                </p>
               </div>
             </Reveal>
           </div>

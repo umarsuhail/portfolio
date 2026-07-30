@@ -180,10 +180,10 @@ export default function HelpWidget() {
                 Email: <a href="mailto:umarsuhail112@gmail.com" className="underline">umarsuhail112@gmail.com</a>
               </p>
               <p className="mt-1">
-                Phone: <a href="tel:+971551912074" className="underline">+971 551912074</a> / <a href="tel:+919497656243" className="underline">+91 9497656243</a>
+                Phone: <a href="tel:+971551912074" className="underline">+971 551 912 074</a> / <a href="tel:+971568323258" className="underline">+971 568 323 258</a> / <a href="tel:+919497656243" className="underline">+91 949 765 6243</a>
               </p>
               <p className="mt-1">
-                WhatsApp: <a href="https://wa.me/971551912074" target="_blank" rel="noopener noreferrer" className="underline">+971 551912074</a>
+                WhatsApp: <a href="https://wa.me/971551912074" target="_blank" rel="noopener noreferrer" className="underline">+971 551 912 074</a> / <a href="https://wa.me/971568323258" target="_blank" rel="noopener noreferrer" className="underline">+971 568 323 258</a>
               </p>
             </div>
           </div>

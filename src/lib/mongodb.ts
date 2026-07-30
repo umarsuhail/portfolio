@@ -9,12 +9,14 @@ if (!uri) {
   throw new Error("MONGODB_URI must be defined in environment variables.");
 }
 
+const mongoUri = uri;
+
 export async function getMongoClient() {
-  if (cachedClient && cachedClient.topology?.isConnected()) {
+  if (cachedClient) {
     return cachedClient;
   }
 
-  const client = new MongoClient(uri);
+  const client = new MongoClient(mongoUri);
   await client.connect();
   cachedClient = client;
   return client;

@@ -111,14 +111,30 @@ export default function ContactModal({ open, onClose }: ContactModalProps) {
             className="rounded-2xl border border-vintage-cream/10 bg-white/5 p-4 text-left transition hover:border-green-400/30"
           >
             <p className="text-sm font-semibold text-vintage-cream">WhatsApp</p>
-            <p className="mt-2 text-xs text-vintage-cream/60">+971 551912074</p>
+            <p className="mt-2 text-xs text-vintage-cream/60">+971 551 912 074</p>
+          </a>
+          <a
+            href="https://wa.me/971568323258"
+            target="_blank"
+            rel="noreferrer"
+            className="rounded-2xl border border-vintage-cream/10 bg-white/5 p-4 text-left transition hover:border-green-400/30"
+          >
+            <p className="text-sm font-semibold text-vintage-cream">WhatsApp</p>
+            <p className="mt-2 text-xs text-vintage-cream/60">+971 568 323 258</p>
           </a>
           <a
             href="tel:+971551912074"
             className="rounded-2xl border border-vintage-cream/10 bg-white/5 p-4 text-left transition hover:border-vintage-burgundy/30"
           >
             <p className="text-sm font-semibold text-vintage-cream">Call</p>
-            <p className="mt-2 text-xs text-vintage-cream/60">+971 551912074</p>
+            <p className="mt-2 text-xs text-vintage-cream/60">+971 551 912 074</p>
+          </a>
+          <a
+            href="tel:+971568323258"
+            className="rounded-2xl border border-vintage-cream/10 bg-white/5 p-4 text-left transition hover:border-vintage-burgundy/30"
+          >
+            <p className="text-sm font-semibold text-vintage-cream">Call</p>
+            <p className="mt-2 text-xs text-vintage-cream/60">+971 568 323 258</p>
           </a>
           <a
             href="https://www.linkedin.com/in/umar-suhail/"

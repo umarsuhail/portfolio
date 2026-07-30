@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     template: "%s | Umar Suhail",
   },
   description:
-    "Umar Suhail – Lead Frontend Engineer & Software Developer from India, based in UAE. 7+ years building React & Next.js applications at Emirates Face Recognition (EFR), Abu Dhabi. Expert in TypeScript, UI/UX design, and frontend architecture.",
+    "Umar Suhail – Lead Frontend Engineer & Software Developer from Thrissur, Kerala, based in UAE. 7+ years building React & Next.js applications at Emirates Face Recognition (EFR), Abu Dhabi. Expert in TypeScript, UI/UX design, and frontend architecture.",
   keywords: [
     "Umar Suhail",
     "Umar Suhail developer",
@@ -65,7 +65,7 @@ export const metadata: Metadata = {
     url: BASE_URL,
     title: "Umar Suhail | Lead Frontend Engineer – UAE & India",
     description:
-      "Umar Suhail, Lead Frontend Engineer from India based in Abu Dhabi, UAE. 7+ years of React, Next.js & TypeScript expertise at Emirates Face Recognition.",
+      "Umar Suhail, Lead Frontend Engineer from Thrissur, Kerala, based in Abu Dhabi, UAE. 7+ years of React, Next.js & TypeScript expertise at Emirates Face Recognition.",
     siteName: "Umar Suhail",
     images: [
       {
@@ -85,7 +85,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Umar Suhail | Lead Frontend Engineer – UAE & India",
     description:
-      "Software developer from India, based in Abu Dhabi UAE. 7+ years React & Next.js.",
+      "Software developer from Thrissur, Kerala, based in Abu Dhabi UAE. 7+ years React & Next.js.",
     images: ["/images/me-s.jpeg"],
   },
   robots: {
@@ -109,17 +109,17 @@ const person = {
   name: "Umar Suhail",
   url: BASE_URL,
   email: "umarsuhail112@gmail.com",
-  telephone: "+971 551912074 / +91 9497656243",
+  telephone: "+971 551 912 074 / +971 568 323 258 / +91 949 765 6243",
   jobTitle: "Lead Frontend Engineer & Application Developer",
   description:
-    "Umar Suhail is a Lead Frontend Engineer and Software Developer from India, currently based in Abu Dhabi, UAE. With 7+ years of experience building high-performance React and Next.js applications, he works at Emirates Face Recognition (EFR) and specialises in UI/UX design, TypeScript, design systems, and performance optimisation.",
+    "Umar Suhail is a Lead Frontend Engineer and Software Developer from Thrissur, Kerala, currently based in Abu Dhabi, UAE. With 7+ years of experience building high-performance React and Next.js applications, he works at Emirates Face Recognition (EFR) and specialises in UI/UX design, TypeScript, design systems, and performance optimisation.",
   image: {
     "@type": "ImageObject",
     url: `${BASE_URL}/images/me-s.jpeg`,
     width: 400,
     height: 400,
   },
-  // Both current (UAE) and origin (India) locations
+  // Current UAE location and hometown in Kerala
   address: {
     "@type": "PostalAddress",
     addressLocality: "Abu Dhabi",
@@ -127,9 +127,11 @@ const person = {
   },
   homeLocation: {
     "@type": "Place",
-    name: "India",
+    name: "Thrissur, Kerala",
     address: {
       "@type": "PostalAddress",
+      addressLocality: "Thrissur",
+      addressRegion: "Kerala",
       addressCountry: "IN",
     },
   },
@@ -205,9 +207,7 @@ const profilePageSchema = {
   url: BASE_URL,
   name: "Umar Suhail – Lead Frontend Engineer Portfolio",
   description:
-    "Official portfolio of Umar Suhail, Lead Frontend Engineer and Software Developer from India, based in Abu Dhabi UAE.",
-  dateCreated: "2024-01-01T00:00:00+00:00",
-  dateModified: new Date().toISOString(),
+    "Official portfolio of Umar Suhail, Lead Frontend Engineer and Software Developer from Thrissur, Kerala, based in Abu Dhabi UAE.",
   inLanguage: "en",
   mainEntity: person,
 };
@@ -220,7 +220,7 @@ const websiteSchema = {
   url: BASE_URL,
   name: "Umar Suhail",
   description:
-    "Portfolio of Umar Suhail — Lead Frontend Engineer from India, based in Abu Dhabi UAE.",
+    "Portfolio of Umar Suhail — Lead Frontend Engineer from Thrissur, Kerala, based in Abu Dhabi UAE.",
   inLanguage: "en",
   publisher: { "@id": `${BASE_URL}/#person` },
 };

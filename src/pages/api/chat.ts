@@ -22,6 +22,10 @@ const MAX_INPUT_CHARS = 500;
 const REFUSAL =
   "I can only answer questions about Umar's work and professional background. What would you like to know about him?";
 
+const projectSummaries = projects
+  .map((project) => `- ${project.name}: ${project.about} Stack: ${project.stacks.join(", ")}.`)
+  .join("\n");
+
 // ── Deterministic pre-screen (runs before any API call) ──────────────────────
 // Blocks prompt-injection/jailbreak attempts and clearly off-topic queries.
 // Ambiguous messages pass through and are handled by the model's system prompt.

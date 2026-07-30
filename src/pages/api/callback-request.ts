@@ -21,7 +21,7 @@ const collectionName = process.env.MONGODB_CALLBACK_COLLECTION || "callback_requ
 let cachedClient: MongoClient | null = null;
 
 async function getClient() {
-  if (cachedClient && cachedClient.topology?.isConnected()) {
+  if (cachedClient) {
     return cachedClient;
   }
 
