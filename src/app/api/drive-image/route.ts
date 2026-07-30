@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 const ALLOWED_IMAGE_IDS = new Set([
+  "1h1OwfyZbLOeKTl_MX_uXaN-egBHh9yfz",
   "14OGmc7nJnmWoquibXGaqGK3ptysOXZdS",
   "1kylUcEamTmVpKMSYqQKfumE0ltw1aTaN",
   "1XsGsobPvZ9XznP9vEg3smCt2dRZtGbMC",

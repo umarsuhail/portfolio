@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { verify } from "jsonwebtoken";
+import { getLoginJwtSecret } from "@/lib/auth";
 
 type ResponseData = {
   user?: {
@@ -7,8 +8,6 @@ type ResponseData = {
     userId: string;
   };
 };
-
-const JWT_SECRET = process.env.LOGIN_JWT_SECRET || "dev_secret_key";
 
 function getTokenFromCookies(cookies: string | undefined) {
   if (!cookies) return null;
@@ -33,7 +32,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Respon
   }
 
   try {
-    const decoded = verify(token, JWT_SECRET);
+    const decoded = verify(token, getLoginJwtSecret());
     if (typeof decoded === "object" && decoded && "email" in decoded && "userId" in decoded) {
       res.status(200).json({
         user: {

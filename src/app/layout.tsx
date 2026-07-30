@@ -24,11 +24,11 @@ export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
   title: {
     default:
-      "Umar Suhail | Lead Frontend Engineer – React & Next.js Developer, UAE & India",
+      "Umar Suhail | Next.js & Frontend Developer in Abu Dhabi",
     template: "%s | Umar Suhail",
   },
   description:
-    "Umar Suhail (also searched as Umer Suhail, Omer Suhail, and Umar Sohail) is a Lead Frontend Engineer and Software Developer from Thrissur, Kerala, based in UAE. 7+ years building React & Next.js applications at Emirates Face Recognition (EFR), Abu Dhabi.",
+    "Umar Suhail is a Next.js developer and frontend developer in Abu Dhabi, UAE. With 7+ years of experience, he builds React, Next.js, and TypeScript applications at Emirates Face Recognition (EFR). Also searched as Umer Suhail, Omer Suhail, and Umar Sohail.",
   keywords: [
     "Umar Suhail",
     "Umer Suhail",
@@ -42,6 +42,8 @@ export const metadata: Metadata = {
     "Umar Suhail React developer",
     "Umar Suhail frontend engineer",
     "Lead Frontend Engineer UAE",
+    "Frontend Developer Abu Dhabi",
+    "Next.js Developer Abu Dhabi",
     "React Developer Abu Dhabi",
     "Next.js Developer UAE",
     "Frontend Engineer India",
@@ -68,9 +70,9 @@ export const metadata: Metadata = {
     locale: "en_AE",
     alternateLocale: ["en_IN", "en_US"],
     url: BASE_URL,
-    title: "Umar Suhail | Lead Frontend Engineer – UAE & India",
+    title: "Umar Suhail | Next.js & Frontend Developer in Abu Dhabi",
     description:
-      "Umar Suhail, Lead Frontend Engineer from Thrissur, Kerala, based in Abu Dhabi, UAE. 7+ years of React, Next.js & TypeScript expertise at Emirates Face Recognition.",
+      "Umar Suhail is a Next.js and frontend developer in Abu Dhabi, UAE, with 7+ years of React and TypeScript expertise at Emirates Face Recognition.",
     siteName: "Umar Suhail",
     images: [
       {
@@ -88,9 +90,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Umar Suhail | Lead Frontend Engineer – UAE & India",
+    title: "Umar Suhail | Next.js & Frontend Developer in Abu Dhabi",
     description:
-      "Software developer from Thrissur, Kerala, based in Abu Dhabi UAE. 7+ years React & Next.js.",
+      "Next.js and frontend developer in Abu Dhabi, UAE. 7+ years building React and TypeScript applications.",
     images: ["/images/me-s.jpeg"],
   },
   robots: {
@@ -118,7 +120,7 @@ const person = {
   telephone: "+971 551 912 074 / +971 568 323 258 / +91 949 765 6243",
   jobTitle: "Lead Frontend Engineer & Application Developer",
   description:
-    "Umar Suhail is a Lead Frontend Engineer and Software Developer from Thrissur, Kerala, currently based in Abu Dhabi, UAE. With 7+ years of experience building high-performance React and Next.js applications, he works at Emirates Face Recognition (EFR) and specialises in UI/UX design, TypeScript, design systems, and performance optimisation.",
+    "Umar Suhail is a Lead Frontend Engineer, Next.js developer, and frontend developer in Abu Dhabi, UAE. With 7+ years of experience building high-performance React and Next.js applications, he works at Emirates Face Recognition (EFR) and specialises in UI/UX design, TypeScript, design systems, and performance optimisation.",
   image: {
     "@type": "ImageObject",
     url: `${BASE_URL}/images/me-s.jpeg`,

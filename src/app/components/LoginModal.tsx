@@ -6,11 +6,11 @@ import { Icon } from "@iconify/react";
 type LoginModalProps = {
   open: boolean;
   onClose: () => void;
-  onSuccess: () => void;
+  onSuccess: (user: { email: string }) => void;
 };
 
 export default function LoginModal({ open, onClose, onSuccess }: LoginModalProps) {
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [status, setStatus] = useState<"idle" | "submitting" | "error">("idle");
   const [message, setMessage] = useState("");
@@ -33,14 +33,14 @@ export default function LoginModal({ open, onClose, onSuccess }: LoginModalProps
       const response = await fetch("/api/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ username, password }),
       });
       const data = await response.json();
       if (!response.ok || !data.success) {
         throw new Error(data.error || "Login failed.");
       }
       setStatus("idle");
-      onSuccess();
+      onSuccess(data.user);
     } catch (error) {
       setStatus("error");
       setMessage(error instanceof Error ? error.message : "Login failed.");
@@ -79,15 +79,16 @@ export default function LoginModal({ open, onClose, onSuccess }: LoginModalProps
 
         <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
           <label className="block text-sm text-vintage-cream/70">
-            Email
+            Username or email
             <input
               ref={firstInputRef}
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
+              value={username}
+              onChange={(event) => setUsername(event.target.value)}
               required
-              type="email"
+              type="text"
+              autoComplete="username"
               className="mt-2 w-full rounded-2xl border border-white/10 bg-slate-950/80 px-4 py-3 text-sm text-vintage-cream focus:border-vintage-burgundy"
-              placeholder="umarsuhail112@gmail.com"
+              placeholder="Username or email"
             />
           </label>
           <label className="block text-sm text-vintage-cream/70">
@@ -97,6 +98,7 @@ export default function LoginModal({ open, onClose, onSuccess }: LoginModalProps
               onChange={(event) => setPassword(event.target.value)}
               required
               type="password"
+              autoComplete="current-password"
               className="mt-2 w-full rounded-2xl border border-white/10 bg-slate-950/80 px-4 py-3 text-sm text-vintage-cream focus:border-vintage-burgundy"
               placeholder="Enter your password"
             />

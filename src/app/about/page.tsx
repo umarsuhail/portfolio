@@ -112,11 +112,8 @@ const addresses = [
 ];
 
 const galleryImages = [
-  "/api/drive-image?id=14OGmc7nJnmWoquibXGaqGK3ptysOXZdS",
-  "/api/drive-image?id=1kylUcEamTmVpKMSYqQKfumE0ltw1aTaN",
+  "/api/drive-image?id=1h1OwfyZbLOeKTl_MX_uXaN-egBHh9yfz",
   "/api/drive-image?id=1XsGsobPvZ9XznP9vEg3smCt2dRZtGbMC",
-  "/api/drive-image?id=1HJYI3RVuh-Crl4hI2rgb8bmOJ6NxXYtv",
-  "/api/drive-image?id=1OpvPWtMmpjy1fEGWtwCfkD4sR1D6a_Dn",
 ];
 
 function SectionHeading({

@@ -445,6 +445,17 @@
     @apply py-20 md:py-32;
   }
 
+  .home-section-skeleton {
+    min-height: var(--section-skeleton-height);
+    background: linear-gradient(180deg, rgba(3, 0, 20, 0.15), rgba(11, 16, 38, 0.35));
+  }
+
+  @media (max-width: 767px) {
+    .home-section-skeleton {
+      min-height: min(var(--section-skeleton-height), 14rem);
+    }
+  }
+
   .section-title {
     @apply text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight;
   }

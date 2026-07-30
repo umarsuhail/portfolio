@@ -1,8 +1,9 @@
 "use client";
 
 import { lazy, Suspense, useEffect, useRef, useState } from "react";
+import Experience from "./Experience";
+import useIsMobile from "./useIsMobile";
 
-const Experience = lazy(() => import("./Experience"));
 const SkillUniverse = lazy(() => import("./SkillUniverse"));
 const ProjectsA = lazy(() => import("./ProjectsA"));
 const SpideyFeature = lazy(() => import("./SpideyFeature"));
@@ -11,7 +12,16 @@ const Contact = lazy(() => import("./Contact"));
 const Footer = lazy(() => import("./Footer"));
 
 function SectionSkeleton({ minHeight = 360 }: { minHeight?: number }) {
-  return <div aria-hidden style={{ minHeight }} />;
+  return (
+    <div
+      aria-hidden
+      className="home-section-skeleton relative overflow-hidden"
+      style={{ "--section-skeleton-height": `${minHeight}px` } as React.CSSProperties}
+    >
+      <div className="absolute inset-x-4 top-10 h-px bg-gradient-to-r from-transparent via-spidey-red/40 to-transparent" />
+      <div className="absolute left-1/2 top-10 h-1.5 w-20 -translate-x-1/2 rounded-full bg-spidey-red/70 shadow-[0_0_14px_rgba(230,36,41,0.65)]" />
+    </div>
+  );
 }
 
 function LazyWhenNear({
@@ -23,6 +33,7 @@ function LazyWhenNear({
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     const el = ref.current;
@@ -34,12 +45,12 @@ function LazyWhenNear({
         setVisible(true);
         observer.disconnect();
       },
-      { rootMargin: "160px 0px" }
+      { rootMargin: isMobile ? "900px 0px" : "240px 0px" }
     );
 
     observer.observe(el);
     return () => observer.disconnect();
-  }, [visible]);
+  }, [isMobile, visible]);
 
   return (
     <div ref={ref}>
@@ -57,9 +68,7 @@ function LazyWhenNear({
 export default function HomeDeferredSections() {
   return (
     <>
-      <LazyWhenNear minHeight={640}>
-        <Experience />
-      </LazyWhenNear>
+      <Experience />
       <LazyWhenNear minHeight={640}>
         <SkillUniverse />
       </LazyWhenNear>

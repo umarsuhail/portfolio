@@ -5,7 +5,7 @@ import confidential from "../../public/images/confidential.png";
 
 export const texts = {
   about:
-    "Software developer from Thrissur, Kerala, based in Abu Dhabi, UAE — Lead Frontend Engineer with 7+ years building scalable React & Next.js applications at Emirates Face Recognition (EFR). Specialising in UI/UX design, TypeScript, and frontend architecture.",
+    "Next.js developer and frontend developer in Abu Dhabi, UAE — Lead Frontend Engineer with 7+ years building scalable React, Next.js, and TypeScript applications at Emirates Face Recognition (EFR). Originally from Thrissur, Kerala, I specialise in UI/UX design and frontend architecture.",
 };
 
 export const skills = [
