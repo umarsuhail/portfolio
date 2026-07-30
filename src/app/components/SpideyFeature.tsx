@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import Reveal from "./Reveal";
 
 interface SpideyFeatureProps {
   /** Small eyebrow label above the heading */
@@ -24,76 +24,82 @@ export default function SpideyFeature({
 }: SpideyFeatureProps) {
   const ref = useRef<HTMLElement>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
+  const figureRef = useRef<HTMLDivElement>(null);
 
-  // 0 when the section's top hits the bottom of the viewport,
-  // 1 when the section's bottom leaves the top of the viewport.
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start end", "end start"],
-  });
-
-  // Scroll-scrubbed glow: each character lights up in sequence as you scroll.
+  // Scroll-interactive reveal (no pin — keeps page scroll smooth):
+  //  • the Spider-Man artwork swings in once and stays as a steady backdrop;
+  //  • the headline highlights letter-by-letter, scrubbed to the heading's own
+  //    travel through the viewport, and is fully lit while it sits comfortably
+  //    in the upper-middle of the screen — then stays lit.
   useEffect(() => {
     const section = ref.current;
     const heading = headingRef.current;
-    if (!section || !heading) return;
+    const figure = figureRef.current;
+    if (!section || !heading || !figure) return;
 
     gsap.registerPlugin(ScrollTrigger);
     const chars = heading.querySelectorAll<HTMLElement>(".spidey-char");
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+    const litShadow =
+      "0 0 16px rgba(230,36,41,0.9), 0 0 34px rgba(43,108,232,0.5)";
+
     const ctx = gsap.context(() => {
       if (reduce) {
-        gsap.set(chars, {
-          color: "#F4E9E8",
-          textShadow:
-            "0 0 16px rgba(230,36,41,0.85), 0 0 34px rgba(43,108,232,0.45)",
-        });
+        gsap.set(figure, { yPercent: 0, xPercent: 0, scale: 1.12, rotation: 0, opacity: 1 });
+        gsap.set(chars, { color: "#F4E9E8", textShadow: litShadow });
         return;
       }
 
+      // Artwork swings in once, then settles and stays put.
+      gsap.fromTo(
+        figure,
+        { yPercent: -16, xPercent: 8, scale: 1.3, rotation: -8, opacity: 0 },
+        {
+          yPercent: 0,
+          xPercent: 0,
+          scale: 1.12,
+          rotation: 0,
+          opacity: 1,
+          duration: 1.1,
+          ease: "power3.out",
+          scrollTrigger: { trigger: section, start: "top 85%", once: true },
+        }
+      );
+
+      // Letters light up in sequence, driven by scroll position (scrubbed).
       gsap.fromTo(
         chars,
         {
           color: "rgba(244,233,232,0.22)",
-          textShadow:
-            "0 0 0px rgba(230,36,41,0), 0 0 0px rgba(43,108,232,0)",
+          textShadow: "0 0 0px rgba(230,36,41,0), 0 0 0px rgba(43,108,232,0)",
         },
         {
           color: "#F4E9E8",
-          textShadow:
-            "0 0 16px rgba(230,36,41,0.9), 0 0 34px rgba(43,108,232,0.5)",
+          textShadow: litShadow,
           ease: "none",
-          stagger: { each: 0.4 },
+          stagger: { each: 0.5 },
           scrollTrigger: {
-            trigger: section,
-            start: "top 75%",
-            end: "bottom 40%",
-            scrub: 0.6,
+            trigger: heading,
+            start: "top 85%",
+            end: "top 35%",
+            scrub: 0.8,
           },
         }
       );
     }, section);
 
-    // Recalculate once lazy sections below/above have settled
-    const t = window.setTimeout(() => ScrollTrigger.refresh(), 300);
+    // Recalculate once lazy sections above have settled.
+    const refresh = () => ScrollTrigger.refresh();
+    const t = window.setTimeout(refresh, 400);
+    window.addEventListener("load", refresh);
 
     return () => {
       window.clearTimeout(t);
+      window.removeEventListener("load", refresh);
       ctx.revert();
     };
   }, []);
-
-  // Spider-Man drifts down + in, then swings back up + out → "comes and goes"
-  const figureY = useTransform(scrollYProgress, [0, 0.5, 1], ["-20%", "0%", "18%"]);
-  const figureX = useTransform(scrollYProgress, [0, 0.5, 1], ["10%", "0%", "-8%"]);
-  const figureScale = useTransform(scrollYProgress, [0, 0.5, 1], [1.32, 1.12, 1.32]);
-  const figureRotate = useTransform(scrollYProgress, [0, 0.5, 1], [-9, 0, 11]);
-  const figureOpacity = useTransform(
-    scrollYProgress,
-    [0, 0.22, 0.5, 0.78, 1],
-    [0, 1, 1, 1, 0]
-  );
 
   return (
     <section
@@ -102,17 +108,11 @@ export default function SpideyFeature({
       className="relative min-h-[85vh] overflow-hidden flex items-center"
     >
       {/* Scroll-driven Spider-Man artwork */}
-      <motion.div
+      <div
+        ref={figureRef}
         aria-hidden
-        className="absolute inset-0 bg-cover bg-right-top will-change-transform"
-        style={{
-          y: figureY,
-          x: figureX,
-          scale: figureScale,
-          rotate: figureRotate,
-          opacity: figureOpacity,
-          backgroundImage: "url('/images/sp-bg1.jpg')",
-        }}
+        className="absolute inset-0 bg-cover bg-right-top will-change-transform opacity-0"
+        style={{ backgroundImage: "url('/images/sp-bg1.jpg')" }}
       />
 
       {/* Left→right darken keeps the heading legible; Spidey stays bright on the right */}
@@ -128,13 +128,7 @@ export default function SpideyFeature({
       <div className="spidey-web absolute inset-0 opacity-25" aria-hidden />
 
       <div className="section-container relative z-10">
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.4 }}
-          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-          className="max-w-2xl"
-        >
+        <Reveal inView y={40} amount={0.4} duration={0.7} className="max-w-2xl">
           <span className="badge mb-5 border-spidey-red/40 bg-spidey-red/15 text-spidey-silk">
             {eyebrow}
           </span>
@@ -143,21 +137,20 @@ export default function SpideyFeature({
             aria-label={title}
             className="text-4xl md:text-6xl font-bold leading-tight text-spidey-silk mb-5"
           >
-            {title.split(" ").map((word, wi, words) => (
-              <span key={`${word}-${wi}`} className="inline-block" aria-hidden>
+            {title.split(" ").map((word, wi) => (
+              <span key={`${word}-${wi}`} className="inline-block mr-[0.28em]" aria-hidden>
                 {word.split("").map((ch, ci) => (
                   <span key={ci} className="spidey-char inline-block">
                     {ch}
                   </span>
                 ))}
-                {wi < words.length - 1 ? " " : null}
               </span>
             ))}
           </h2>
           <p className="text-spidey-silk/75 text-lg md:text-xl max-w-xl">
             {subtitle}
           </p>
-        </motion.div>
+        </Reveal>
       </div>
     </section>
   );

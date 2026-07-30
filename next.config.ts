@@ -19,13 +19,10 @@ if (
 }
 
 const nextConfig: NextConfig = {
+  // Enables Partial Prerendering and the "use cache" runtime in Next 16.
+  cacheComponents: true,
+
   experimental: {
-    // Partial Pre-Rendering — pages opt in with `export const experimental_ppr = true`
-    ppr: "incremental",
-
-    // "use cache" directive + cacheLife / cacheTag APIs
-    useCache: true,
-
     // Router cache: how long prefetched static/dynamic pages stay fresh in the client
     staleTimes: {
       dynamic: 30,   // 30 s for dynamically-rendered pages

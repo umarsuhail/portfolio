@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, FormEvent } from "react";
-import { motion } from "framer-motion";
 import { Icon } from "@iconify/react";
+import Reveal from "./Reveal";
 
 const contactInfo = [
   {
@@ -59,13 +59,7 @@ export default function Contact() {
     <section id="contact" className="section-padding relative overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-b from-vintage-navy via-vintage-slate/20 to-vintage-navy opacity-50" />
       <div className="section-container relative z-10">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-16"
-        >
+        <Reveal inView y={30} duration={0.6} className="text-center mb-16">
           <span className="badge badge-primary mb-4">Get In Touch</span>
           <h2 className="section-title text-vintage-cream mb-4">
             Let&apos;s Work <span className="gradient-text">Together</span>
@@ -73,16 +67,10 @@ export default function Contact() {
           <p className="section-subtitle">
             Have a project in mind? I&apos;d love to hear about it. Let&apos;s create something amazing together.
           </p>
-        </motion.div>
+        </Reveal>
 
         <div className="grid lg:grid-cols-2 gap-12 items-start">
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="space-y-8"
-          >
+          <Reveal inView x={-30} y={0} duration={0.6} className="space-y-8">
             <div>
               <h3 className="text-2xl font-bold text-vintage-cream mb-4">
                 Contact Information
@@ -149,23 +137,19 @@ export default function Contact() {
                 Currently accepting freelance projects and full-time positions. Let&apos;s discuss how I can contribute to your team!
               </p>
             </div>
-          </motion.div>
+          </Reveal>
 
-          <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-          >
+          <Reveal inView x={30} y={0} duration={0.6}>
             <div className="vintage-card rounded-xl p-8">
               <h3 className="text-2xl font-bold text-vintage-cream mb-6">
                 Send a Message
               </h3>
 
               {submitted ? (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
+                <Reveal
+                  scale={0.9}
+                  y={0}
+                  duration={0.4}
                   className="flex flex-col items-center justify-center py-12 text-center"
                 >
                   <div className="w-20 h-20 rounded-lg bg-vintage-burgundy/20 flex items-center justify-center mb-4">
@@ -173,7 +157,7 @@ export default function Contact() {
                   </div>
                   <h4 className="text-xl font-bold text-vintage-cream mb-2">Message Sent!</h4>
                   <p className="text-vintage-cream/60">Thank you for reaching out. I&apos;ll get back to you soon.</p>
-                </motion.div>
+                </Reveal>
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-5">
                   <div className="grid sm:grid-cols-2 gap-5">
@@ -253,7 +237,7 @@ export default function Contact() {
                 </form>
               )}
             </div>
-          </motion.div>
+          </Reveal>
         </div>
       </div>
     </section>

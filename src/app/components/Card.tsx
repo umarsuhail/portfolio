@@ -1,11 +1,9 @@
-"use client";
-
 import Image from "next/image";
-import { motion } from "framer-motion";
-import { Icon } from "@iconify/react";
 import profile from "../../../public/images/me-s.jpeg";
 import { texts } from "@/utils/constants";
 import DownloadCVMenu from "./DownloadCVMenu";
+import CriticalIcon from "./CriticalIcon";
+import Reveal from "./Reveal";
 
 const stats = [
   { value: "7+",  label: "Years Experience" },
@@ -15,11 +13,11 @@ const stats = [
 ];
 
 const socialLinks = [
-  { icon: "mdi:linkedin", href: "https://www.linkedin.com/in/umar-suhail/", label: "LinkedIn" },
-  { icon: "mdi:github",   href: "https://github.com/umarsuhail",            label: "GitHub" },
-  { icon: "mdi:facebook",  href: "https://facebook.com/umar.suhail1",           label: "facebook" },
-  { icon: "mdi:instagram",  href: "https://www.instagram.com/umar_suhail_/",           label: "Instagram" },
-]
+  { icon: "linkedin", href: "https://www.linkedin.com/in/umar-suhail/", label: "LinkedIn" },
+  { icon: "github", href: "https://github.com/umarsuhail", label: "GitHub" },
+  { icon: "user", href: "https://facebook.com/umar.suhail1", label: "Facebook" },
+  { icon: "instagram", href: "https://www.instagram.com/umar_suhail_/", label: "Instagram" },
+] as const;
 // Spider-Man palette
 const GOLD_RICH  = "#E62429"; // spidey red (decorative / gradients)
 const GOLD_DEEP  = "#E62429"; // spidey red (functional accent)
@@ -55,17 +53,11 @@ export default function Card() {
         <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 items-center">
 
           {/* Left — content */}
-          <motion.div
-            initial={{ opacity: 0, y: 32 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
-            className="order-2 lg:order-1 flex flex-col gap-8"
-          >
+          <Reveal y={32} duration={0.7} className="order-2 lg:order-1 flex flex-col gap-8">
             {/* Status pill */}
-            <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.15 }}
+            <Reveal
+              y={12}
+              delay={0.15}
               className="inline-flex items-center gap-2.5 self-start px-4 py-2 rounded-full"
               style={{
                 border: `1px solid rgba(230,36,41,0.4)`,
@@ -85,14 +77,10 @@ export default function Card() {
               <span className="text-sm font-medium" style={{ color: GOLD_DEEP }}>
                 Available for opportunities
               </span>
-            </motion.div>
+            </Reveal>
 
             {/* Heading */}
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.25 }}
-            >
+            <Reveal y={16} delay={0.25}>
               <p
                 className="text-sm font-semibold tracking-[0.18em] uppercase mb-3"
                 style={{ color: GOLD_DEEP }}
@@ -113,86 +101,55 @@ export default function Card() {
                   Umar Suhail
                 </span>
               </h1>
-              <p
-                className="mt-2 text-sm font-medium italic"
-                style={{ color: TEXT_3 }}
-              >
-                🕷️ Your Friendly Neighbourhood Developer
-              </p>
-            </motion.div>
+            </Reveal>
 
             {/* Description */}
-            <motion.p
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.35 }}
+            <Reveal
+              y={16}
+              delay={0.35}
               className="text-lg leading-[1.8] max-w-lg"
               style={{ color: TEXT_2 }}
             >
               {texts.about}
-            </motion.p>
+            </Reveal>
 
             {/* CTA buttons */}
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.45 }}
-              className="flex flex-wrap gap-3 items-center"
-            >
+            <Reveal y={16} delay={0.45} className="flex flex-wrap gap-3 items-center">
               {/* Primary — gold gradient + shimmer */}
-              <motion.a
+              <a
                 href="#contact"
                 data-hover-sound
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm text-white landing-btn-primary"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm text-white landing-btn-primary transition-transform duration-150 hover:-translate-y-[3px] hover:scale-[1.04] active:scale-[0.97]"
                 style={{
                   background: `linear-gradient(135deg, ${GOLD_DEEP} 0%, ${GOLD_DARK} 100%)`,
                   boxShadow: `0 4px 14px rgba(138,106,26,0.35), 0 1px 3px rgba(138,106,26,0.2)`,
                 }}
-                whileHover={{
-                  scale: 1.04,
-                  y: -3,
-                  boxShadow: "0 10px 28px rgba(138,106,26,0.50), 0 3px 8px rgba(138,106,26,0.28)",
-                  transition: { duration: 0.16, ease: "easeOut" },
-                }}
-                whileTap={{ scale: 0.97, transition: { duration: 0.1 } }}
               >
-                <Icon icon="solar:chat-round-dots-bold" className="text-base" />
+                <CriticalIcon name="chat" className="h-4 w-4" />
                 Get In Touch
-              </motion.a>
+              </a>
 
               {/* Secondary — white + steel border + shimmer */}
-              <motion.a
+              <a
                 href="#projects"
                 data-hover-sound
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm landing-btn-secondary"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm landing-btn-secondary transition-transform duration-150 hover:-translate-y-[3px] hover:scale-[1.04] active:scale-[0.97]"
                 style={{
                   color: TEXT_1,
                   background: CARD_BG,
                   border: `1px solid rgba(43,108,232,0.45)`,
                   boxShadow: "0 1px 3px rgba(0,0,0,0.4)",
                 }}
-                whileHover={{
-                  scale: 1.04,
-                  y: -3,
-                  boxShadow: "0 8px 24px rgba(43,108,232,0.3), 0 2px 6px rgba(43,108,232,0.18)",
-                  transition: { duration: 0.16, ease: "easeOut" },
-                }}
-                whileTap={{ scale: 0.97, transition: { duration: 0.1 } }}
               >
-                <Icon icon="solar:eye-bold" className="text-base" />
+                <CriticalIcon name="eye" className="h-4 w-4" />
                 View Projects
-              </motion.a>
+              </a>
 
               <DownloadCVMenu variant="dark" />
-            </motion.div>
+            </Reveal>
 
             {/* Social links */}
-            <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.55 }}
-              className="flex items-center gap-4 pt-1"
-            >
+            <Reveal y={12} delay={0.55} className="flex items-center gap-4 pt-1">
               <span
                 className="text-xs font-medium tracking-widest uppercase"
                 style={{ color: TEXT_3 }}
@@ -215,31 +172,16 @@ export default function Card() {
                       color: TEXT_2,
                       boxShadow: "0 1px 3px rgba(0,0,0,0.4)",
                     }}
-                    onMouseEnter={(e) => {
-                      (e.currentTarget as HTMLElement).style.color = GOLD_DEEP;
-                      (e.currentTarget as HTMLElement).style.borderColor = `rgba(230,36,41,0.5)`;
-                      (e.currentTarget as HTMLElement).style.background = `rgba(230,36,41,0.12)`;
-                    }}
-                    onMouseLeave={(e) => {
-                      (e.currentTarget as HTMLElement).style.color = TEXT_2;
-                      (e.currentTarget as HTMLElement).style.borderColor = "rgba(244,233,232,0.14)";
-                      (e.currentTarget as HTMLElement).style.background = "rgba(11,16,38,0.6)";
-                    }}
                   >
-                    <Icon icon={social.icon} className="text-base" />
+                    <CriticalIcon name={social.icon} className="h-4 w-4" />
                   </a>
                 ))}
               </div>
-            </motion.div>
-          </motion.div>
+            </Reveal>
+          </Reveal>
 
           {/* Right — portrait */}
-          <motion.div
-            initial={{ opacity: 0, y: 32 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.1, ease: [0.25, 0.46, 0.45, 0.94] }}
-            className="order-1 lg:order-2 flex justify-center"
-          >
+          <Reveal y={32} delay={0.1} duration={0.7} className="order-1 lg:order-2 flex justify-center">
             <div className="relative">
 
               {/* Decorative ring — gold + steel */}
@@ -268,15 +210,16 @@ export default function Card() {
                   fill
                   className="object-cover"
                   style={{ objectPosition: "top" }}
+                  sizes="(min-width: 768px) 320px, 256px"
                   priority
                 />
               </div>
 
               {/* Badge — Experience */}
-              <motion.div
-                initial={{ opacity: 0, scale: 0.85 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.7 }}
+              <Reveal
+                scale={0.85}
+                y={0}
+                delay={0.7}
                 className="absolute -bottom-4 -right-4 rounded-2xl px-4 py-3 flex items-center gap-3 landing-badge"
                 style={{
                   background: CARD_BG,
@@ -288,19 +231,19 @@ export default function Card() {
                   className="w-10 h-10 rounded-xl flex items-center justify-center"
                   style={{ background: `linear-gradient(135deg, ${GOLD_DEEP} 0%, ${GOLD_DARK} 100%)` }}
                 >
-                  <Icon icon="solar:verified-check-bold" className="text-xl" style={{ color: "#ffffff" }} />
+                  <CriticalIcon name="verified" className="h-5 w-5" style={{ color: "#ffffff" }} />
                 </div>
                 <div>
                   <p className="text-sm font-bold" style={{ color: TEXT_1 }}>7+ Years</p>
                   <p className="text-xs" style={{ color: TEXT_3 }}>Experience</p>
                 </div>
-              </motion.div>
+              </Reveal>
 
               {/* Badge — Top rated */}
-              <motion.div
-                initial={{ opacity: 0, scale: 0.85 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.85 }}
+              <Reveal
+                scale={0.85}
+                y={0}
+                delay={0.85}
                 className="absolute -top-4 -left-4 rounded-2xl px-4 py-3 flex items-center gap-3 landing-badge"
                 style={{
                   background: CARD_BG,
@@ -312,31 +255,23 @@ export default function Card() {
                   className="w-10 h-10 rounded-xl flex items-center justify-center"
                   style={{ background: `linear-gradient(135deg, ${STEEL} 0%, #1A3F9C 100%)` }}
                 >
-                  <Icon icon="solar:star-bold" className="text-xl" style={{ color: "#ffffff" }} />
+                  <CriticalIcon name="star" className="h-5 w-5" style={{ color: "#ffffff" }} />
                 </div>
                 <div>
                   <p className="text-sm font-bold" style={{ color: TEXT_1 }}>Top Rated</p>
                   <p className="text-xs" style={{ color: TEXT_3 }}>Developer</p>
                 </div>
-              </motion.div>
+              </Reveal>
 
             </div>
-          </motion.div>
+          </Reveal>
         </div>
 
         {/* ── Stats row ──────────────────────────────────────────── */}
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.65, duration: 0.6 }}
-          className="mt-24 grid grid-cols-2 md:grid-cols-4 gap-4"
-        >
-          {stats.map((stat, index) => (
-            <motion.div
+        <Reveal y={24} delay={0.65} duration={0.6} className="mt-24 grid grid-cols-2 md:grid-cols-4 gap-4">
+          {stats.map((stat) => (
+            <div
               key={stat.label}
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.75 + index * 0.08 }}
               className="rounded-2xl px-6 py-5 text-center group hover:-translate-y-1 transition-transform duration-300"
               style={{
                 background: CARD_BG,
@@ -355,9 +290,9 @@ export default function Card() {
               <p className="text-sm font-medium" style={{ color: TEXT_3 }}>
                 {stat.label}
               </p>
-            </motion.div>
+            </div>
           ))}
-        </motion.div>
+        </Reveal>
 
       </div>
     </section>

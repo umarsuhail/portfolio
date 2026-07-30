@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { Icon } from "@iconify/react";
 import Link from "next/link";
 
@@ -110,12 +109,9 @@ export default function Footer() {
             <div className="flex items-center gap-6">
               <p className="text-vintage-cream/40 text-sm flex items-center gap-2">
                 Made with
-                <motion.span
-                  animate={{ scale: [1, 1.2, 1] }}
-                  transition={{ duration: 1, repeat: Infinity }}
-                >
+                <span className="inline-block animate-pulse">
                   <Icon icon="solar:heart-bold" className="text-vintage-burgundy" />
-                </motion.span>
+                </span>
                 to Spidy
               </p>
             </div>

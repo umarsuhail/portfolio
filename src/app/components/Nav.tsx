@@ -1,18 +1,17 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Icon } from "@iconify/react";
-import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import CriticalIcon, { type CriticalIconName } from "./CriticalIcon";
 import DownloadCVMenu from "./DownloadCVMenu";
 
 const navLinks = [
-  { href: "/about",    label: "About",    icon: "solar:user-bold-duotone" },
-  { href: "#projects", label: "Projects", icon: "solar:code-bold-duotone" },
-  { href: "#skills",   label: "Skills",   icon: "solar:star-bold-duotone" },
-  { href: "#contact",  label: "Contact",  icon: "solar:chat-round-dots-bold-duotone" },
-];
+  { href: "/about", label: "About", icon: "user" },
+  { href: "#projects", label: "Projects", icon: "code" },
+  { href: "#skills", label: "Skills", icon: "star" },
+  { href: "#contact", label: "Contact", icon: "chat" },
+] as const;
 
 export default function Nav() {
   const [isOpen, setIsOpen]               = useState(false);
@@ -21,7 +20,6 @@ export default function Nav() {
 
   const pathname = usePathname();
   const isLight  = pathname === "/";
-
   useEffect(() => {
     let ticking = false;
     const handleScroll = () => {
@@ -50,10 +48,7 @@ export default function Nav() {
   }, []);
 
   return (
-    <motion.header
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
-      transition={{ duration: 0.5 }}
+    <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         scrolled ? "py-3" : "py-5"
       } ${
@@ -139,8 +134,8 @@ export default function Nav() {
                   style={isLight ? { color: isActive ? "#F4E9E8" : "rgba(244,233,232,0.6)" } : {}}
                 >
                   {isActive && (
-                    <motion.div
-                      layoutId="activeNav"
+                    <span
+                      aria-hidden
                       className="absolute inset-0 rounded-lg"
                       style={isLight ? {
                         background: "rgba(43,108,232,0.14)",
@@ -149,13 +144,12 @@ export default function Nav() {
                         background: "rgba(71,85,105,0.5)",
                         border:     "1px solid rgba(255,255,255,0.1)",
                       }}
-                      transition={{ type: "spring", stiffness: 380, damping: 30 }}
                     />
                   )}
                   <span className="relative flex items-center gap-2">
-                    <Icon
-                      icon={link.icon}
-                      className="text-lg"
+                    <CriticalIcon
+                      name={link.icon}
+                      className="h-[18px] w-[18px]"
                       style={isLight ? { color: isActive ? "#2B6CE8" : "rgba(244,233,232,0.5)" } : {}}
                     />
                     {link.label}
@@ -169,7 +163,7 @@ export default function Nav() {
           <div className="hidden md:flex items-center gap-2">
             {isLight ? (
               <>
-                <LightNavBtn href="/resume-builder" icon="solar:document-text-bold-duotone" isLink>
+                <LightNavBtn href="/resume-builder" icon="file" isLink>
                   Resume Builder
                 </LightNavBtn>
                 <DownloadCVMenu variant="dark" />
@@ -185,19 +179,19 @@ export default function Nav() {
                   }}
                 >
                   Let&apos;s Talk
-                  <Icon icon="solar:arrow-right-linear" className="text-base" />
+                  <CriticalIcon name="arrow-right" className="h-4 w-4" />
                 </a>
               </>
             ) : (
               <>
                 <Link href="/resume-builder" className="btn-secondary text-sm px-4 py-2">
-                  <Icon icon="solar:document-text-bold-duotone" className="text-lg" />
+                  <CriticalIcon name="file" className="h-[18px] w-[18px]" />
                   <span>Resume Builder</span>
                 </Link>
                 <DownloadCVMenu variant="dark" />
                 <a href="https://wa.me/971568323258" target="_blank" rel="noopener noreferrer" className="btn-primary text-sm px-4 py-2">
                   <span>Let&apos;s Talk</span>
-                  <Icon icon="solar:arrow-right-linear" />
+                  <CriticalIcon name="arrow-right" className="h-4 w-4" />
                 </a>
               </>
             )}
@@ -205,22 +199,24 @@ export default function Nav() {
 
           {/* ── Mobile hamburger ─────────────────────────────────── */}
           <button
+            type="button"
             onClick={() => setIsOpen(!isOpen)}
             className="md:hidden relative w-10 h-10 flex items-center justify-center"
             aria-label="Toggle menu"
+            aria-expanded={isOpen}
           >
             <div className="relative w-6 h-5 flex flex-col justify-between">
-              <motion.span
-                animate={{ rotate: isOpen ? 45 : 0, y: isOpen ? 8 : 0 }}
-                className={`block h-0.5 rounded-full origin-center ${isLight ? "bg-[#F4E9E8]" : "bg-vintage-cream"}`}
+              <span
+                className={`block h-0.5 rounded-full origin-center transition-transform duration-200 ${isLight ? "bg-[#F4E9E8]" : "bg-vintage-cream"}`}
+                style={{ transform: isOpen ? "translateY(8px) rotate(45deg)" : "none" }}
               />
-              <motion.span
-                animate={{ opacity: isOpen ? 0 : 1, scaleX: isOpen ? 0 : 1 }}
-                className={`block h-0.5 rounded-full ${isLight ? "bg-[#F4E9E8]" : "bg-vintage-cream"}`}
+              <span
+                className={`block h-0.5 rounded-full transition-all duration-200 ${isLight ? "bg-[#F4E9E8]" : "bg-vintage-cream"}`}
+                style={{ opacity: isOpen ? 0 : 1, transform: isOpen ? "scaleX(0)" : "scaleX(1)" }}
               />
-              <motion.span
-                animate={{ rotate: isOpen ? -45 : 0, y: isOpen ? -8 : 0 }}
-                className={`block h-0.5 rounded-full origin-center ${isLight ? "bg-[#F4E9E8]" : "bg-vintage-cream"}`}
+              <span
+                className={`block h-0.5 rounded-full origin-center transition-transform duration-200 ${isLight ? "bg-[#F4E9E8]" : "bg-vintage-cream"}`}
+                style={{ transform: isOpen ? "translateY(-8px) rotate(-45deg)" : "none" }}
               />
             </div>
           </button>
@@ -228,30 +224,28 @@ export default function Nav() {
       </div>
 
       {/* ── Mobile menu ───────────────────────────────────────────── */}
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            className={`md:hidden overflow-hidden ${
-              isLight ? "" : "bg-vintage-navy/95 backdrop-blur-xl border-t border-vintage-cream/10"
-            }`}
-            style={isLight ? {
-              background:           "rgba(11,16,38,0.97)",
-              backdropFilter:       "blur(20px)",
-              WebkitBackdropFilter: "blur(20px)",
-              borderTop:            "1px solid rgba(43,108,232,0.2)",
-            } : {}}
-          >
+      <div
+        className={`md:hidden grid transition-[grid-template-rows] duration-300 ease-in-out ${
+          isOpen && !isLight
+            ? "bg-vintage-navy/95 backdrop-blur-xl border-t border-vintage-cream/10"
+            : ""
+        }`}
+        style={{
+          gridTemplateRows: isOpen ? "1fr" : "0fr",
+          ...(isOpen && isLight
+            ? {
+                background: "rgba(11,16,38,0.97)",
+                backdropFilter: "blur(20px)",
+                WebkitBackdropFilter: "blur(20px)",
+                borderTop: "1px solid rgba(43,108,232,0.2)",
+              }
+            : {}),
+        }}
+      >
+        <div className="overflow-hidden">
             <div className="px-4 py-6 space-y-1">
-              {navLinks.map((link, index) => (
-                <motion.div
-                  key={link.href}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: index * 0.07 }}
-                >
+              {navLinks.map((link) => (
+                <div key={link.href}>
                   {isLight ? (
                     <Link
                       href={link.href}
@@ -259,7 +253,7 @@ export default function Nav() {
                       className="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 font-medium text-sm"
                       style={{ color: "#F4E9E8" }}
                     >
-                      <Icon icon={link.icon} className="text-xl" style={{ color: "#2B6CE8" }} />
+                      <CriticalIcon name={link.icon} className="h-5 w-5" style={{ color: "#2B6CE8" }} />
                       {link.label}
                     </Link>
                   ) : (
@@ -268,16 +262,16 @@ export default function Nav() {
                       onClick={() => setIsOpen(false)}
                       className="flex items-center gap-3 px-4 py-3 text-vintage-cream/80 hover:text-vintage-cream hover:bg-vintage-slate/30 rounded-lg transition-all"
                     >
-                      <Icon icon={link.icon} className="text-xl text-vintage-burgundy" />
+                      <CriticalIcon name={link.icon} className="h-5 w-5 text-vintage-burgundy" />
                       <span className="font-medium">{link.label}</span>
                     </Link>
                   )}
-                </motion.div>
+                </div>
               ))}
               <div className="pt-4 flex flex-col gap-3">
                 {isLight ? (
                   <>
-                    <LightNavBtn href="/resume-builder" icon="solar:document-text-bold-duotone" isLink fullWidth>
+                    <LightNavBtn href="/resume-builder" icon="file" isLink fullWidth>
                       Resume Builder
                     </LightNavBtn>
                     <DownloadCVMenu variant="dark" fullWidth />
@@ -287,33 +281,32 @@ export default function Nav() {
                       rel="noopener noreferrer"
                       className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold"
                       style={{
-                        background: "linear-gradient(135deg, #8A6A1A 0%, #5F4A10 100%)",
-                        color:      "#ffffff",
-                        boxShadow:  "0 4px 14px rgba(138,106,26,0.30)",
+                        background: "linear-gradient(135deg, #E62429 0%, #B11313 100%)",
+                        color:      "#F4E9E8",
+                        boxShadow:  "0 4px 14px rgba(230,36,41,0.35)",
                       }}
                     >
                       Let&apos;s Talk
-                      <Icon icon="solar:arrow-right-linear" className="text-base" />
+                      <CriticalIcon name="arrow-right" className="h-4 w-4" />
                     </a>
                   </>
                 ) : (
                   <>
                     <Link href="/resume-builder" onClick={() => setIsOpen(false)} className="btn-secondary justify-center">
-                      <Icon icon="solar:document-text-bold-duotone" />
+                      <CriticalIcon name="file" className="h-4 w-4" />
                       Resume Builder
                     </Link>
                     <DownloadCVMenu variant="dark" fullWidth />
                     <a href="https://wa.me/971568323258" target="_blank" rel="noopener noreferrer" className="btn-primary justify-center">
-                      Let&apos;s Talk <Icon icon="solar:arrow-right-linear" />
+                      Let&apos;s Talk <CriticalIcon name="arrow-right" className="h-4 w-4" />
                     </a>
                   </>
                 )}
               </div>
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </motion.header>
+        </div>
+      </div>
+    </header>
   );
 }
 
@@ -322,7 +315,7 @@ function LightNavBtn({
   href, icon, children, isLink, download, fullWidth,
 }: {
   href: string;
-  icon: string;
+  icon: CriticalIconName;
   children: React.ReactNode;
   isLink?: boolean;
   download?: string;
@@ -350,7 +343,7 @@ function LightNavBtn({
 
   const inner = (
     <>
-      <Icon icon={icon} style={{ fontSize: "17px", color: "#2B6CE8", flexShrink: 0 }} />
+      <CriticalIcon name={icon} className="h-[17px] w-[17px] shrink-0" style={{ color: "#2B6CE8" }} />
       <span>{children}</span>
     </>
   );

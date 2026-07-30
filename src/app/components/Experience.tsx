@@ -1,8 +1,8 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { Icon } from "@iconify/react";
 import { experiences } from "@/utils/experienceData";
+import Reveal from "./Reveal";
 
 export default function Experience() {
   return (
@@ -11,13 +11,7 @@ export default function Experience() {
       <div className="absolute -top-24 -left-24 h-80 w-80 rounded-full bg-vintage-burgundy/20 blur-3xl" />
       <div className="absolute -bottom-24 -right-24 h-80 w-80 rounded-full bg-vintage-cream/10 blur-3xl" />
       <div className="section-container relative z-10">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-16"
-        >
+        <Reveal inView y={30} duration={0.6} className="text-center mb-16">
           <span className="badge badge-primary mb-4">Career Journey</span>
           <h2 className="section-title text-vintage-cream mb-4">
             Professional <span className="text-vintage-burgundy/90">Experience</span>
@@ -25,19 +19,19 @@ export default function Experience() {
           <p className="section-subtitle">
             A track record of delivering impactful solutions across diverse industries
           </p>
-        </motion.div>
+        </Reveal>
 
         <div className="relative">
           <div className="absolute left-6 md:left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-vintage-burgundy/60 via-vintage-cream/40 to-transparent" />
 
           <div className="space-y-12">
             {experiences.map((exp, index) => (
-              <motion.div
+              <Reveal
                 key={exp.title}
-                initial={{ opacity: 0, y: 50 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.2 }}
+                inView
+                y={50}
+                duration={0.5}
+                delay={index * 0.2}
                 className={`relative flex flex-col md:flex-row gap-8 ${
                   index % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"
                 }`}
@@ -100,7 +94,7 @@ export default function Experience() {
                 <div className="absolute left-6 md:left-1/2 w-4 h-4 -translate-x-1/2 bg-gradient-to-r from-vintage-burgundy to-vintage-cream rounded-full border-[3px] border-vintage-navy shadow-[0_0_0_6px_rgba(12,12,22,0.4)] z-10" />
 
                 <div className="flex-1 hidden md:block" />
-              </motion.div>
+              </Reveal>
             ))}
           </div>
         </div>

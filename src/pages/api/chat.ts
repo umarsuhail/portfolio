@@ -7,7 +7,7 @@ type ResponseData = {
   fallback?: boolean; // true when the AI is unavailable (no key, error, quota) — client shows FAQ
 };
 
-const GEMINI_MODEL = process.env.GEMINI_MODEL?.trim() || "gemini-3.5-flash";
+const GEMINI_MODEL = process.env.GEMINI_MODEL?.trim() || "gemini-3.6-flash";
 
 // Cap input length to limit token usage / abuse.
 const MAX_INPUT_CHARS = 500;
@@ -128,6 +128,13 @@ export default async function chat(
       prompt: message,
       temperature: 0.2,
       maxOutputTokens: 220,
+      providerOptions: {
+        // Allow a little reasoning but keep it tight — thinking tokens share the
+        // output budget, so a large think would starve/cut off the visible answer.
+        google: {
+          thinkingConfig: { thinkingBudget: 96 },
+        },
+      },
     });
 
     const reply = text.trim();

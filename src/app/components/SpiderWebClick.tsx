@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { useCallback, useEffect, useRef, useState } from "react";
+import gsap from "gsap";
 
 type Web = {
   id: number;
@@ -53,8 +53,77 @@ function buildWeb() {
   return { spokes, rings };
 }
 
+function WebMark({ web, onDone }: { web: Web; onDone: (id: number) => void }) {
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) {
+      onDone(web.id);
+      return;
+    }
+    const tl = gsap.timeline({ onComplete: () => onDone(web.id) });
+    tl.fromTo(
+      el,
+      { opacity: 0, scale: 0.15, rotate: web.rotate },
+      { opacity: 0.9, scale: 1, rotate: web.rotate, duration: 0.4, ease: "power3.out" }
+    )
+      .to(el, { opacity: 0.65, duration: 0.2 })
+      .to(el, { opacity: 0, scale: 1.12, duration: 0.3, ease: "power1.in" }, "+=0.15");
+
+    return () => {
+      tl.kill();
+    };
+  }, [web.id, web.rotate, onDone]);
+
+  return (
+    <div
+      ref={ref}
+      style={{
+        position: "fixed",
+        left: web.x,
+        top: web.y,
+        width: web.size,
+        height: web.size,
+        marginLeft: -web.size / 2,
+        marginTop: -web.size / 2,
+        pointerEvents: "none",
+        zIndex: 9990,
+        opacity: 0,
+      }}
+    >
+      <svg
+        viewBox="0 0 100 100"
+        width="100%"
+        height="100%"
+        style={{ filter: "drop-shadow(0 0 2px rgba(255,255,255,0.45))" }}
+      >
+        <path
+          d={web.spokes}
+          fill="none"
+          stroke="rgba(255,255,255,0.85)"
+          strokeWidth={0.6}
+          strokeLinecap="round"
+        />
+        <path
+          d={web.rings}
+          fill="none"
+          stroke="rgba(255,255,255,0.7)"
+          strokeWidth={0.5}
+          strokeLinejoin="round"
+        />
+        <circle cx={CX} cy={CY} r={1.2} fill="rgba(255,255,255,0.9)" />
+      </svg>
+    </div>
+  );
+}
+
 export default function SpiderWebClick() {
   const [webs, setWebs] = useState<Web[]>([]);
+
+  const removeWeb = useCallback((id: number) => {
+    setWebs((prev) => prev.filter((w) => w.id !== id));
+  }, []);
 
   useEffect(() => {
     const onClick = (e: MouseEvent) => {
@@ -80,10 +149,6 @@ export default function SpiderWebClick() {
           rings,
         },
       ]);
-      setTimeout(
-        () => setWebs((prev) => prev.filter((w) => w.id !== id)),
-        900
-      );
     };
 
     document.addEventListener("click", onClick);
@@ -91,50 +156,10 @@ export default function SpiderWebClick() {
   }, []);
 
   return (
-    <AnimatePresence>
+    <>
       {webs.map((w) => (
-        <motion.div
-          key={w.id}
-          initial={{ opacity: 0, scale: 0.15 }}
-          animate={{ opacity: [0, 0.9, 0.65], scale: 1, rotate: w.rotate }}
-          exit={{ opacity: 0, scale: 1.12 }}
-          transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-          style={{
-            position: "fixed",
-            left: w.x,
-            top: w.y,
-            width: w.size,
-            height: w.size,
-            marginLeft: -w.size / 2,
-            marginTop: -w.size / 2,
-            pointerEvents: "none",
-            zIndex: 9990,
-          }}
-        >
-          <svg
-            viewBox="0 0 100 100"
-            width="100%"
-            height="100%"
-            style={{ filter: "drop-shadow(0 0 2px rgba(255,255,255,0.45))" }}
-          >
-            <path
-              d={w.spokes}
-              fill="none"
-              stroke="rgba(255,255,255,0.85)"
-              strokeWidth={0.6}
-              strokeLinecap="round"
-            />
-            <path
-              d={w.rings}
-              fill="none"
-              stroke="rgba(255,255,255,0.7)"
-              strokeWidth={0.5}
-              strokeLinejoin="round"
-            />
-            <circle cx={CX} cy={CY} r={1.2} fill="rgba(255,255,255,0.9)" />
-          </svg>
-        </motion.div>
+        <WebMark key={w.id} web={w} onDone={removeWeb} />
       ))}
-    </AnimatePresence>
+    </>
   );
 }

@@ -1,15 +1,9 @@
 "use client";
 
-import { useRef, useState } from "react";
-import {
-  motion,
-  AnimatePresence,
-  useReducedMotion,
-  useScroll,
-  useTransform,
-} from "framer-motion";
+import { useEffect, useState } from "react";
 import { Icon } from "@iconify/react";
 import useIsMobile from "./useIsMobile";
+import Reveal from "./Reveal";
 
 const projects = [
   {
@@ -147,20 +141,18 @@ const categories = ["All", ...new Set(projects.map((p) => p.category))];
 
 export default function ProjectsA() {
   const isMobile = useIsMobile();
-  const prefersReducedMotion = useReducedMotion();
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
   const shouldReduceMotion = isMobile || prefersReducedMotion;
   const [activeCategory, setActiveCategory] = useState("All");
   const [expandedProject, setExpandedProject] = useState<string | null>(null);
 
-  const sectionRef = useRef<HTMLElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start end", "end start"],
-  });
-  // Layered parallax: background drifts up, decorative blobs counter-move.
-  const bgY = useTransform(scrollYProgress, [0, 1], ["-12%", "12%"]);
-  const blobYSlow = useTransform(scrollYProgress, [0, 1], ["-20%", "20%"]);
-  const blobYFast = useTransform(scrollYProgress, [0, 1], ["25%", "-25%"]);
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setPrefersReducedMotion(mq.matches);
+    const handler = () => setPrefersReducedMotion(mq.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
 
   const filteredProjects =
     activeCategory === "All"
@@ -170,33 +162,17 @@ export default function ProjectsA() {
   return (
     <section
       id="projects"
-      ref={sectionRef}
       className="section-padding relative overflow-hidden"
     >
       {!shouldReduceMotion && (
         <>
-          <motion.div
-            style={{ y: blobYSlow }}
-            className="pointer-events-none absolute -top-32 -left-24 h-80 w-80 rounded-full bg-[#C8A84B]/15 blur-3xl"
-          />
-          <motion.div
-            style={{ y: blobYFast }}
-            className="pointer-events-none absolute bottom-0 -right-20 h-96 w-96 rounded-full bg-[#475569]/12 blur-3xl"
-          />
-          <motion.div
-            style={{ y: bgY }}
-            className="pointer-events-none absolute top-1/3 left-1/2 -translate-x-1/2 h-64 w-[40rem] rounded-full bg-[#C8A84B]/8 blur-3xl"
-          />
+          <div className="pointer-events-none absolute -top-32 -left-24 h-80 w-80 rounded-full bg-[#C8A84B]/15 blur-3xl" />
+          <div className="pointer-events-none absolute bottom-0 -right-20 h-96 w-96 rounded-full bg-[#475569]/12 blur-3xl" />
+          <div className="pointer-events-none absolute top-1/3 left-1/2 -translate-x-1/2 h-64 w-[40rem] rounded-full bg-[#C8A84B]/8 blur-3xl" />
         </>
       )}
       <div className="section-container relative z-10">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-16"
-        >
+        <Reveal inView y={30} duration={0.6} className="text-center mb-16">
           <span className="badge badge-primary mb-4">Portfolio</span>
           <h2 className="section-title text-vintage-cream mb-4">
             Featured <span className="gradient-text">Projects</span>
@@ -204,17 +180,13 @@ export default function ProjectsA() {
           <p className="section-subtitle">
             Showcasing impactful solutions that drive business value and user engagement
           </p>
-        </motion.div>
+        </Reveal>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="flex flex-wrap justify-center gap-2 mb-12"
-        >
+        <Reveal inView y={20} duration={0.6} className="flex flex-wrap justify-center gap-2 mb-12">
           {categories.map((category) => (
             <button
               key={category}
+              type="button"
               onClick={() => setActiveCategory(category)}
               className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-300 ring-1 ${
                 activeCategory === category
@@ -225,22 +197,12 @@ export default function ProjectsA() {
               {category}
             </button>
           ))}
-        </motion.div>
+        </Reveal>
 
-        <motion.div layout={!shouldReduceMotion} className="grid md:grid-cols-2 gap-6">
-          <AnimatePresence mode="popLayout">
-            {filteredProjects.map((project, index) => (
-              <motion.div
-                key={project.title}
-                layout={!shouldReduceMotion}
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.9 }}
-                transition={{ duration: shouldReduceMotion ? 0.2 : 0.4, delay: shouldReduceMotion ? 0 : index * 0.1 }}
-                className="group h-full"
-                {...(shouldReduceMotion ? {} : { whileHover: { y: -8 } })}
-              >
-                <div className="relative h-full flex flex-col rounded-2xl bg-white overflow-hidden border border-slate-900/[0.07] shadow-[0_1px_3px_rgba(15,23,42,0.06),0_10px_30px_rgba(15,23,42,0.05)] transition-all duration-300 group-hover:-translate-y-0.5 group-hover:shadow-[0_24px_50px_rgba(15,23,42,0.13)] group-hover:border-[#C8A84B]/45">
+        <Reveal inView y={20} duration={0.6} className="grid md:grid-cols-2 gap-6">
+            {filteredProjects.map((project) => (
+              <div key={project.title} className="group h-full">
+                <div className="relative h-full flex flex-col rounded-2xl bg-white overflow-hidden border border-slate-900/[0.07] shadow-[0_1px_3px_rgba(15,23,42,0.06),0_10px_30px_rgba(15,23,42,0.05)] transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-[0_24px_50px_rgba(15,23,42,0.13)] group-hover:border-[#C8A84B]/45">
                   {/* gold top accent */}
                   <span className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[#C8A84B] via-[#E6CE7B] to-[#8A6A1A] opacity-60 group-hover:opacity-100 transition-opacity duration-300" />
 
@@ -287,36 +249,35 @@ export default function ProjectsA() {
                       ))}
                     </div>
 
-                    <AnimatePresence>
-                      {expandedProject === project.title && (
-                        <motion.div
-                          initial={{ opacity: 0, height: 0 }}
-                          animate={{ opacity: 1, height: "auto" }}
-                          exit={{ opacity: 0, height: 0 }}
-                          className="overflow-hidden"
-                        >
-                          <div className="mb-5 rounded-xl bg-slate-50 border border-slate-900/[0.05] p-4">
-                            <h4 className="text-sm font-semibold text-slate-900 mb-3">
-                              Key Contributions
-                            </h4>
-                            <ul className="space-y-2">
-                              {project.contributions.map((item, i) => (
-                                <li
-                                  key={i}
-                                  className="flex items-start gap-2 text-sm text-slate-600"
-                                >
-                                  <Icon
-                                    icon="solar:check-circle-bold"
-                                    className="text-[#8A6A1A] mt-0.5 shrink-0 text-base"
-                                  />
-                                  {item}
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
+                    <div
+                      className="grid transition-[grid-template-rows] duration-300 ease-in-out"
+                      style={{
+                        gridTemplateRows:
+                          expandedProject === project.title ? "1fr" : "0fr",
+                      }}
+                    >
+                      <div className="overflow-hidden">
+                        <div className="mb-5 rounded-xl bg-slate-50 border border-slate-900/[0.05] p-4">
+                          <h4 className="text-sm font-semibold text-slate-900 mb-3">
+                            Key Contributions
+                          </h4>
+                          <ul className="space-y-2">
+                            {project.contributions.map((item, i) => (
+                              <li
+                                key={i}
+                                className="flex items-start gap-2 text-sm text-slate-600"
+                              >
+                                <Icon
+                                  icon="solar:check-circle-bold"
+                                  className="text-[#8A6A1A] mt-0.5 shrink-0 text-base"
+                                />
+                                {item}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
 
                     <div className="flex flex-wrap gap-2 mb-5 mt-auto">
                       {project.tech.map((tech) => (
@@ -330,6 +291,7 @@ export default function ProjectsA() {
                     </div>
 
                     <button
+                      type="button"
                       onClick={() =>
                         setExpandedProject(
                           expandedProject === project.title ? null : project.title
@@ -351,17 +313,11 @@ export default function ProjectsA() {
                     </button>
                   </div>
                 </div>
-              </motion.div>
+              </div>
             ))}
-          </AnimatePresence>
-        </motion.div>
+        </Reveal>
 
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="mt-12 text-center"
-        >
+        <Reveal inView y={30} duration={0.6} className="mt-12 text-center">
           <a
             href="https://github.com/umarsuhail"
             target="_blank"
@@ -371,7 +327,7 @@ export default function ProjectsA() {
             <Icon icon="mdi:github" className="text-xl" />
             View More on GitHub
           </a>
-        </motion.div>
+        </Reveal>
       </div>
     </section>
   );

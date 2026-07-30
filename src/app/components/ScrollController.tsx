@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { PointerEvent } from "react";
 import { usePathname } from "next/navigation";
-import GlobeCanvas from "./GlobeCanvas";
+import { Icon } from "@iconify/react";
 import useIsMobile from "./useIsMobile";
 
 const RADIUS = 44;
@@ -16,7 +16,6 @@ export default function ScrollController() {
   const [visible, setVisible] = useState(false);
   const [dragging, setDragging] = useState(false);
   const [showHint, setShowHint] = useState(true);
-  const externalLambdaRef = useRef(0);
   const dragRef = useRef<{
     pointerId: number;
     startX: number;
@@ -39,8 +38,6 @@ export default function ScrollController() {
         const p = total > 0 ? Math.min(1, scrolled / total) : 0;
         setProgress(p);
         setVisible(scrolled > (isMobile ? 120 : 80));
-        // 2 full rotations across the entire page length (desktop + mobile)
-        externalLambdaRef.current = p * 720;
         ticking = false;
       });
     };
@@ -93,9 +90,6 @@ export default function ScrollController() {
     const total = document.documentElement.scrollHeight - window.innerHeight;
     const nextY = Math.max(0, Math.min(total, drag.startScrollY - dy * 3));
     window.scrollTo({ top: nextY, behavior: "auto" });
-
-    // Let horizontal thumb movement spin the globe a little while vertical drag scrolls.
-    externalLambdaRef.current += dx * 0.02;
   };
 
   const endDrag = (event: PointerEvent<HTMLButtonElement>) => {
@@ -145,13 +139,13 @@ export default function ScrollController() {
         ].join(" ")}
       >
         {/* Outer glow ring */}
-        <div className="absolute inset-0 rounded-full bg-[#0081A7]/10 blur-md scale-110 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+        <div className="absolute inset-0 rounded-full bg-[#E62429]/10 blur-md scale-110 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
         {/* Dark backdrop */}
         <div
           className={[
-            "absolute inset-0 rounded-full bg-[#030014]/70 backdrop-blur-md border shadow-[0_8px_32px_rgba(0,0,0,0.6)] transition-colors",
-            dragging ? "border-[#0081A7]/70" : "border-white/10",
+            "absolute inset-0 rounded-full bg-[#0B1026]/75 backdrop-blur-md border shadow-[0_8px_32px_rgba(0,0,0,0.6)] transition-colors",
+            dragging ? "border-[#E62429]/70" : "border-white/10",
           ].join(" ")}
         />
 
@@ -173,7 +167,7 @@ export default function ScrollController() {
           <circle
             cx="48" cy="48" r={RADIUS}
             fill="none"
-            stroke="#0081A7"
+            stroke="#E62429"
             strokeWidth="2.5"
             strokeLinecap="round"
             strokeDasharray={`${strokeDash} ${CIRCUMFERENCE}`}
@@ -181,19 +175,21 @@ export default function ScrollController() {
           />
         </svg>
 
-        {/* Globe */}
+        {/* Spider mark */}
         <div
           className={[
             "absolute inset-0 flex items-center justify-center",
             isMobile ? "pb-2.5" : "pb-3",
           ].join(" ")}
         >
-          <GlobeCanvas
-            size={isMobile ? 46 : 68}
-            globeRadius={isMobile ? 20 : 30}
-            speed={8}
-            tilt={16}
-            externalLambdaRef={externalLambdaRef}
+          <Icon
+            icon="game-icons:spider-alt"
+            className={[
+              "text-[#F4E9E8] drop-shadow-[0_0_8px_rgba(230,36,41,0.6)] transition-transform duration-200",
+              dragging ? "scale-110" : "group-hover:scale-110",
+              isMobile ? "text-[26px]" : "text-[38px]",
+            ].join(" ")}
+            aria-hidden
           />
         </div>
 
@@ -207,7 +203,7 @@ export default function ScrollController() {
           {atTop ? (
             <svg
               width={isMobile ? "11" : "10"} height={isMobile ? "11" : "10"} viewBox="0 0 10 10"
-              className="text-[#0081A7] fill-current opacity-90"
+              className="text-[#E62429] fill-current opacity-90"
               aria-hidden="true"
             >
               <path d="M5 1 L9 7 L1 7 Z" />
@@ -234,7 +230,7 @@ export default function ScrollController() {
 
       {/* Back-to-top hint when the page is fully scrolled */}
       {visible && atTop && (
-        <span className="pointer-events-none absolute left-1/2 bottom-full mb-2 -translate-x-1/2 flex items-center gap-1 whitespace-nowrap rounded-full border border-[#0081A7]/40 bg-[#030014]/85 px-2.5 py-1 text-[10px] font-semibold tracking-wide text-[#7fd4ec] backdrop-blur-sm animate-pulse">
+        <span className="pointer-events-none absolute left-1/2 bottom-full mb-2 -translate-x-1/2 flex items-center gap-1 whitespace-nowrap rounded-full border border-[#E62429]/40 bg-[#0B1026]/85 px-2.5 py-1 text-[10px] font-semibold tracking-wide text-[#F4A0A2] backdrop-blur-sm animate-pulse">
           <svg width="9" height="9" viewBox="0 0 10 10" className="fill-current" aria-hidden="true">
             <path d="M5 1 L9 7 L1 7 Z" />
           </svg>

@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useMemo, useCallback } from "react";
-import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import { useState, useMemo, useCallback, useEffect, useRef } from "react";
+import gsap from "gsap";
 import { Icon } from "@iconify/react";
 import { skills } from "@/utils/constants";
 import useIsMobile from "./useIsMobile";
+import Reveal from "./Reveal";
 
 interface Splatter {
   id: number;
@@ -46,17 +47,47 @@ const splatterColors = [
 ];
 
 const GraffitiSplatter = ({ splatter }: { splatter: Splatter }) => {
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const ctx = gsap.context(() => {
+      // Pop-and-fade envelope on the whole splatter
+      gsap
+        .timeline()
+        .fromTo(
+          el,
+          { scale: 0, opacity: 1 },
+          { scale: 1.5, opacity: 0.8, duration: 0.32, ease: "power2.out" }
+        )
+        .to(el, { scale: 1.2, opacity: 0, duration: 0.48, ease: "power1.in" });
+
+      // Core blob grows
+      gsap.fromTo(
+        el.querySelector(".splatter-main"),
+        { attr: { r: 0 } },
+        { attr: { r: 20 }, duration: 0.3, ease: "power2.out" }
+      );
+      // Inner ring of droplets
+      gsap.fromTo(
+        el.querySelectorAll(".splatter-mid"),
+        { opacity: 0 },
+        { opacity: 0.8, duration: 0.2, delay: 0.1, stagger: 0.02 }
+      );
+      // Outer speckles
+      gsap.fromTo(
+        el.querySelectorAll(".splatter-outer"),
+        { opacity: 0 },
+        { opacity: 0.6, duration: 0.25, delay: 0.15, stagger: 0.015 }
+      );
+    }, el);
+    return () => ctx.revert();
+  }, []);
+
   return (
-    <motion.div
-      initial={{ scale: 0, opacity: 1 }}
-      animate={{ 
-        scale: [0, 1.5, 1.2],
-        opacity: [1, 0.8, 0],
-      }}
-      transition={{ 
-        duration: 0.8,
-        ease: "easeOut",
-      }}
+    <div
+      ref={ref}
       style={{
         position: "absolute",
         left: splatter.x,
@@ -64,6 +95,7 @@ const GraffitiSplatter = ({ splatter }: { splatter: Splatter }) => {
         transform: `rotate(${splatter.rotation}deg)`,
         pointerEvents: "none",
         zIndex: 50,
+        opacity: 0,
       }}
     >
       <svg
@@ -72,15 +104,7 @@ const GraffitiSplatter = ({ splatter }: { splatter: Splatter }) => {
         viewBox="0 0 100 100"
         className="overflow-visible"
       >
-        <motion.circle
-          cx="50"
-          cy="50"
-          r="20"
-          fill={splatter.color}
-          initial={{ r: 0 }}
-          animate={{ r: [0, 25, 20] }}
-          transition={{ duration: 0.3 }}
-        />
+        <circle className="splatter-main" cx="50" cy="50" r="20" fill={splatter.color} />
         {[...Array(8)].map((_, i) => {
           const angle = (i * 45 * Math.PI) / 180;
           const distance = 25 + Math.random() * 15;
@@ -88,16 +112,7 @@ const GraffitiSplatter = ({ splatter }: { splatter: Splatter }) => {
           const cy = 50 + Math.sin(angle) * distance;
           const r = 3 + Math.random() * 8;
           return (
-            <motion.circle
-              key={i}
-              cx={cx}
-              cy={cy}
-              r={r}
-              fill={splatter.color}
-              initial={{ scale: 0, opacity: 0 }}
-              animate={{ scale: 1, opacity: 0.8 }}
-              transition={{ delay: 0.1 + i * 0.02, duration: 0.2 }}
-            />
+            <circle key={i} className="splatter-mid" cx={cx} cy={cy} r={r} fill={splatter.color} />
           );
         })}
         {[...Array(12)].map((_, i) => {
@@ -107,27 +122,26 @@ const GraffitiSplatter = ({ splatter }: { splatter: Splatter }) => {
           const cy = 50 + Math.sin(angle) * distance;
           const r = 1 + Math.random() * 4;
           return (
-            <motion.circle
-              key={`outer-${i}`}
-              cx={cx}
-              cy={cy}
-              r={r}
-              fill={splatter.color}
-              initial={{ scale: 0, opacity: 0 }}
-              animate={{ scale: 1, opacity: 0.6 }}
-              transition={{ delay: 0.15 + i * 0.015, duration: 0.25 }}
-            />
+            <circle key={`outer-${i}`} className="splatter-outer" cx={cx} cy={cy} r={r} fill={splatter.color} />
           );
         })}
       </svg>
-    </motion.div>
+    </div>
   );
 };
 
 export default function SkillsUniverse() {
   const isMobile = useIsMobile();
-  const prefersReducedMotion = useReducedMotion();
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
   const shouldReduceMotion = isMobile || prefersReducedMotion;
+
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setPrefersReducedMotion(mq.matches);
+    const handler = () => setPrefersReducedMotion(mq.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
   const [skillState, setSkillState] = useState<SkillWithSplatters[]>(
     skills.map((s) => ({ ...s, splatters: [] }))
   );
@@ -193,13 +207,7 @@ export default function SkillsUniverse() {
       className="section-padding relative overflow-hidden"
     >
       <div className="section-container">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-16"
-        >
+        <Reveal inView y={30} duration={0.6} className="text-center mb-16">
           <span className="badge badge-primary mb-4">Technical Expertise</span>
           <h2 className="section-title text-vintage-cream mb-4">
             Skills & <span className="gradient-text">Technologies</span>
@@ -207,17 +215,13 @@ export default function SkillsUniverse() {
           <p className="section-subtitle">
             A comprehensive toolkit for building modern, scalable web applications
           </p>
-        </motion.div>
+        </Reveal>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="flex flex-wrap justify-center gap-2 mb-12"
-        >
+        <Reveal inView y={20} duration={0.6} className="flex flex-wrap justify-center gap-2 mb-12">
           {categories.map((category) => (
             <button
               key={category}
+              type="button"
               onClick={() => setFilter(category)}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 ${
                 filter === category
@@ -228,25 +232,21 @@ export default function SkillsUniverse() {
               {category}
             </button>
           ))}
-        </motion.div>
+        </Reveal>
 
-        <motion.div
-          layout={!shouldReduceMotion}
+        <Reveal
+          inView
+          y={20}
+          duration={0.6}
           className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4"
         >
-          <AnimatePresence mode="popLayout">
-            {filteredSkills.map((skill, index) => (
-              <motion.div
+            {filteredSkills.map((skill) => (
+              <div
                 key={skill.name}
-                layout={!shouldReduceMotion}
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.8 }}
-                transition={{ duration: shouldReduceMotion ? 0.2 : 0.3, delay: shouldReduceMotion ? 0 : index * 0.05 }}
-                {...(shouldReduceMotion ? {} : { whileHover: { scale: 1.05, y: -5 } })}
-                whileTap={{ scale: 0.95 }}
                 onClick={(e) => handleGraffiti(e, skill.name)}
-                className="relative group cursor-pointer overflow-visible"
+                className={`relative group cursor-pointer overflow-visible transition-transform duration-300 active:scale-95 ${
+                  shouldReduceMotion ? "" : "hover:scale-105 hover:-translate-y-1"
+                }`}
               >
                 {skill.splatters.map((splatter) => (
                   <GraffitiSplatter key={splatter.id} splatter={splatter} />
@@ -278,20 +278,9 @@ export default function SkillsUniverse() {
 
                   <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-vintage-burgundy/0 via-vintage-burgundy/0 to-vintage-cream/0 group-hover:from-vintage-burgundy/10 group-hover:via-vintage-burgundy/5 group-hover:to-vintage-cream/10 transition-all duration-300 pointer-events-none" />
                 </div>
-              </motion.div>
+              </div>
             ))}
-          </AnimatePresence>
-        </motion.div>
-
-        {!shouldReduceMotion && (
-          <motion.p
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            className="text-center text-vintage-cream/40 text-sm mt-8"
-          >
-          </motion.p>
-        )}
+        </Reveal>
       </div>
     </section>
   );

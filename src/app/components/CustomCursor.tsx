@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { motion, useMotionValue, useSpring } from "framer-motion";
+import gsap from "gsap";
 
 // spider.svg is the resting pointer; turn.gif is the hover/click effect.
 // turn.gif is 25 frames ≈ 1500ms for a single play-through.
@@ -14,11 +14,7 @@ const GIF_H = 58;
 const GIF_W = Math.round((GIF_H * 474) / 846); // ≈ 33
 
 export default function CustomCursor() {
-  const rawX = useMotionValue(-100);
-  const rawY = useMotionValue(-100);
-
-  const x = useSpring(rawX, { stiffness: 1000, damping: 50, mass: 0.25 });
-  const y = useSpring(rawY, { stiffness: 1000, damping: 50, mass: 0.25 });
+  const elRef = useRef<HTMLDivElement>(null);
 
   const [visible, setVisible] = useState(false);
   const [playGif, setPlayGif] = useState(false);
@@ -35,6 +31,14 @@ export default function CustomCursor() {
       return;
     }
 
+    const el = elRef.current;
+    if (!el) return;
+
+    // Center the artwork on the pointer, start off-screen, then follow smoothly.
+    gsap.set(el, { xPercent: -50, yPercent: -50, x: -100, y: -100 });
+    const xTo = gsap.quickTo(el, "x", { duration: 0.25, ease: "power3" });
+    const yTo = gsap.quickTo(el, "y", { duration: 0.25, ease: "power3" });
+
     // Play the gif exactly one pass, then fall back to the static spider.
     const trigger = () => {
       setGifKey((k) => k + 1);
@@ -47,12 +51,12 @@ export default function CustomCursor() {
     };
 
     const onMove = (e: MouseEvent) => {
-      rawX.set(e.clientX);
-      rawY.set(e.clientY);
+      xTo(e.clientX);
+      yTo(e.clientY);
       if (!visible) setVisible(true);
 
-      const el = document.elementFromPoint(e.clientX, e.clientY);
-      const clickable = !!el?.closest(
+      const el2 = document.elementFromPoint(e.clientX, e.clientY);
+      const clickable = !!el2?.closest(
         'a, button, [role="button"], input, textarea, select, label'
       );
 
@@ -81,14 +85,15 @@ export default function CustomCursor() {
       document.removeEventListener("mouseenter", onEnter);
       if (timeoutRef.current) window.clearTimeout(timeoutRef.current);
     };
-  }, [rawX, rawY, visible]);
+  }, [visible]);
 
   if (isTouch.current) return null;
 
   return (
-    <motion.div
-      style={{ x, y, opacity: visible ? 1 : 0 }}
-      className="pointer-events-none fixed left-0 top-0 z-[9999] -translate-x-1/2 -translate-y-1/2"
+    <div
+      ref={elRef}
+      style={{ opacity: visible ? 1 : 0 }}
+      className="pointer-events-none fixed left-0 top-0 z-[9999]"
     >
       {playGif ? (
         // eslint-disable-next-line @next/next/no-img-element
@@ -112,6 +117,6 @@ export default function CustomCursor() {
           draggable={false}
         />
       )}
-    </motion.div>
+    </div>
   );
 }

@@ -5,7 +5,7 @@ import { useEffect } from "react";
 /**
  * UI sounds via event delegation (mounted once globally):
  *   - click / tap on any clickable element → pop.mp3   (all devices)
- *   - hover on opt-in [data-hover-sound]   → hover.wav  (desktop pointers only)
+ *   - hover on opt-in [data-hover-sound]   → pop.mp3    (desktop pointers only)
  */
 const CLICKABLE_SELECTOR =
   'a[href], button, [role="button"], [role="tab"], [role="menuitem"], ' +
@@ -21,7 +21,7 @@ export default function UISound() {
 
     const clickSound = new Audio("/sounds/pop.mp3");
     clickSound.preload = "auto";
-    const hoverSound = new Audio("/sounds/hover.wav");
+    const hoverSound = new Audio("/sounds/pop.mp3");
     hoverSound.preload = "auto";
 
     // Clone per play so rapid interactions don't cut each other off.

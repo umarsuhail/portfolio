@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Icon } from "@iconify/react";
+import CriticalIcon from "./CriticalIcon";
 
 type Variant = "light" | "dark";
 
@@ -14,18 +14,18 @@ const OPTIONS = [
   {
     label: "PDF",
     desc: "Standard PDF format",
-    icon: "solar:file-text-bold-duotone",
+    icon: "file",
     href: "/umar-suhail-resume-2026.pdf",
     download: "Umar-Suhail-Resume.pdf",
   },
   {
     label: "LaTeX",
     desc: "Source .tex file",
-    icon: "solar:code-file-bold-duotone",
+    icon: "code",
     href: "/resume.tex",
     download: "Umar-Suhail-Resume.tex",
   },
-];
+] as const;
 
 export default function DownloadCVMenu({ variant = "light", fullWidth = false }: Props) {
   const [open, setOpen] = useState(false);
@@ -67,16 +67,14 @@ export default function DownloadCVMenu({ variant = "light", fullWidth = false }:
         className={isLight ? "" : "btn-secondary text-sm px-4 py-2"}
         style={isLight ? triggerStyle : fullWidth ? { width: "100%" } : undefined}
       >
-        <Icon
-          icon="solar:file-download-bold-duotone"
-          style={isLight ? { fontSize: "17px", color: "#64748B", flexShrink: 0 } : { fontSize: "18px" }}
-        />
+        <CriticalIcon name="download" className="h-[18px] w-[18px] shrink-0" style={isLight ? { color: "#64748B" } : undefined} />
         <span>Download CV</span>
-        <Icon
-          icon={open ? "solar:alt-arrow-up-linear" : "solar:alt-arrow-down-linear"}
+        <CriticalIcon
+          name={open ? "chevron-up" : "chevron-down"}
+          className="h-3.5 w-3.5"
           style={isLight
-            ? { fontSize: "13px", color: "#94a3b8", marginLeft: "2px" }
-            : { fontSize: "13px", opacity: 0.6, marginLeft: "2px" }}
+            ? { color: "#94a3b8", marginLeft: "2px" }
+            : { opacity: 0.6, marginLeft: "2px" }}
         />
       </button>
 
@@ -107,7 +105,7 @@ export default function DownloadCVMenu({ variant = "light", fullWidth = false }:
                 (e.currentTarget as HTMLElement).style.background = "transparent";
               }}
             >
-              <Icon icon={opt.icon} style={{ fontSize: "18px", color: "#E62429", flexShrink: 0 }} />
+              <CriticalIcon name={opt.icon} className="h-[18px] w-[18px] shrink-0" style={{ color: "#E62429" }} />
               <div>
                 <p style={{ fontSize: "13px", fontWeight: 600, lineHeight: 1.3 }}>{opt.label}</p>
                 <p style={{ fontSize: "11px", color: "rgba(244,233,232,0.5)", lineHeight: 1.3 }}>{opt.desc}</p>

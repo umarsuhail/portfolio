@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import { Icon } from "@iconify/react";
 
 const faqs = [
@@ -99,39 +98,33 @@ export default function FAQ() {
                   >
                     {faq.q}
                   </span>
-                  <motion.span
-                    animate={{ rotate: isOpen ? 45 : 0 }}
-                    transition={{ duration: 0.2 }}
-                    className="shrink-0 w-7 h-7 rounded-full flex items-center justify-center"
+                  <span
+                    className="shrink-0 w-7 h-7 rounded-full flex items-center justify-center transition-transform duration-200"
                     style={{
                       background: isOpen
                         ? "linear-gradient(135deg, #8A6A1A, #5F4A10)"
                         : "rgba(71,85,105,0.09)",
                       color: isOpen ? "#fff" : "#475569",
+                      transform: isOpen ? "rotate(45deg)" : "rotate(0deg)",
                     }}
                   >
                     <Icon icon="solar:add-linear" className="text-sm" />
-                  </motion.span>
+                  </span>
                 </button>
 
-                <AnimatePresence initial={false}>
-                  {isOpen && (
-                    <motion.div
-                      key="content"
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.25, ease: "easeInOut" }}
+                <div
+                  className="grid transition-[grid-template-rows] duration-300 ease-in-out"
+                  style={{ gridTemplateRows: isOpen ? "1fr" : "0fr" }}
+                >
+                  <div className="overflow-hidden">
+                    <p
+                      className="px-6 pb-5 text-sm leading-relaxed"
+                      style={{ color: "#334155" }}
                     >
-                      <p
-                        className="px-6 pb-5 text-sm leading-relaxed"
-                        style={{ color: "#334155" }}
-                      >
-                        {faq.a}
-                      </p>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                      {faq.a}
+                    </p>
+                  </div>
+                </div>
               </div>
             );
           })}

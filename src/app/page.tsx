@@ -1,20 +1,11 @@
-import { lazy, Suspense } from "react";
 import type { Metadata } from "next";
 import Card from "./components/Card";
-import ScrollProgress from "./components/ScrollProgress";
-import SpideyFeature from "./components/SpideyFeature";
+import HomeDeferredSections from "./components/HomeDeferredSections";
 import "./css/landing.css";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/" },
 };
-
-const Experience    = lazy(() => import("./components/Experience"));
-const SkillUniverse = lazy(() => import("./components/SkillUniverse"));
-const ProjectsA     = lazy(() => import("./components/ProjectsA"));
-const FAQ           = lazy(() => import("./components/FAQ"));
-const Contact       = lazy(() => import("./components/Contact"));
-const Footer        = lazy(() => import("./components/Footer"));
 
 const faqSchema = {
   "@context": "https://schema.org",
@@ -63,20 +54,6 @@ const faqSchema = {
   ],
 };
 
-function SectionSkeleton({ height = "py-20" }: { height?: string }) {
-  return (
-    <div className={`flex items-center justify-center ${height}`}>
-      <div className="flex flex-col items-center gap-4">
-        <div className="w-10 h-10 rounded-full border-2 border-[#E62429]/25 border-t-[#E62429] animate-spin" />
-        <div className="flex flex-col items-center gap-2">
-          <div className="h-2 w-32 rounded bg-white/10 animate-pulse" />
-          <div className="h-2 w-24 rounded bg-white/10 animate-pulse" />
-        </div>
-      </div>
-    </div>
-  );
-}
-
 export default function Home() {
   return (
     <>
@@ -91,35 +68,13 @@ export default function Home() {
         {/* Spider-Man grunge background + web overlay */}
         <div className="spidey-bg" aria-hidden />
         <div className="spidey-web fixed inset-0 -z-[2] opacity-50" aria-hidden />
-        <ScrollProgress />
+        <div
+          className="spidey-progress fixed top-0 left-0 right-0 h-1 z-50 origin-left scale-x-0"
+          aria-hidden
+        />
 
         <Card />
-
-        <Suspense fallback={<SectionSkeleton height="py-24" />}>
-          <Experience />
-        </Suspense>
-
-        <Suspense fallback={<SectionSkeleton height="py-24" />}>
-          <SkillUniverse />
-        </Suspense>
-
-        <Suspense fallback={<SectionSkeleton height="py-24" />}>
-          <ProjectsA />
-        </Suspense>
-
-        <SpideyFeature />
-
-        <Suspense fallback={<SectionSkeleton height="py-20" />}>
-          <FAQ />
-        </Suspense>
-
-        <Suspense fallback={<SectionSkeleton height="py-16" />}>
-          <Contact />
-        </Suspense>
-
-        <Suspense fallback={<SectionSkeleton height="py-10" />}>
-          <Footer />
-        </Suspense>
+        <HomeDeferredSections />
       </main>
     </>
   );

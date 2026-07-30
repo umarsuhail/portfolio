@@ -2,15 +2,8 @@ import type { Metadata, Viewport } from "next";
 import { Quicksand } from "next/font/google";
 import "./globals.css";
 import Nav from "./components/Nav";
-import ChatBot from "./chatbot/ChatBot";
-import BackgroundEffects from "./components/BackgroundEffects";
-import SmoothScroll from "./components/SmoothScroll";
-import PageTransition from "./components/PageTransition";
-import ScrollController from "./components/ScrollController";
-import UISound from "./components/UISound";
-import CustomCursor from "./components/CustomCursor";
-import SpiderWebClick from "./components/SpiderWebClick";
-import { Analytics } from "@vercel/analytics/next";
+import DeferredClientFeatures from "./components/DeferredClientFeatures";
+
 const BASE_URL = "https://www.umar.website";
 
 const quicksand = Quicksand({
@@ -258,18 +251,11 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${quicksand.variable} font-sans antialiased bg-[#030014] text-white min-h-screen cursor-none`}
+        className={`${quicksand.variable} font-sans antialiased bg-[#030014] text-white min-h-screen`}
       >
-        <CustomCursor />
-        <SpiderWebClick />
-        <BackgroundEffects />
         <Nav />
-        <SmoothScroll>
-          <PageTransition>{children}</PageTransition>
-        </SmoothScroll>
-        <ScrollController />
-        <UISound />
-        <ChatBot />
+        {children}
+        <DeferredClientFeatures />
       </body>
     </html>
   );

@@ -207,6 +207,14 @@
       url("/images/sp-bg.jpg") center / cover no-repeat fixed;
   }
 
+  @media (max-width: 767px) {
+    .spidey-bg {
+      background:
+        linear-gradient(180deg, rgba(7, 6, 12, 0.84) 0%, rgba(7, 6, 12, 0.72) 45%, rgba(7, 6, 12, 0.94) 100%),
+        url("/images/sp-bg.jpg") center top / 900px auto no-repeat;
+    }
+  }
+
   /* Spider-web net overlay — repeating radial-ish web of thin silk lines */
   .spidey-web {
     background-image:

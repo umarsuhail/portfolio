@@ -1,10 +1,10 @@
 "use client";
 
-import { motion, Variants } from "framer-motion";
 import { Icon } from "@iconify/react";
 import Link from "next/link";
 import { about_me, resumeUrl } from "../../utils/constants";
 import ScrollProgress from "../components/ScrollProgress";
+import Reveal from "../components/Reveal";
 
 const hobbies = [
   {
@@ -105,20 +105,6 @@ const addresses = [
   },
 ];
 
-const fadeUp: Variants = {
-  hidden: { opacity: 0, y: 40 },
-  show: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] },
-  },
-};
-
-const stagger: Variants = {
-  hidden: {},
-  show: { transition: { staggerChildren: 0.1 } },
-};
-
 function SectionHeading({
   badge,
   children,
@@ -127,18 +113,12 @@ function SectionHeading({
   children: React.ReactNode;
 }) {
   return (
-    <motion.div
-      variants={fadeUp}
-      initial="hidden"
-      whileInView="show"
-      viewport={{ once: true, amount: 0.5 }}
-      className="text-center mb-16"
-    >
+    <Reveal inView y={40} amount={0.5} duration={0.6} className="text-center mb-16">
       <span className="badge badge-primary mb-4 border-spidey-red/40 bg-spidey-red/15 text-spidey-silk">
         {badge}
       </span>
       <h2 className="section-title text-spidey-silk">{children}</h2>
-    </motion.div>
+    </Reveal>
   );
 }
 
@@ -165,11 +145,7 @@ export default function AboutPage() {
           aria-hidden
         />
         <div className="section-container">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mb-8"
-          >
+          <Reveal y={20} className="mb-8">
             <Link
               href="/"
               className="inline-flex items-center gap-2 text-spidey-silk/60 hover:text-spidey-red transition-colors"
@@ -177,14 +153,10 @@ export default function AboutPage() {
               <Icon icon="solar:arrow-left-linear" />
               Back to Home
             </Link>
-          </motion.div>
+          </Reveal>
 
           <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6 }}
-            >
+            <Reveal x={-30} y={0} duration={0.6}>
               <span className="badge mb-4 border-spidey-red/40 bg-spidey-red/15 text-spidey-silk">
                 About Me
               </span>
@@ -210,14 +182,9 @@ export default function AboutPage() {
                   {isResumeConfigured ? "Download CV" : "Request CV"}
                 </a>
               </div>
-            </motion.div>
+            </Reveal>
 
-            <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="flex justify-center"
-            >
+            <Reveal x={30} y={0} delay={0.2} duration={0.6} className="flex justify-center">
               <script
                 src="https://platform.linkedin.com/badges/js/profile.js"
                 async
@@ -240,7 +207,7 @@ export default function AboutPage() {
                   Umar Suhail
                 </a>
               </div>
-            </motion.div>
+            </Reveal>
           </div>
         </div>
       </section>
@@ -252,14 +219,8 @@ export default function AboutPage() {
             Personal <span className="spidey-text">Details</span>
           </SectionHeading>
 
-          <motion.div
-            variants={stagger}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, amount: 0.2 }}
-            className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5"
-          >
-            {personalDetails.map((detail) => {
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            {personalDetails.map((detail, index) => {
               const Inner = (
                 <div className="spidey-card rounded-2xl p-5 h-full flex items-start gap-4">
                   <div className="shrink-0 w-11 h-11 rounded-xl bg-gradient-to-br from-spidey-red to-spidey-crimson flex items-center justify-center">
@@ -277,7 +238,7 @@ export default function AboutPage() {
               );
 
               return (
-                <motion.div key={detail.label} variants={fadeUp}>
+                <Reveal key={detail.label} inView y={40} delay={index * 0.1}>
                   {detail.href ? (
                     <a href={detail.href} className="block h-full">
                       {Inner}
@@ -285,10 +246,10 @@ export default function AboutPage() {
                   ) : (
                     Inner
                   )}
-                </motion.div>
+                </Reveal>
               );
             })}
-          </motion.div>
+          </div>
         </div>
       </section>
 
@@ -299,17 +260,13 @@ export default function AboutPage() {
             Address & <span className="spidey-text">Location</span>
           </SectionHeading>
 
-          <motion.div
-            variants={stagger}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, amount: 0.2 }}
-            className="grid md:grid-cols-2 gap-6"
-          >
-            {addresses.map((addr) => (
-              <motion.div
+          <div className="grid md:grid-cols-2 gap-6">
+            {addresses.map((addr, index) => (
+              <Reveal
                 key={addr.title}
-                variants={fadeUp}
+                inView
+                y={40}
+                delay={index * 0.1}
                 className="spidey-card rounded-2xl p-7 relative overflow-hidden"
               >
                 <div className="spidey-web absolute inset-0 opacity-30" aria-hidden />
@@ -344,9 +301,9 @@ export default function AboutPage() {
                     ))}
                   </ul>
                 </div>
-              </motion.div>
+              </Reveal>
             ))}
-          </motion.div>
+          </div>
         </div>
       </section>
 
@@ -357,17 +314,13 @@ export default function AboutPage() {
             What <span className="spidey-text">Drives Me</span>
           </SectionHeading>
 
-          <motion.div
-            variants={stagger}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, amount: 0.2 }}
-            className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6"
-          >
-            {values.map((value) => (
-              <motion.div
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {values.map((value, index) => (
+              <Reveal
                 key={value.title}
-                variants={fadeUp}
+                inView
+                y={40}
+                delay={index * 0.1}
                 className="spidey-card rounded-2xl p-6 text-center"
               >
                 <div className="w-14 h-14 mx-auto mb-4 rounded-xl bg-gradient-to-br from-spidey-blue to-indigo-700 flex items-center justify-center">
@@ -377,9 +330,9 @@ export default function AboutPage() {
                   {value.title}
                 </h3>
                 <p className="text-spidey-silk/60 text-sm">{value.description}</p>
-              </motion.div>
+              </Reveal>
             ))}
-          </motion.div>
+          </div>
         </div>
       </section>
 
@@ -390,17 +343,13 @@ export default function AboutPage() {
             Hobbies & <span className="spidey-text">Interests</span>
           </SectionHeading>
 
-          <motion.div
-            variants={stagger}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, amount: 0.2 }}
-            className="grid md:grid-cols-3 gap-6"
-          >
-            {hobbies.map((hobby) => (
-              <motion.div
+          <div className="grid md:grid-cols-3 gap-6">
+            {hobbies.map((hobby, index) => (
+              <Reveal
                 key={hobby.name}
-                variants={fadeUp}
+                inView
+                y={40}
+                delay={index * 0.1}
                 className="spidey-card rounded-2xl overflow-hidden"
               >
                 <div className="h-32 bg-gradient-to-br from-spidey-red/30 to-spidey-blue/30 flex items-center justify-center relative">
@@ -415,9 +364,9 @@ export default function AboutPage() {
                     {hobby.description}
                   </p>
                 </div>
-              </motion.div>
+              </Reveal>
             ))}
-          </motion.div>
+          </div>
         </div>
       </section>
 
@@ -425,12 +374,7 @@ export default function AboutPage() {
       <section className="section-padding relative bg-gradient-to-r from-spidey-red/20 via-black/30 to-spidey-blue/20 border-t border-spidey-red/20">
         <div className="spidey-web absolute inset-0 opacity-40" aria-hidden />
         <div className="section-container text-center relative">
-          <motion.div
-            variants={fadeUp}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, amount: 0.4 }}
-          >
+          <Reveal inView y={40} amount={0.4} duration={0.6}>
             <h2 className="text-3xl md:text-4xl font-bold text-spidey-silk mb-6 spidey-glow">
               Ready to Build Something Amazing?
             </h2>
@@ -451,7 +395,7 @@ export default function AboutPage() {
                 View My Work
               </Link>
             </div>
-          </motion.div>
+          </Reveal>
         </div>
       </section>
     </main>
