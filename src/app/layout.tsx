@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Quicksand } from "next/font/google";
+import { Analytics } from "@vercel/analytics/react";
 import "./globals.css";
 import Nav from "./components/Nav";
 import DeferredClientFeatures from "./components/DeferredClientFeatures";

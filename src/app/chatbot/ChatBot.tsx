@@ -212,11 +212,7 @@ export default function ChatBot() {
               )}
 
               {showFaq && !isTyping && (
-                <motion.div
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="flex flex-col gap-2"
-                >
+                <div className="flex flex-col gap-2">
                   {FAQS.map((faq) => (
                     <button
                       key={faq.q}
@@ -227,7 +223,7 @@ export default function ChatBot() {
                       {faq.q}
                     </button>
                   ))}
-                </motion.div>
+                </div>
               )}
             </div>
 
