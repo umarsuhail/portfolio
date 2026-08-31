@@ -5,10 +5,8 @@ import { useEffect, useState } from "react";
 
 const BackgroundEffects = dynamic(() => import("./BackgroundEffects"), { ssr: false });
 const ChatBot = dynamic(() => import("../chatbot/ChatBot"), { ssr: false });
-const CustomCursor = dynamic(() => import("./CustomCursor"), { ssr: false });
 const ScrollController = dynamic(() => import("./ScrollController"), { ssr: false });
 const ScrollProgress = dynamic(() => import("./ScrollProgress"), { ssr: false });
-const SpiderWebClick = dynamic(() => import("./SpiderWebClick"), { ssr: false });
 const UISound = dynamic(() => import("./UISound"), { ssr: false });
 const InteractiveToast = dynamic(() => import("./InteractiveToast"), { ssr: false });
 
@@ -41,8 +39,6 @@ export default function DeferredClientFeatures() {
 
   return (
     <>
-      <CustomCursor />
-      <SpiderWebClick />
       <BackgroundEffects />
       <ScrollProgress />
       <ScrollController />

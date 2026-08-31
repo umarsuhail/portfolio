@@ -36,6 +36,8 @@ export const metadata: Metadata = {
     "Umar Sohail",
     "Umer Sohail",
     "Omer Sohail",
+    "Umar Suhail Instagram",
+    "umar_suhail_",
     "Umar Suhail developer",
     "Umar Suhail UAE",
     "Umar Suhail India",
@@ -174,9 +176,9 @@ const person = {
     },
   },
   sameAs: [
+    "https://www.instagram.com/umar_suhail_/",
     "https://www.linkedin.com/in/umar-suhail/",
     "https://github.com/umarsuhail",
-    BASE_URL,
   ],
   hasOccupation: {
     "@type": "Occupation",

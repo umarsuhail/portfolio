@@ -6,7 +6,6 @@ import useIsMobile from "./useIsMobile";
 
 const SkillUniverse = lazy(() => import("./SkillUniverse"));
 const ProjectsA = lazy(() => import("./ProjectsA"));
-const SpideyFeature = lazy(() => import("./SpideyFeature"));
 const FAQ = lazy(() => import("./FAQ"));
 const Contact = lazy(() => import("./Contact"));
 const Footer = lazy(() => import("./Footer"));
@@ -74,9 +73,6 @@ export default function HomeDeferredSections() {
       </LazyWhenNear>
       <LazyWhenNear minHeight={720}>
         <ProjectsA />
-      </LazyWhenNear>
-      <LazyWhenNear minHeight={560}>
-        <SpideyFeature />
       </LazyWhenNear>
       <LazyWhenNear minHeight={480}>
         <FAQ />
